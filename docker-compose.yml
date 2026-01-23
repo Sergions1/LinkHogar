@@ -1,0 +1,13 @@
+services:
+  mysqldb:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "Admin123!"
+      MYSQL_DATABASE: linkhogar_bd
+      MYSQL_USER: usuario_dev
+      MYSQL_PASSWORD: password_dev
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
