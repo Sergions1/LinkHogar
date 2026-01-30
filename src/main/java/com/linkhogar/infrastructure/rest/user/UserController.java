@@ -2,15 +2,24 @@ package com.linkhogar.infrastructure.rest.user;
 
 import com.linkhogar.application.user.create.CreateUserCommand;
 import com.linkhogar.application.user.create.CreateUserCommandHandler;
+import com.linkhogar.application.user.delete.DeleteUserCommand;
+import com.linkhogar.application.user.delete.DeleteUserCommandHandler;
+import com.linkhogar.application.user.getById.GetUserByIdQueryHandler;
+import com.linkhogar.application.user.getById.GetUserByIdQuery;
+import com.linkhogar.application.user.update.UpdateUserCommand;
+import com.linkhogar.application.user.update.UpdateUserCommandHandler;
+import com.linkhogar.application.user.update.UserUpdateDTO;
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.common.result.Error;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.UUID;
@@ -19,15 +28,90 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Tag(name = "Users", description = "Operaciones relacionadas con la gestión de usuarios")
 public class UserController {
     private final CreateUserCommandHandler createUserCommandHandler;
+    private final GetUserByIdQueryHandler getUserByIdQueryHandler;
+    private final DeleteUserCommandHandler deleteUserCommandHandler;
+    private final UpdateUserCommandHandler updateUserCommandHandler;
 
+    @Operation(
+            summary = "Registrar un nuevo usuario",
+            description = "Crea un usuario en el sistema verificando que el email no exista previamente. Devuelve el UUID generado."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos (Validation Error)"),
+            @ApiResponse(responseCode = "409", description = "El email ya está registrado")
+    })
     @PostMapping
     public ResponseEntity<?> register(@RequestBody CreateUserCommand request){
         Result<UUID> result = createUserCommandHandler.handle(request);
 
         if(result.isSuccess()){
             return ResponseEntity.created(URI.create("/users/"+result.getValue())).body(result.getValue());
+        }
+
+        return mapErrorToResponse(result.getError());
+    }
+
+    @Operation(
+            summary = "Obtener usuario por Id",
+            description = "Recupera la información pública de un usuario dado su UUID. No devuelve la contraseña."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado con ese ID")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable UUID id){
+        GetUserByIdQuery query = new GetUserByIdQuery(id);
+
+        var result = getUserByIdQueryHandler.handle(query);
+
+        if(result.isSuccess()){
+            return ResponseEntity.ok(result.getValue());
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @Operation(
+            summary = "Eliminar usuario por Id",
+            description = "Elimina un usuario por su Id, si este existe previamente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Usuario eliminado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable UUID id){
+        DeleteUserCommand command = new DeleteUserCommand(id);
+        Result<Void> result = deleteUserCommandHandler.handle(command);
+
+        if (result.isSuccess()){
+            return ResponseEntity.noContent().build(); //Estandar para los delete exitosos
+        }
+
+        return mapErrorToResponse(result.getError());
+    }
+
+    @Operation(
+            summary = "Actualizar usuario",
+            description = "Actualizado de usuario pasandole el id de Usuario y los datos a traves de JSON"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario actualizado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable UUID id, @RequestBody UserUpdateDTO updateDTO){
+        UpdateUserCommand command = new UpdateUserCommand(id, updateDTO.firstName(), updateDTO.lastName(), updateDTO.fecha_Nac());
+
+        Result<Void> result = updateUserCommandHandler.handle(command);
+
+        if (result.isSuccess()){
+            return ResponseEntity.ok().build();
         }
 
         return mapErrorToResponse(result.getError());

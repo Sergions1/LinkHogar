@@ -28,4 +28,13 @@ public class UserErrors {
             "Users.Unauthorized",
             "No tienes permisos para realizar esta acción"
     );
+
+    public static final Error invalidPassword(){
+        return Error.notFound(
+                "Users.InvalidPassword",
+                "La contraseña es incorrecta"
+        );
+    }
+
+
 }

@@ -15,38 +15,28 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void saveUser(User user) {
-        UserEntity entity = UserEntity.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .mail(user.getMail())
-                .password(user.getPassword())
-                .fecha_nac(user.getFecha_nac())
-                .creationDate(user.getCreationDate())
-                .build();
 
-        jpaUserRepository.save(entity);
+        jpaUserRepository.save(user);
     }
 
     @Override
     public Optional<User> userById(UUID userId) {
-        return jpaUserRepository.findById(userId).map(this::toDomain);
+        return jpaUserRepository.findById(userId);
     }
 
     @Override
     public Optional<User> userByMail(String mail) {
-        return jpaUserRepository.findByMail(mail).map(this::toDomain);
+        return jpaUserRepository.findByMail(mail);
     }
 
-    private User toDomain(UserEntity entity) {
-        return User.builder()
-                .id(entity.getId())
-                .firstName(entity.getFirstName())
-                .lastName(entity.getLastName())
-                .mail(entity.getMail())
-                .password(entity.getPassword())
-                .fecha_nac(entity.getFecha_nac())
-                .creationDate(entity.getCreationDate())
-                .build();
+    @Override
+    public boolean existByMail(String mail) {
+        return jpaUserRepository.existsByMail(mail);
     }
+
+    @Override
+    public void delete(UUID userId) {
+        jpaUserRepository.deleteById(userId);
+    }
+
 }

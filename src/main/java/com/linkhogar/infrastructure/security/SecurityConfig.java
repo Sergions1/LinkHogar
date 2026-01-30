@@ -3,31 +3,41 @@ package com.linkhogar.infrastructure.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        // 1. Desactivamos CSRF (Cross-Site Request Forgery)
-        // Esto es necesario para que Postman pueda enviar POSTs sin tokens especiales.
-        // En APIs REST modernas sin estado (stateless), suele desactivarse.
-        return http.csrf(AbstractHttpConfigurer::disable)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+        http
+                // 1. Desactivar CSRF (No es necesario en APIs REST stateless)
+                .csrf(AbstractHttpConfigurer::disable)
 
-        // 2. Configuramos las reglas de quién entra y quién no
-        .authorizeHttpRequests(auth -> auth
-                // A. PERMITIMOS EL REGISTRO:
-                // "Si alguien intenta hacer POST a /users, déjalo pasar sin preguntar"
-                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                // 2. Gestionar permisos de rutas
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html").permitAll()
 
-                // B. BLOQUEAMOS EL RESTO:
-                // "Cualquier otra petición requiere que el usuario esté autenticado"
-                .anyRequest().authenticated()
-        )
-        .build();
+                        .anyRequest().authenticated()
+                )
+                // 3. Gestión de Sesión: STATELESS
+                // No queremos que el servidor guarde sesiones. Cada petición debe llevar su Token.
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authenticationProvider(authenticationProvider) //Añadimos el proveedor
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); //Añadir el filtro antes del filtro estándar
+
+        return http.build();
     }
 }
