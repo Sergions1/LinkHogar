@@ -1,0 +1,65 @@
+.seccion{
+  background-color: beige;
+}
+body{
+  min-height: 100%;
+}
+
+#foto {
+
+  background-size: cover;
+  background-position: center;
+
+  min-height: 450px;
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* (Opcional) Añade un poco de sombra al texto para que resalte más */
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.card-img-top {
+  height: 250px;
+  object-fit: cover;
+}
+
+.btn-heart {
+  background-color: white;
+  border: none;
+  transition: 0.2s;
+  z-index: 2; /* Asegurar que está encima */
+}
+.btn-heart:hover {
+  color: red;
+  transform: scale(1.1);
+}
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 3rem rgba(0,0,0,.15)!important;
+}
+.text-price {
+  color: var(--color-primario, #0d6efd);
+}
+
+/* Enlace que cubre toda la tarjeta para hacerla clicable*/
+.stretched-link::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  content: "";
+}
+/* Para que el icono de favorito esté por encima del enlace */
+.btn-heart {
+  position: absolute;
+  z-index: 2;
+}

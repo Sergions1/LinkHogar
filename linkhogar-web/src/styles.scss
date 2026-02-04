@@ -1,0 +1,45 @@
+/* You can add global styles to this file, and also import other style files */
+
+:root {
+  --color-primario: #4A90E2;          /* Azul Confianza */
+  --color-acento: #F08A5D;            /* Coral Acogedor */
+  --color-fondo-principal: #F8F9FA;   /* Blanco Nube */
+  --color-fondo-secundario: #F1F3F5;  /* Gris Suave */
+  --color-texto: #2D3748;             /* Grafito */
+  --color-exito: #28A745;             /* Verde */
+  --color-error: #E53E3E;             /* Rojo */
+
+  /* Colores de texto para contraste */
+  --color-texto-claro: #FFFFFF;       /* Texto para fondos oscuros */
+  --color-texto-oscuro: #2D3748;      /* Texto para fondos claros (color Grafito) */
+  /* Definir un tono más oscuro para el estado HOVER */
+  --color-acento-oscuro: #DB7C55;
+  /*Definir un tono aún más oscuro para el estado ACTIVE/FOCUS */
+  --color-acento-presionado: #C9724C;
+}
+
+
+
+/* Clases para Fondos*/
+
+.bg-primario {
+  background-color: var(--color-primario);
+}
+.bg-acento {
+  background-color: var(--color-acento);
+}
+.bg-fondo-principal {
+  background-color: var(--color-fondo-principal);
+}
+.bg-fondo-secundario {
+  background-color: var(--color-fondo-secundario);
+}
+.bg-texto {
+  background-color: var(--color-texto);
+}
+.bg-exito {
+  background-color: var(--color-exito);
+}
+.bg-error {
+  background-color: var(--color-error);
+}
