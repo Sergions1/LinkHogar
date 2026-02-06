@@ -43,3 +43,16 @@
 .bg-error {
   background-color: var(--color-error);
 }
+
+
+/* 🎨 Estilos Base del Botón */
+.primary-btn{
+  /* Fondo */
+  background-color: var(--color-acento) !important;
+
+  /* Borde*/
+  border-color: var(--color-acento) !important;
+
+  /* Color de Texto */
+  color: var(--color-texto-claro);
+}

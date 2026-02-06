@@ -14,7 +14,14 @@
 
 
       <div class="text-end" id="SeccionUsuario">
-
+        @if (authService.isLoggedIn()) {
+          <a href="${pageContext.request.contextPath}/Pisos/Fav" class="btn me-1 text-acento" id="favorito"><span class="material-icons">favorite</span></a>
+          <a href="${pageContext.request.contextPath}/Usuario" type="button" class="btn primary-btn me-2" id="botonPerfil">Perfil</a>
+          <button class="btn btn-danger" id="btnCerrarSesion" (click)="logOut()">Cerrar Sesión</button>
+        } @else {
+          <button type="button" class="btn btn-light me-2" id="login-button" (click)="login()">Iniciar Sesión</button>
+          <button type="button" class="btn boton-primario" id="botonRegister" >Registrarse</button>
+        }
       </div>
 
 
