@@ -23,12 +23,12 @@ export class LoginComponent {
       this.authService.login(this.loginData).subscribe({
         next: (token) => {
           localStorage.setItem("token", token);
-          alert("Inicio de sesion correcto. Token: " + token);
-          //Falta redirigir
+          this.router.navigate(["/"]);
 
         },
         error: (error) => {
           alert("Ha ocurrido un error: " + error.message);
+          //todo modificar error de login
         }
       })
     }
