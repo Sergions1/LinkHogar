@@ -56,3 +56,7 @@
   /* Color de Texto */
   color: var(--color-texto-claro);
 }
+
+.primary-btn:hover{
+  background-color: var(--color-acento-presionado) !important;
+}
