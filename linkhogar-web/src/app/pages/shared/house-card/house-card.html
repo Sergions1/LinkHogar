@@ -1,0 +1,56 @@
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden card-hover h-100">
+
+  <div class="position-relative" style="height: 200px; background-color: #eee;">
+      <span class="position-absolute top-50 start-50 translate-middle text-muted">
+         🏠 Foto
+      </span>
+  </div>
+
+  <div class="card-body p-4 d-flex flex-column">
+    <h5 class="card-title fw-bold mb-1 text-truncate" [title]="house.title">
+      {{ house.title }}
+    </h5>
+
+    <p class="text-muted small mb-3">
+      <i class="bi bi-geo-alt-fill"></i>
+      {{ house.address.city }}, {{ house.address.province }}
+    </p>
+
+    <div class="d-flex gap-3 mb-4 text-muted small">
+      <div class="d-flex align-items-center gap-1" title="Superficie">
+        <i class="bi bi-rulers"></i>
+        <span>{{ house.size }} m²</span>
+      </div>
+      <div class="d-flex align-items-center gap-1" title="Habitaciones">
+        <i class="bi bi-layout-bedroom"></i>
+        <span>{{ house.rooms }} hab.</span>
+      </div>
+      <div class="d-flex align-items-center gap-1" title="Baños">
+        <i class="bi bi-droplet"></i>
+        <span>{{ house.baths }} baños</span>
+      </div>
+    </div>
+
+    <hr class="text-muted opacity-25 mt-auto mb-3">
+
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <span class="h4 fw-bold text-price mb-0">
+          {{ house.price }} €
+        </span>
+        <span class="text-muted small">/mes</span>
+      </div>
+
+      <div>
+        <button class="btn btn-trash rounded-circle me-2" [attr.data-id]="house.id">
+          <i class="bi bi-trash fs-4 text-danger"></i>
+        </button>
+
+        <a [routerLink]="['/pisos/piso', house.id]"
+           class="btn btn-primary fw-medium border-0 px-3 py-2 stretched-link">
+          Ver detalles
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
