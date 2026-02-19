@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface HouseRepository {
     void save(House house);
-    List<House> findByCity(String city);
+    Page<House> findByCity(String city, Pageable pageable);
     Page<House> getAll(Pageable pageable);
 }

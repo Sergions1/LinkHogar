@@ -7,4 +7,5 @@ export const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path:"", component: LandingComponent},
   {path:"explore", component: Explore},
+  {path: 'explore/:provincia/:municipio', component: Explore },
 ];

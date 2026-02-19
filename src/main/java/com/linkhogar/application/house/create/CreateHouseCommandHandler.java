@@ -30,6 +30,7 @@ public class CreateHouseCommandHandler {
                 .floor(command.getFloor())
                 .door(command.getDoor())
                 .city(command.getCity())
+                .cp(command.getCp())
                 .province(command.getProvince())
                 .country(command.getCountry())
                 .build();

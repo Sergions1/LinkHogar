@@ -20,8 +20,8 @@ public class HouseRepositoryImpl implements HouseRepository {
     }
 
     @Override
-    public List<House> findByCity(String city) {
-        return jpaHouseRepository.findByAddress_City(city);
+    public Page<House> findByCity(String city, Pageable pageable) {
+        return jpaHouseRepository.findByAddress_City(city, pageable);
     }
 
     @Override

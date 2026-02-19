@@ -10,10 +10,35 @@
           <div class="input-group mb-3">
             <input type="text"
                     class="form-control"
-                    placeholder="Encuentra tu hogar">
+                    placeholder="Encuentra tu hogar"
+                    [value]="searchQuery()"
+                    (input)="onInput($event)">
 
-            <button class="btn primary-btn" (click)="search()"><i class="fa-brands fa-sistrix"></i> Buscar</button>
+            <button
+              class="btn primary-btn"
+              (click)="search()"
+              [disabled]="!selectedCity()">
+              <i class="fa-brands fa-sistrix"></i> Buscar
+            </button>
           </div>
+          @if (isSearching()) {
+            <ul class="list-group position-absolute" style="z-index: 1000">
+              <li class="list-group-item text-muted">
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                Buscando...
+              </li>
+            </ul>
+          } @else if (sugerencias().length > 0) {
+            <ul class="list-group position-absolute" style="z-index: 1000">
+              @for (municipio of sugerencias(); track municipio.id) {
+                <li class="list-group-item list-group-item-action"
+                    (click)="seleccionar(municipio)">
+                  <i class="bi bi-geo-alt me-2 text-primary"></i>
+                  {{ municipio.display }}
+                </li>
+              }
+            </ul>
+          }
         </div>
 
       </div>

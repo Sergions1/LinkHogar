@@ -10,17 +10,15 @@
             [cardTemplate]="houseCard"
             (pageChange)="onPageChange($event)">
           </app-entity-card-view>
-
-          <ng-template #houseCard let-house>
-            <house-card [house]="house" />
-          </ng-template>
-
         </div>
       </div>
     </section>
   </div>
 </div>
 
+<ng-template #houseCard let-house>
+  <house-card [house]="house" />
+</ng-template>
 </body>
 
 

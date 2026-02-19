@@ -7,6 +7,7 @@ import com.linkhogar.application.house.get.GetQueryHandle;
 import com.linkhogar.application.house.get.HouseResponse;
 import com.linkhogar.application.house.getByCity.GetByCityQuery;
 import com.linkhogar.application.house.getByCity.GetByCityQueryHandler;
+import com.linkhogar.application.house.getByCity.HouseCardResponse;
 import com.linkhogar.domain.house.House;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -64,8 +65,10 @@ public class HouseController {
             description = "Devuelve un listado de tipo HouseCardResponse"
     )
     @GetMapping("/{city}")
-    public ResponseEntity<?> getByCity(@PathVariable String city){
-        GetByCityQuery query = new GetByCityQuery(city);
+    public ResponseEntity<Page<HouseCardResponse>> getByCity(@PathVariable String city,
+                                                  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size){
+        GetByCityQuery query = new GetByCityQuery(city, page, size);
 
         var result = getByCityQueryHandler.handle(query);
 

@@ -4,6 +4,7 @@ export interface AddressResponse{
   floor : string;
   door : string;
   city : string;
+  cp : number
   province : string;
   country : string;
 

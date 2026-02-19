@@ -1,4 +1,4 @@
 package com.linkhogar.application.house.getByCity;
 
-public record GetByCityQuery (String city) {
+public record GetByCityQuery (String city, int page, int size) {
 }

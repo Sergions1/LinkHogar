@@ -27,6 +27,8 @@ public class Address {
     @Column(nullable = false)
     private String city;
     @Column(nullable = false)
+    private int cp;
+    @Column(nullable = false)
     private String province;
     @Column(nullable = false)
     private String country;

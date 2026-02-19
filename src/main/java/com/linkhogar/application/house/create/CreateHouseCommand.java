@@ -34,6 +34,7 @@ public class CreateHouseCommand {
     private String floor;
     private String door;
     private String city;
+    private int cp;
     private String province;
     private String country;
 

@@ -4,6 +4,9 @@ import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.HouseRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,10 +16,11 @@ import java.util.List;
 public class GetByCityQueryHandler {
     private final HouseRepository houseRepository;
 
-    public List<HouseCardResponse> handle(GetByCityQuery query){
-        List<House> houseList = houseRepository.findByCity(query.city());
+    public Page<HouseCardResponse> handle(GetByCityQuery query){
+        Pageable pageable = PageRequest.of(query.page(), query.size());
+        Page<House> housePage = houseRepository.findByCity(query.city(), pageable);
 
-        return houseList.stream().map(this::toHouseCardResponse).toList();
+        return housePage.map(this::toHouseCardResponse);
     }
 
 

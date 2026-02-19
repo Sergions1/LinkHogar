@@ -13,17 +13,19 @@ export class HouseService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/houses`;
 
-  searchByCity(city: string): Observable<HouseCardResponse[]> {
-    return this.http.get<HouseCardResponse[]>(`${this.apiUrl}/search`,{
-      params: {city: city}
-    });
-  }
-
   getPaginatedHouses(page: number = 0, size: number= 10): Observable<PageResponse<HouseResponse>>{
     const params = new HttpParams()
       .set('page', page)
       .set('size', size);
 
     return this.http.get<PageResponse<HouseResponse>>(`${this.apiUrl}`, {params});
+  }
+
+  getByCityPaginatedHouses(city:string, page: number = 0, size: number=10): Observable<PageResponse<HouseResponse>>{
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    return this.http.get<PageResponse<HouseResponse>>(`${this.apiUrl}/${city}`, {params});
   }
 }
