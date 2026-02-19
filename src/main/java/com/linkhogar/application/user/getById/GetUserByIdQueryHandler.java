@@ -14,18 +14,9 @@ public class GetUserByIdQueryHandler {
 
     public Result<UserResponse> handle(GetUserByIdQuery query){
         return userRepository.userById(query.userId())
-                .map(user -> Result.success(mapToResponse(user)))
+                .map(user -> Result.success(UserResponse.mapToResponse(user)))
                 .orElse(Result.failure(UserErrors.NotFound(query.userId())));
     }
 
-    private UserResponse mapToResponse(User user) {
-        return new UserResponse(
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getMail(),
-                user.getFecha_nac(),
-                user.getRegisterDate()
-        );
-    }
+
 }

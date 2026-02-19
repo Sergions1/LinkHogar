@@ -23,6 +23,7 @@ public class House {
     private UUID id;
     private String title;
     private String description;
+    private LocalDateTime creationDate;
     private LocalDateTime publicationDate;
     private LocalDateTime updateDate;
     private HouseType houseType;
@@ -35,18 +36,17 @@ public class House {
     private int size;
     private int rooms;
     private int baths;
-    private int floor;
 
-    private boolean lift;
-    private boolean furnished;
-    private boolean airConditioned;
-    private boolean terrace;
-    private boolean balcony;
-    private boolean garage;
-    private boolean storage;
-    private boolean pool;
-    private boolean commonAreas;
-    private boolean petsAllowed;
+    private boolean lift = false;
+    private boolean furnished = false;
+    private boolean airConditioned = false;
+    private boolean terrace = false;
+    private boolean balcony = false;
+    private boolean garage = false;
+    private boolean storage = false;
+    private boolean pool = false;
+    private boolean commonAreas = false;
+    private boolean petsAllowed = false;
 
     private long price;
 

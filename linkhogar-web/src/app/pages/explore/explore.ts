@@ -25,7 +25,7 @@ export class Explore implements OnInit {
 
   loadHouses(page: number) {
     this.isLoading.set(true);
-    this.houseService.getPaginatedHouses(page, 10).subscribe({
+    this.houseService.getPaginatedHouses(page, 5).subscribe({
       next: (data) => {
         this.houses.set(data);
         this.isLoading.set(false);

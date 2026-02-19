@@ -1,5 +1,7 @@
 package com.linkhogar.application.user.getById;
 
+import com.linkhogar.domain.user.User;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -10,4 +12,16 @@ public record UserResponse (
     String mail,
     LocalDateTime fechaNac,
     LocalDateTime creationDate
-){}
+){
+
+    public static  UserResponse mapToResponse(User user) {
+        return new UserResponse(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getMail(),
+                user.getFecha_nac(),
+                user.getRegisterDate()
+        );
+    }
+}

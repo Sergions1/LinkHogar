@@ -1,5 +1,6 @@
 package com.linkhogar.domain.address;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.linkhogar.domain.house.House;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,6 +8,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
+@Setter
 @Getter
 @Builder // (Lombok) Patrón Builder para crear instancias cómodamente.
 @AllArgsConstructor
@@ -27,7 +29,7 @@ public class Address {
     @Column(nullable = false)
     private String province;
     @Column(nullable = false)
-    private String contry;
+    private String country;
 
     // --- Geolocalización ---
     // Usamos Double (clase wrapper) para permitir nulos.
@@ -38,5 +40,6 @@ public class Address {
     @OneToOne(mappedBy = "address")
     @ToString.Exclude // (Lombok) ¡IMPEDIR BUCLE INFINITO! Al imprimir Address, no imprimas House.
     @EqualsAndHashCode.Exclude // (Lombok) ¡IMPEDIR BUCLE INFINITO! Al comparar Address, ignora House.
+    @JsonIgnore //Evita que Jackson intente pintar la casa dentro de la dirección
     private House house;
 }

@@ -1,6 +1,6 @@
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden card-hover h-100">
 
-  <div class="position-relative" style="height: 200px; background-color: #eee;">
+  <div class="position-relative" style="height: 400px; background-color: #eee;">
       <span class="position-absolute top-50 start-50 translate-middle text-muted">
          🏠 Foto
       </span>
@@ -10,6 +10,11 @@
     <h5 class="card-title fw-bold mb-1 text-truncate" [title]="house.title">
       {{ house.title }}
     </h5>
+
+    <p class="text-muted small mb-3">
+      <lucide-icon name="map-pinned"></lucide-icon>
+      {{ house.address.city }}, {{ house.address.province }}
+    </p>
 
     <p class="text-muted small mb-3">
       <i class="bi bi-geo-alt-fill"></i>

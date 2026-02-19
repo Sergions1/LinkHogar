@@ -5,11 +5,9 @@ public enum HouseType {
     Adosado,
     Estudio,
     Apartamento,
-    Duplex,
     Chalet,
-    Ático,
-    Bungalow,
-    Cortijo,
-    Casona,
-    Loft
+    Atico,
+    Loft,
+    Habitacion,
+    Residencia
 }

@@ -4,9 +4,10 @@ import com.linkhogar.domain.house.House;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface JpaHouseRepository extends JpaRepository<House, UUID> {
-
+    List<House> findByAddress_City(String City);
 }
