@@ -8,6 +8,8 @@ import com.linkhogar.application.house.get.HouseResponse;
 import com.linkhogar.application.house.getByCity.GetByCityQuery;
 import com.linkhogar.application.house.getByCity.GetByCityQueryHandler;
 import com.linkhogar.application.house.getByCity.HouseCardResponse;
+import com.linkhogar.application.house.getById.GetByIdQuery;
+import com.linkhogar.application.house.getById.GetByIdQueryHandler;
 import com.linkhogar.domain.house.House;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,6 +35,7 @@ public class HouseController {
     private final CreateHouseCommandHandler createHouseCommandHandler;
     private final GetByCityQueryHandler getByCityQueryHandler;
     private final GetQueryHandle getQueryHandle;
+    private final GetByIdQueryHandler getByIdQueryHandler;
 
     @Operation(
             summary = "Obtención de todas las casas",
@@ -64,13 +67,30 @@ public class HouseController {
             summary = "Obtención de casas por ciudad",
             description = "Devuelve un listado de tipo HouseCardResponse"
     )
-    @GetMapping("/{city}")
+    @GetMapping("/city/{city}")
     public ResponseEntity<Page<HouseCardResponse>> getByCity(@PathVariable String city,
                                                   @RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "10") int size){
         GetByCityQuery query = new GetByCityQuery(city, page, size);
 
         var result = getByCityQueryHandler.handle(query);
+
+        if (result != null){
+            return ResponseEntity.ok(result);
+        }
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Obtención de casas por Id",
+            description = "Devuelve un tipo HouseResponse"
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<HouseResponse> getById(@PathVariable String id){
+        GetByIdQuery query = new GetByIdQuery(id);
+
+        var result = getByIdQueryHandler.handle(query);
 
         if (result != null){
             return ResponseEntity.ok(result);

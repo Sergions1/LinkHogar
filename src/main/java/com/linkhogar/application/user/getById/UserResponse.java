@@ -11,7 +11,8 @@ public record UserResponse (
     String lastName,
     String mail,
     LocalDateTime fechaNac,
-    LocalDateTime creationDate
+    LocalDateTime creationDate,
+    String phone
 ){
 
     public static  UserResponse mapToResponse(User user) {
@@ -21,7 +22,8 @@ public record UserResponse (
                 user.getLastName(),
                 user.getMail(),
                 user.getFecha_nac(),
-                user.getRegisterDate()
+                user.getRegisterDate(),
+                user.getPhone().toString()
         );
     }
 }

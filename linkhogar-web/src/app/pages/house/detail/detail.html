@@ -1,0 +1,187 @@
+
+<div class="container mt-4">
+  @if(isLoading()){
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+      <div class="spinner-grow text-primary" role="status"></div>
+      <p class="text-muted mt-2">Cargando...</p>
+    </div>
+  } @else if (house() == null){
+
+  }
+  @else if(house(); as house){
+  <div class="row">
+
+    <div class="col-lg-8">
+
+      <div class="d-flex mb-1 justify-content-between align-items-center">
+        <div class="">
+          <h1 class="h2 fw-bold">{{house.title}}</h1>
+          <p class="text-muted">{{house.address.street}} {{house.address.city}}, {{house.address.province}}</p>
+        </div>
+        <div>
+          <button class="btn btn-heart rounded-circle m-3 shadow-sm p-2 lh-1" id="botonFav" data-id="${piso.id}">
+            <!-- Todo boton de favoritos cuando este disponible la tabla de favoritos -->
+          </button>
+        </div>
+      </div>
+      <div id="pisoCarousel" class="carousel slide shadow-sm rounded mb-4" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <!-- Todo carruosel de imagenes cuando este operativo el tratado de imagenes -->
+        </div>
+        <div class="carousel-inner rounded">
+          <!-- carruosel de imagenes cuando este operativo el tratado de imagenes -->
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#pisoCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#pisoCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+
+      <h4 class="mb-3">Características principales</h4>
+      <div class="row mb-4 border-bottom pb-3">
+        <div class="col-6 col-md-3 mb-2"><i class="bi bi-door-open-fill me-2 text-primario"></i>{{house.rooms}} hab.</div>
+        <div class="col-6 col-md-3 mb-2"><i class="bi bi-heptagon-fill me-2 text-primario"></i>{{house.baths}} baños</div>
+        <div class="col-6 col-md-3 mb-2"><i class="bi bi-arrows-angle-expand me-2 text-primario"></i>{{house.size}} m²</div>
+        <div class="col-6 col-md-3 mb-2"><i class="bi bi-building-fill me-2 text-primario"></i>{{house.address.floor}}ª Planta</div>
+      </div>
+
+      <h4 class="mb-3">Descripción</h4>
+      <p>{{house.description}}</p>
+
+      <h4 class="mb-3">Servicios y comodidades</h4>
+      <div class="row mb-4 border-bottom pb-3">
+
+        @if (house.lift) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-buildings me-2 text-acento fs-5"></i>
+            <span>Ascensor</span>
+          </div>
+        }
+
+        @if (house.airConditioned) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-snow me-2 text-acento fs-5"></i>
+            <span>Aire acondicionado</span>
+          </div>
+        }
+
+        @if (house.furnished) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-lamp-fill me-2 text-acento fs-5"></i>
+            <span>Amueblado</span>
+          </div>
+        }
+
+        @if (house.terrace) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-sun-fill me-2 text-acento fs-5"></i>
+            <span>Terraza</span>
+          </div>
+        }
+
+        @if (house.balcony) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-aspect-ratio-fill me-2 text-acento fs-5"></i>
+            <span>Balcón</span>
+          </div>
+        }
+
+        @if (house.garage) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-car-front-fill me-2 text-acento fs-5"></i>
+            <span>Garaje</span>
+          </div>
+        }
+
+        @if (house.storage) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-box-seam-fill me-2 text-acento fs-5"></i>
+            <span>Trastero</span>
+          </div>
+        }
+
+        @if (house.pool) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-water me-2 text-acento fs-5"></i>
+            <span>Piscina</span>
+          </div>
+        }
+
+        @if (house.commonAreas) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-tree-fill me-2 text-acento fs-5"></i>
+            <span>Zonas Comunes (Jardín)</span>
+          </div>
+        }
+
+        @if (house.petsAllowed) {
+          <div class="col-md-6 mb-2 d-flex align-items-center">
+            <i class="bi bi-paw-fill me-2 text-acento fs-5"></i>
+            <span>Mascotas Permitidas</span>
+          </div>
+        }
+
+        @if (!house.lift && !house.airConditioned && !house.furnished && !house.terrace && !house.balcony && !house.garage && !house.storage && !house.pool && !house.commonAreas && !house.petsAllowed) {
+          <p class="text-muted fst-italic">Este piso no tiene características especiales destacadas.</p>
+        }
+
+      </div>
+
+      <h4 class="mb-3" id="labelUbicacion">Ubicación</h4>
+      <div id="map" class="mb-5" data-direccion="${piso.direccion}, ${piso.codigoPostal}, ${piso.ciudad}, ${piso.provincia}, España"></div>
+
+
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 sticky-top">
+        <div class="card-body p-4">
+
+          <div class="mb-4">
+            <h3 class="card-title mb-0 fw-bold text-primario">
+              {{house.price}} € <span class="fs-6 text-muted fw-normal">/mes</span>
+            </h3>
+          </div>
+
+          <hr class="my-4 text-muted opacity-25">
+
+          <div class="d-flex align-items-center mb-4">
+            <img src="${pageContext.request.contextPath}/${piso.dueño.imagen}"
+                 class="rounded-circle shadow-sm me-3 object-fit-cover"
+                 style="width: 50px; height: 50px;"
+                 alt="Avatar">
+            <div>
+              <span class="small text-muted d-block">Publicado por</span>
+              <h6 class="mb-0 fw-bold text-dark">{{house.owner.firstName}} {{house.owner.lastName}}</h6>
+            </div>
+          </div>
+
+          <div class="bg-light p-3 rounded-3">
+            @if(house.owner.phone){
+              <div class="mb-3">
+                <small class="text-muted text-uppercase fw-bold" >Teléfono</small>
+                <p class="mb-0 text-dark text-break">
+                  {{ house.owner.phone }}
+                </p>
+              </div>
+            }
+
+
+              <div class="${piso.dueño.telefono != 0 ? 'mt-3' : ''}"> <small class="text-muted text-uppercase fw-bold">Correo Electrónico</small>
+                <p class="mb-0 text-dark text-break">
+                  {{ house.owner.mail }}
+                </p>
+              </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+  }
+</div>

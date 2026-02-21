@@ -27,8 +27,6 @@ export class Explore implements OnInit {
   ngOnInit() {
     // Leemos los parámetros de ruta
     this.route.paramMap.subscribe(params => {
-      console.log('params:', params.keys);
-      console.log('municipio:', params.get('municipio'));
       this.citySlug = params.get('municipio');
       this.loadHouses(0);
     });
