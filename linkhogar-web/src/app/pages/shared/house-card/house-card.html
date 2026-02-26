@@ -55,11 +55,12 @@
           <i class="bi bi-trash fs-4 text-danger"></i>
         </button>
 
-        <a [routerLink]="['/pisos/piso', house.id]"
+        <button (click)="open()"
            class="btn btn-primary fw-medium border-0 px-3 py-2 stretched-link">
           Ver detalles
-        </a>
+        </button>
       </div>
     </div>
   </div>
+
 </div>

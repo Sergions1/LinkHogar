@@ -9,5 +9,5 @@ export const routes: Routes = [
   {path:"", component: LandingComponent},
   {path:"explore", component: Explore},
   {path: 'explore/:provincia/:municipio', component: Explore },
-  {path: 'inmueble/:titulo', component: Detail},
+  {path: 'inmueble/:titulo/:id', component: Detail},
 ];

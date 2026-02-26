@@ -32,7 +32,7 @@ public class SecurityConfig {
                 // 2. Gestionar permisos de rutas
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/houses/city/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",

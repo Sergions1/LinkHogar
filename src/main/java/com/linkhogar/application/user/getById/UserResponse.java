@@ -23,7 +23,7 @@ public record UserResponse (
                 user.getMail(),
                 user.getFecha_nac(),
                 user.getRegisterDate(),
-                user.getPhone().toString()
+                user.getPhone() != null ? user.getPhone().toString() : null
         );
     }
 }
