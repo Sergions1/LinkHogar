@@ -24,6 +24,15 @@ export class Header {
    this.router.navigate(['/']);
  }
 
+ publicate() {
+    var logged = this.authService.isLoggedIn();
+
+    if(logged){
+      this.router.navigate(['']);
+    }else{
+      this.login();
+    }
+ }
 
 
 

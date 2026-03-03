@@ -1,10 +1,10 @@
 export interface AddressResponse{
   street : string;
-  number : number;
+  number : number | null;
   floor : string;
   door : string;
   city : string;
-  cp : number
+  cp : number | null;
   province : string;
   country : string;
 

@@ -1,0 +1,25 @@
+<label class="col-12 col-form-label">{{Label}}
+  @if(isRequired)
+  {
+    <span class="text-danger"> *</span>
+  }
+</label>
+<select #selectElement
+        class="form-select {{cssClass}} {{validationClass}}"
+        [value]="selectedValue"
+        (change)="onValueChanged($event)"
+        (input)="onValueChanged($event)"
+        data-choices="true"
+        [attr.attributes]="additionalAttributes">
+  @if (Placeholder && Placeholder.trim() !== '')
+  {
+    <option value="">{{Placeholder}}</option>
+  }
+  @if (items != null)
+  {
+    @for (item of items; track item)
+    {
+      <option [value]="GetValue(item)">{{ item }}</option>
+    }
+  }
+</select>

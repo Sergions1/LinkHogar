@@ -1,0 +1,15 @@
+<div class="container mt-4">
+  <h2>Editar Inmueble</h2>
+
+  @if (isLoading()) {
+    <div class="d-flex justify-content-center mt-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <span class="ms-3">Cargando datos del inmueble...</span>
+    </div>
+  } @else if (house()) {
+    <app-house-form
+      [initialData]="house"
+      (saveForm)="updateHouse($event)">
+    </app-house-form>
+  }
+</div>

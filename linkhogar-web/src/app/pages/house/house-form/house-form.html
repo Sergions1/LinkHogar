@@ -1,0 +1,111 @@
+<div class="container py-4">
+  <h2 class="mb-4">Publicar nuevo inmueble</h2>
+
+  <form [formGroup]="houseForm" (ngSubmit)="onSubmit()" class="row g-3">
+
+    <div class="col-md-8">
+      <label class="form-label">Título del anuncio <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="title" placeholder="Ej: Piso luminoso en el centro">
+      @if (houseForm.get('title')?.invalid && houseForm.get('title')?.touched) {
+        <small class="text-danger">El título es obligatorio (mín. 10 caracteres).</small>
+      }
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Precio (€/mes) <span class="text-danger">*</span></label>
+      <input type="number" class="form-control" formControlName="price">
+    </div>
+
+    <div class="col-12">
+      <label class="form-label">Descripción <span class="text-danger">*</span></label>
+      <textarea class="form-control" formControlName="description" rows="4"></textarea>
+    </div>
+
+    <h4 class="mt-5 border-bottom pb-2">Detalles</h4>
+
+    <div class="col-md-3">
+      <label class="form-label">Tipo de inmueble</label>
+      <select class="form-select" formControlName="houseType">
+        <option value="" disabled selected>Selecciona...</option>
+        <option value="FLAT">Piso</option>
+        <option value="HOUSE">Casa / Chalet</option>
+        <option value="DUPLEX">Dúplex</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Superficie (m²) <span class="text-danger">*</span></label>
+      <input type="number" class="form-control" formControlName="size">
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Habitaciones</label>
+      <input type="number" class="form-control" formControlName="rooms">
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Baños</label>
+      <input type="number" class="form-control" formControlName="baths">
+    </div>
+
+    <h4 class="mt-5 border-bottom pb-2">Características</h4>
+    <div class="row g-2 mt-2">
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="lift" id="lift"><label class="form-check-label" for="lift">Ascensor</label></div></div>
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="furnished" id="furnished"><label class="form-check-label" for="furnished">Amueblado</label></div></div>
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="airConditioned" id="air"><label class="form-check-label" for="air">Aire Acondicionado</label></div></div>
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="terrace" id="terrace"><label class="form-check-label" for="terrace">Terraza</label></div></div>
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="balcony" id="balcony"><label class="form-check-label" for="balcony">Balcón</label></div></div>
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="garage" id="garage"><label class="form-check-label" for="garage">Garaje</label></div></div>
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="storage" id="storage"><label class="form-check-label" for="storage">Trastero</label></div></div>
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="pool" id="pool"><label class="form-check-label" for="pool">Piscina</label></div></div>
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="commonAreas" id="common"><label class="form-check-label" for="common">Zonas Comunes</label></div></div>
+      <div class="col-md-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" formControlName="petsAllowed" id="pets"><label class="form-check-label" for="pets">Mascotas Permitidas</label></div></div>
+    </div>
+
+    <h4 class="mt-5 border-bottom pb-2">Ubicación</h4>
+
+    <div formGroupName="address" class="row g-3 bg-light p-3 rounded mt-2">
+      <div class="col-md-6">
+        <label class="form-label">Calle <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="street">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Número <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" formControlName="number">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Planta</label>
+        <input type="text" class="form-control" formControlName="floor" placeholder="Ej: 3">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Puerta</label>
+        <input type="text" class="form-control" formControlName="door" placeholder="Ej: B">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">País <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="country">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Provincia <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="province">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Ciudad <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="city">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Código Postal <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" formControlName="cp">
+      </div>
+    </div>
+
+    <div class="col-12 mt-5 text-end">
+      <button type="submit" class="btn btn-primary btn-lg" [disabled]="houseForm.invalid">
+        <i class="bi bi-save me-2"></i> Publicar Inmueble
+      </button>
+    </div>
+
+  </form>
+</div>

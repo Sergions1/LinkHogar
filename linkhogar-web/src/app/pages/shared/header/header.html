@@ -14,6 +14,7 @@
 
 
       <div class="text-end" id="SeccionUsuario">
+        <button type="button" class="btn light-btn-outline me-2" id="btnCreate" (click)="publicate()">Publicar gratis</button>
         @if (authService.isLoggedIn()) {
           <a href="${pageContext.request.contextPath}/Pisos/Fav" class="btn me-1 text-acento" id="favorito"><span class="material-icons">favorite</span></a>
           <a href="${pageContext.request.contextPath}/Usuario" type="button" class="btn primary-btn me-2" id="botonPerfil">Perfil</a>
