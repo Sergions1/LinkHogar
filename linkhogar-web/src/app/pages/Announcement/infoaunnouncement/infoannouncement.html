@@ -1,0 +1,230 @@
+<body>
+
+<!-- HERO -->
+<section class="py-5">
+  <div class="container py-4">
+    <div class="bg-primario text-white card border-0 shadow-lg rounded-4 overflow-hidden">
+      <div class="card-body p-5">
+        <div class="row align-items-center">
+
+          <svg class="position-absolute top-0 start-0 w-100 h-100" xmlns="http://www.w3.org/2000/svg"
+               preserveAspectRatio="none" style="opacity: 0.10; pointer-events: none;">
+            <path d="M-50 80 Q200 20 500 100 T1100 60" stroke="white" stroke-width="2" fill="none"/>
+            <path d="M-50 140 Q300 60 600 160 T1200 100" stroke="white" stroke-width="2" fill="none"/>
+            <path d="M-50 200 Q250 140 550 220 T1150 170" stroke="white" stroke-width="2" fill="none"/>
+          </svg>
+
+          <div class="col-lg-7">
+            <h1 class="display-5 fw-bold mb-3">Publica tu anuncio en LinkHogar</h1>
+            <p class="lead mb-4">Llega a miles de personas buscando su próximo hogar. Rápido, sencillo y sin complicaciones.</p>
+            <button class="btn primary-btn btn-lg fw-semibold px-5" (click)="newAnnouncement()">
+              Publicar ahora <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+          </div>
+
+          <div class="col-lg-5 text-center d-none d-lg-block">
+            <!--Todo inkuir imagen/icono /-->imagen
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PASOS -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-2">¿Cómo funciona?</h2>
+    <p class="text-center text-muted mb-5">Publica tu anuncio en 3 sencillos pasos</p>
+
+    <div class="row g-4 text-center">
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+          <div class="mb-3">
+              <span class="bg-acento text-white rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width: 56px; height: 56px; font-size: 1.4rem;">
+                1
+              </span>
+          </div>
+          <h5 class="fw-bold">Crea tu cuenta</h5>
+          <p class="text-muted">Regístrate gratis en LinkHogar. Solo necesitas tu email y unos segundos.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+          <div class="mb-3">
+              <span class="bg-acento text-white rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width: 56px; height: 56px; font-size: 1.4rem;">
+                2
+              </span>
+          </div>
+          <h5 class="fw-bold">Rellena los datos</h5>
+          <p class="text-muted">Añade la dirección, características, precio y fotos de tu inmueble fácilmente.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+          <div class="mb-3">
+              <span class="bg-acento text-white rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width: 56px; height: 56px; font-size: 1.4rem;">
+                3
+              </span>
+          </div>
+          <h5 class="fw-bold">Publica y llega a miles</h5>
+          <p class="text-muted">Tu anuncio estará visible de inmediato para todos los usuarios de LinkHogar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VENTAJAS -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-2">¿Por qué elegir LinkHogar?</h2>
+    <p class="text-center text-muted mb-5">Todo lo que necesitas para alquilar tu inmueble</p>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex gap-3 align-items-start">
+          <div class="text-primary fs-2"><i class="bi bi-graph-up-arrow"></i></div>
+          <div>
+            <h6 class="fw-bold mb-1">Máxima visibilidad</h6>
+            <p class="text-muted small">Tu anuncio llegará a miles de personas buscando piso cada día.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex gap-3 align-items-start">
+          <div class="text-primary fs-2"><i class="bi bi-shield-check"></i></div>
+          <div>
+            <h6 class="fw-bold mb-1">Anuncios verificados</h6>
+            <p class="text-muted small">Revisamos cada anuncio para garantizar la calidad y seguridad.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex gap-3 align-items-start">
+          <div class="text-primary fs-2"><i class="bi bi-phone"></i></div>
+          <div>
+            <h6 class="fw-bold mb-1">Gestión sencilla</h6>
+            <p class="text-muted small">Edita, pausa o elimina tu anuncio cuando quieras desde tu perfil.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="d-flex gap-3 align-items-start">
+          <div class="text-primary fs-2"><i class="bi bi-chat-dots"></i></div>
+          <div>
+            <h6 class="fw-bold mb-1">Contacto directo</h6>
+            <p class="text-muted small">Los interesados te contactarán directamente sin intermediarios.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-2">Preguntas frecuentes</h2>
+    <p class="text-center text-muted mb-5">Resolvemos tus dudas</p>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="accordion accordion-flush rounded-4 overflow-hidden shadow-sm" id="faqAccordion">
+
+          <div class="accordion-item border-0 border-bottom">
+            <h2 class="accordion-header">
+              <button class="accordion-button fw-semibold" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#faq1">
+                ¿Es gratuito publicar un anuncio?
+              </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                Sí, publicar un anuncio en LinkHogar es completamente gratuito. No hay costes ocultos ni comisiones.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0 border-bottom">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed fw-semibold" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#faq2">
+                ¿Cuánto tiempo tarda en publicarse mi anuncio?
+              </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                Tu anuncio se publica de forma inmediata tras completar el formulario. En menos de un minuto estará visible para todos los usuarios.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0 border-bottom">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed fw-semibold" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#faq3">
+                ¿Puedo editar mi anuncio después de publicarlo?
+              </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                Sí, puedes editar, pausar o eliminar tu anuncio en cualquier momento desde tu panel de propietario.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed fw-semibold" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#faq4">
+                ¿Qué tipo de inmuebles puedo publicar?
+              </button>
+            </h2>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                Puedes publicar pisos, estudios, chalets, locales y cualquier tipo de inmueble en alquiler en toda España.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="py-5">
+  <div class="container">
+    <div class="bg-primario card border-0 shadow rounded-4 text-center py-5 px-4 position-relative overflow-hidden">
+
+      <!-- Líneas decorativas SVG -->
+      <svg class="position-absolute top-0 start-0 w-100 h-100" xmlns="http://www.w3.org/2000/svg"
+           preserveAspectRatio="none" style="opacity: 0.10; pointer-events: none;">
+        <path d="M-50 80 Q200 20 500 100 T1100 60" stroke="white" stroke-width="2" fill="none"/>
+        <path d="M-50 140 Q300 60 600 160 T1200 100" stroke="white" stroke-width="2" fill="none"/>
+        <path d="M-50 200 Q250 140 550 220 T1150 170" stroke="white" stroke-width="2" fill="none"/>
+      </svg>
+
+      <div class="card-body text-white position-relative">
+        <h2 class="fw-bold mb-3">¿Listo para publicar?</h2>
+        <p class="opacity-75 mb-4">Únete a cientos de propietarios que ya confían en LinkHogar</p>
+        <a routerLink="/anuncio/nuevo" class="btn primary-btn btn-lg fw-semibold px-5">
+          Publicar mi anuncio <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>

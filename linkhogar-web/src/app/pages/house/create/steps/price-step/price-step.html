@@ -1,0 +1,59 @@
+<div>
+  <h4 class="fw-bold mb-1">What's the monthly rent?</h4>
+  <p class="text-muted mb-4">Set a competitive price to attract more tenants.</p>
+
+  <!-- Input principal -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-6">
+      <label class="form-label fw-semibold">
+        Monthly rent <span class="text-danger">*</span>
+      </label>
+      <div class="input-group input-group-lg">
+        <input
+          type="number"
+          class="form-control"
+          placeholder="0"
+          min="1"
+          [value]="price() ?? ''"
+          (input)="onPriceInput($any($event.target).value)">
+        <span class="input-group-text fw-bold">€ / mo</span>
+      </div>
+
+      <!-- Precio en tiempo real -->
+      @if (price() && price()! > 0) {
+        <div class="mt-2 text-muted small">
+          <i class="bi bi-info-circle me-1"></i>
+          That's approximately
+          <strong>{{ (price()! / 30) | number:'1.0-0' }} €/day</strong>
+        </div>
+      }
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- Sugerencias rápidas -->
+  <div>
+    <p class="text-muted small fw-semibold mb-3">QUICK SUGGESTIONS</p>
+    <div class="d-flex flex-wrap gap-2">
+      @for (s of suggestions; track s) {
+        <button
+          class="btn btn-sm rounded-pill px-3"
+          [class.primary-btn]="price() === s"
+          [class.btn-outline-secondary]="price() !== s"
+          (click)="selectSuggestion(s)">
+          {{ s }} €
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Aviso precio alto -->
+  @if (price() && price()! > 3000) {
+    <div class="alert alert-warning rounded-3 mt-4 d-flex gap-2 align-items-center">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <span>This price is above average. Make sure it reflects the property's value.</span>
+    </div>
+  }
+
+</div>

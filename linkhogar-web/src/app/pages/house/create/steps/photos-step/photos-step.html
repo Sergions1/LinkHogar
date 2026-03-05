@@ -1,0 +1,81 @@
+<!-- steps/photos-step/photos-step.html -->
+<div>
+  <h4 class="fw-bold mb-1">Add photos</h4>
+  <p class="text-muted mb-4">
+    Add at least 1 photo. The first one will be the cover.
+    <span class="text-muted small">(Max {{ MAX_PHOTOS }})</span>
+  </p>
+
+  <!-- Zona de drop -->
+  @if (photos().length < MAX_PHOTOS) {
+    <div class="border-2 border-dashed rounded-4 text-center py-5 px-3 mb-4"
+         style="cursor: pointer; transition: all 0.15s ease;"
+         [class.bg-primario]="isDragging()"
+         [class.text-white]="isDragging()"
+         [class.bg-fondo-secundario]="!isDragging()"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave()"
+         (drop)="onDrop($event)"
+         (click)="fileInput.click()">
+      <i class="bi bi-cloud-arrow-up fs-1 mb-2 d-block"></i>
+      <p class="fw-semibold mb-1">Drag & drop your photos here</p>
+      <p class="small opacity-75">or click to browse — JPG, PNG, WEBP</p>
+      <input #fileInput
+             type="file"
+             class="d-none"
+             multiple
+             accept="image/*"
+             (change)="onFileSelected($event)">
+    </div>
+  }
+
+  <!-- Grid de fotos -->
+  @if (photos().length > 0) {
+    <div class="row g-3">
+      @for (photo of photos(); track photo.preview; let i = $index) {
+        <div class="col-6 col-md-4">
+          <div class="card border-0 rounded-4 overflow-hidden shadow-sm position-relative">
+
+            <!-- Badge portada -->
+            @if (i === 0) {
+              <span class="badge bg-primario position-absolute top-0 start-0 m-2 rounded-pill">
+                <i class="bi bi-star-fill me-1"></i>Cover
+              </span>
+            }
+
+            <img [src]="photo.preview"
+                 class="w-100 object-fit-cover"
+                 style="height: 150px;"
+                 [alt]="'Photo ' + (i + 1)">
+
+            <!-- Controles -->
+            <div class="card-body p-2 d-flex justify-content-between align-items-center">
+              <div class="d-flex gap-1">
+                <button class="btn btn-sm btn-outline-secondary rounded-circle"
+                        [disabled]="i === 0"
+                        (click)="moveLeft(i)">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary rounded-circle"
+                        [disabled]="i === photos().length - 1"
+                        (click)="moveRight(i)">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+              <button class="btn btn-sm btn-outline-danger rounded-circle"
+                      (click)="remove(i)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <p class="text-muted small mt-3">
+      <i class="bi bi-info-circle me-1"></i>
+      {{ photos().length }} / {{ MAX_PHOTOS }} photos added. Use arrows to reorder.
+    </p>
+  }
+
+</div>

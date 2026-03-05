@@ -1,0 +1,73 @@
+<!-- announcement-detail-step.html -->
+<div>
+  <h4 class="fw-bold mb-1">Detalles del anuncio</h4>
+  <p class="text-muted mb-4">Escribe el título y la descripción de tu anuncio.</p>
+
+  <div class="row g-3">
+
+    <!-- Title -->
+    <div class="col-12">
+      <label class="form-label fw-semibold">
+        Título <span class="text-danger">*</span>
+      </label>
+      <div class="position-relative">
+        <input type="text"
+               class="form-control pe-5"
+               placeholder="Ej: Precioso ático luminoso en el centro"
+               [attr.maxlength]="MAX_TITLE"
+               [value]="form().title"
+               (input)="update('title', $any($event.target).value)">
+        <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted small">
+          {{ form().title.length }}/{{ MAX_TITLE }}
+        </span>
+      </div>
+      @if (form().title.length > 0 && form().title.trim().length < 5) {
+        <div class="text-danger small mt-1">
+          <i class="bi bi-x-circle me-1"></i>El título debe tener al menos 5 caracteres.
+        </div>
+      }
+    </div>
+
+    <!-- Description -->
+    <div class="col-12">
+      <label class="form-label fw-semibold">
+        Descripción <span class="text-danger">*</span>
+      </label>
+      <div class="position-relative">
+        <textarea
+          class="form-control"
+          rows="6"
+          placeholder="Escribe una descripción detallada del inmueble..."
+          [attr.maxlength]="MAX_DESCRIPTION"
+          [value]="form().description"
+          (input)="update('description', $any($event.target).value)">
+        </textarea>
+        <span class="position-absolute bottom-0 end-0 me-3 mb-2 text-muted small">
+          {{ form().description.length }}/{{ MAX_DESCRIPTION }}
+        </span>
+      </div>
+      @if (form().description.length > 0 && form().description.trim().length < MIN_DESCRIPTION) {
+        <div class="text-danger small mt-1">
+          <i class="bi bi-x-circle me-1"></i>La descripción debe tener al menos {{ MIN_DESCRIPTION }} caracteres.
+        </div>
+      }
+    </div>
+
+  </div>
+
+  <!-- Validation status -->
+  <div class="mt-3">
+    @if (form().title.trim().length >= 5 && form().description.trim().length >= MIN_DESCRIPTION) {
+      <div class="d-flex align-items-center gap-2 text-success">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>Todos los campos son válidos</span>
+      </div>
+    } @else if (form().title.length > 0 || form().description.length > 0) {
+      <div class="d-flex align-items-center gap-2 text-muted">
+        <i class="bi bi-info-circle"></i>
+        <span>Rellena todos los campos obligatorios para continuar</span>
+      </div>
+    }
+  </div>
+
+</div>

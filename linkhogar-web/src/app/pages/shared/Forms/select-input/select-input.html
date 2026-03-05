@@ -5,12 +5,9 @@
   }
 </label>
 <select #selectElement
-        class="form-select {{cssClass}} {{validationClass}}"
+        class="form-select {{ cssClass }} {{ validationClass }}"
         [value]="selectedValue"
-        (change)="onValueChanged($event)"
-        (input)="onValueChanged($event)"
-        data-choices="true"
-        [attr.attributes]="additionalAttributes">
+        (change)="onValueChanged($event)">
   @if (Placeholder && Placeholder.trim() !== '')
   {
     <option value="">{{Placeholder}}</option>

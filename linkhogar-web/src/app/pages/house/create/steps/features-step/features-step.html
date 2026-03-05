@@ -1,0 +1,74 @@
+<!-- steps/features-step/features-step.html -->
+<div>
+  <h4 class="fw-bold mb-1">Property features</h4>
+  <p class="text-muted mb-4">Fill in the basic details and select the available amenities.</p>
+
+  <!-- Campos numéricos -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">
+        Size (m²) <span class="text-danger">*</span>
+      </label>
+      <div class="input-group">
+        <input type="number"
+               class="form-control"
+               placeholder="85"
+               min="1"
+               [value]="form().size ?? ''"
+               (input)="updateNumber('size', $any($event.target).value)">
+        <span class="input-group-text">m²</span>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">
+        Bedrooms <span class="text-danger">*</span>
+      </label>
+      <div class="input-group">
+        <input type="number"
+               class="form-control"
+               placeholder="2"
+               min="1"
+               [value]="form().rooms ?? ''"
+               (input)="updateNumber('rooms', $any($event.target).value)">
+        <span class="input-group-text"><i class="bi bi-door-closed"></i></span>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">
+        Bathrooms <span class="text-danger">*</span>
+      </label>
+      <div class="input-group">
+        <input type="number"
+               class="form-control"
+               placeholder="1"
+               min="1"
+               [value]="form().baths ?? ''"
+               (input)="updateNumber('baths', $any($event.target).value)">
+        <span class="input-group-text"><i class="bi bi-droplet-fill"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toggles de características -->
+  <label class="form-label fw-semibold mb-3">Amenities</label>
+  <div class="row g-2">
+    @for (toggle of toggles; track toggle.key) {
+      <div class="col-6 col-md-3">
+        <div class="card border-2 rounded-4 text-center py-3 px-2 h-100"
+             style="cursor: pointer; transition: all 0.15s ease;"
+             [class.bg-primario]="form()[toggle.key]"
+             [class.text-white]="form()[toggle.key]"
+             [class.border-primario]="form()[toggle.key]"
+             [class.border-light]="!form()[toggle.key]"
+             [class.text-muted]="!form()[toggle.key]"
+             (click)="toggleFeature(toggle.key)">
+          <i class="bi {{ toggle.icon }} fs-4 mb-1 d-block"></i>
+          <span class="small fw-semibold">{{ toggle.label }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+</div>

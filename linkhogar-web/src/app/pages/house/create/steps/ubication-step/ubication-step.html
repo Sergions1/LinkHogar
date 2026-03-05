@@ -1,0 +1,101 @@
+<!-- steps/ubication-step/ubication-step.html -->
+<div>
+  <h4 class="fw-bold mb-1">Where is the property?</h4>
+  <p class="text-muted mb-4">Enter the full address. We will validate it to make sure it exists.</p>
+
+  <div class="row g-3">
+
+    <!-- Street -->
+    <div class="col-md-8">
+      <label class="form-label fw-semibold">Street <span class="text-danger">*</span></label>
+      <input type="text"
+             class="form-control"
+             placeholder="e.g. Gran Vía"
+             [value]="form().street"
+             (input)="update('street', $any($event.target).value)">
+    </div>
+
+    <!-- Number -->
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">Number <span class="text-danger">*</span></label>
+      <input type="text"
+             class="form-control"
+             placeholder="e.g. 24"
+             [value]="form().number"
+             (input)="update('number', $any($event.target).value)">
+    </div>
+
+    <!-- Floor -->
+    <div class="col-md-6">
+      <label class="form-label fw-semibold">Floor</label>
+      <input type="text"
+             class="form-control"
+             placeholder="e.g. 3"
+             [value]="form().floor ?? ''"
+             (input)="update('floor', $any($event.target).value)">
+    </div>
+
+    <!-- Door -->
+    <div class="col-md-6">
+      <label class="form-label fw-semibold">Door</label>
+      <input type="text"
+             class="form-control"
+             placeholder="e.g. A"
+             [value]="form().door ?? ''"
+             (input)="update('door', $any($event.target).value)">
+    </div>
+
+    <!-- Zip code -->
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">Zip code <span class="text-danger">*</span></label>
+      <input type="text"
+             class="form-control"
+             placeholder="e.g. 28013"
+             maxlength="5"
+             [value]="form().cp"
+             (input)="update('cp', $any($event.target).value)">
+    </div>
+
+    <!-- City -->
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">City <span class="text-danger">*</span></label>
+      <input type="text"
+             class="form-control"
+             placeholder="e.g. Madrid"
+             [value]="form().city"
+             (input)="update('city', $any($event.target).value)">
+    </div>
+
+    <!-- Province -->
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">Province</label>
+      <input type="text"
+             class="form-control"
+             placeholder="e.g. Madrid"
+             [value]="form().province"
+             (input)="update('province', $any($event.target).value)">
+    </div>
+
+  </div>
+
+  <!-- Validation status -->
+  <div class="mt-4">
+    @if (isValidating()) {
+      <div class="d-flex align-items-center gap-2 text-muted">
+        <div class="spinner-border spinner-border-sm"></div>
+        <span>Validating address...</span>
+      </div>
+    } @else if (isValid()) {
+      <div class="d-flex align-items-center gap-2 text-success">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>Address validated successfully</span>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="d-flex align-items-center gap-2 text-danger">
+        <i class="bi bi-x-circle-fill"></i>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+  </div>
+
+</div>

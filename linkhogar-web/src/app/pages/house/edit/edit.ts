@@ -2,21 +2,21 @@ import {Component, inject, signal, OnInit, Input} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {HouseService} from '../../../services/house/house-service';
 import {HouseResponse} from '../../../Models/Houses/HouseResponse';
+import {HouseForm} from '../house-form/house-form';
+
 
 @Component({
   selector: 'app-edit',
-  imports: [],
+  imports: [HouseForm], // 👈 añadirlo aquí
   templateUrl: './edit.html',
   styleUrl: './edit.scss',
 })
-export class Edit implements OnInit{
+export class Edit implements OnInit {
   private route = inject(ActivatedRoute);
   private houseService = inject(HouseService);
 
-  house= signal<HouseResponse | null>(null);
+  house = signal<HouseResponse | null>(null);
   isLoading = signal(false);
-
-  @Input() houseId : string | null = null;
 
   ngOnInit() {
     this.loadHouse();
@@ -25,23 +25,23 @@ export class Edit implements OnInit{
   loadHouse() {
     this.isLoading.set(true);
     this.route.paramMap.subscribe(param => {
-      this.houseId = param.get('id');
-    })
-    if(this.houseId != null){
-      this.houseService.getHouseById(this.houseId).subscribe({
-        next: params => {
-          this.house.set(params);
-          this.isLoading.set(false);
-        },
-        error: err => {
-          console.log(err);
-          this.isLoading.set(false);
-        }
-      })
-    }
+      const id = param.get('id');
+      if (id != null) {
+        this.houseService.getHouseById(id).subscribe({
+          next: (data) => {
+            this.house.set(data);
+            this.isLoading.set(false);
+          },
+          error: (err) => {
+            console.error(err);
+            this.isLoading.set(false);
+          }
+        });
+      }
+    });
   }
 
-  updateHouse(){
-
+  updateHouse(data: any) { // 👈 acepta $event
+    console.log('Actualizando casa:', data);
   }
 }

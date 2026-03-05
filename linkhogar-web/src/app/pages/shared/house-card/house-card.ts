@@ -1,12 +1,12 @@
 import {Component, Input,inject} from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {HouseCardResponse} from '../../../Models/Houses/house-card-response.interface';
-import { LucideAngularModule, MapPinned } from 'lucide-angular';
+import { LucideAngularModule} from 'lucide-angular';
 
 @Component({
   selector: 'house-card',
-  imports: [CommonModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './house-card.html',
   styleUrl: './house-card.scss',
 })

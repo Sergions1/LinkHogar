@@ -28,7 +28,7 @@ export class Header {
     var logged = this.authService.isLoggedIn();
 
     if(logged){
-      this.router.navigate(['']);
+      this.router.navigate(['/publicar-anuncio']);
     }else{
       this.login();
     }

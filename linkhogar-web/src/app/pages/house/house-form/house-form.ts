@@ -14,7 +14,7 @@ import {ActivatedRoute} from '@angular/router';
 export class HouseForm implements OnInit{
   private fb = inject(FormBuilder);
 
-  @Input() initialData?: HouseResponse;
+  @Input() initialData?: HouseResponse | null;
   @Output() saveForm = new EventEmitter<any>();
 
   houseForm = this.fb.group({

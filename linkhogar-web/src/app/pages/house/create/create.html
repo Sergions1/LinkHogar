@@ -1,0 +1,140 @@
+<!-- create.html -->
+<div class="min-vh-100 bg-fondo-principal d-flex flex-column">
+
+  <!-- HEADER -->
+  <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center gap-3">
+    <i class="bi bi-house-add fs-4 text-primario"></i>
+    <h5 class="mb-0 fw-bold">Publish a listing</h5>
+    <span class="text-muted small ms-auto">
+      Step {{ currentStep() + 1 }} of {{ steps.length }} — {{ steps[currentStep()].label }}
+    </span>
+  </div>
+
+  <!-- STEPS INDICADOR -->
+  <div class="bg-white border-bottom px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+      @for (step of steps; track $index) {
+        <div class="d-flex flex-column align-items-center gap-1 flex-fill">
+          <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+               style="width: 36px; height: 36px; font-size: 0.85rem; transition: all 0.2s ease;"
+               [class.bg-primario]="$index <= currentStep()"
+               [class.text-white]="$index <= currentStep()"
+               [class.bg-fondo-secundario]="$index > currentStep()"
+               [class.text-muted]="$index > currentStep()">
+            @if ($index < currentStep()) {
+              <i class="bi bi-check"></i>
+            } @else {
+              {{ $index + 1 }}
+            }
+          </div>
+          <span class="d-none d-md-block small"
+                [class.fw-semibold]="$index === currentStep()"
+                [class.text-muted]="$index !== currentStep()">
+            {{ step.label }}
+          </span>
+        </div>
+
+        @if ($index < steps.length - 1) {
+          <div class="flex-fill border-top mx-1 mb-4"
+               [class.border-primario]="$index < currentStep()">
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- CONTENIDO DEL PASO -->
+  <div class="flex-grow-1 py-4">
+    <div class="container" style="max-width: 720px;">
+      <div class="card border-0 shadow-sm rounded-4 p-4">
+
+        @switch (currentStep()) {
+          @case (0) {
+            <app-ubication-step
+              [data]="formData().location"
+              (validChange)="onStepValidChange($event)"
+              (dataChange)="onLocationChange($event)"/>
+          }
+          @case (1) {
+            <app-type-step
+              [data]="formData().type"
+              (validChange)="onStepValidChange($event)"
+              (dataChange)="onTypeChange($event)"/>
+          }
+          @case (2) {
+            <app-features-step
+              [data]="formData().features"
+              (validChange)="onStepValidChange($event)"
+              (dataChange)="onFeaturesChange($event)"/>
+          }
+          @case (3) {
+            <app-price-step
+              [data]="formData().price"
+              (validChange)="onStepValidChange($event)"
+              (dataChange)="onPriceChange($event)"/>
+          }
+          @case (4) {
+            <app-photos-step
+              [data]="formData().photos"
+              (validChange)="onStepValidChange($event)"
+              (dataChange)="onPhotosChange($event)"/>
+          }
+          @case (5) {
+            <app-announcement-detail-step
+              [data]="formData().details"
+              (validChange)="onStepValidChange($event)"
+              (dataChange)="onDetailsChange($event)"/>
+          }
+          @case (6) { <!-- todo cambiar contenido del paso review por la vista details  /-->
+            <app-review-step
+              [data]="formData()"
+              (validChange)="onStepValidChange($event)"/>
+          }
+        }
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER CON CONTROLES Y BARRA DE PROGRESO -->
+  <div class="bg-white border-top shadow-sm">
+
+    <!-- Barra de progreso -->
+    <div class="progress rounded-0" style="height: 5px;">
+      <div class="progress-bar bg-primario"
+           role="progressbar"
+           [style.width.%]="progress()"
+           style="transition: width 0.3s ease;">
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="container d-flex justify-content-between align-items-center py-3"
+         style="max-width: 720px;">
+
+      <button class="btn btn-outline-secondary px-4"
+              [disabled]="isFirst()"
+              (click)="prev()">
+        <i class="bi bi-chevron-left me-1"></i> Back
+      </button>
+
+      <span class="text-muted small">{{ progress() }}% completed</span>
+
+      @if (isLast()) {
+        <button class="btn primary-btn px-4 fw-semibold"
+                [disabled]="!stepValid()"
+                (click)="submit()">
+          Publish listing <i class="bi bi-send ms-1"></i>
+        </button>
+      } @else {
+        <button class="btn primary-btn px-4 fw-semibold"
+                [disabled]="!stepValid()"
+                (click)="next()">
+          Next <i class="bi bi-chevron-right ms-1"></i>
+        </button>
+      }
+
+    </div>
+  </div>
+
+</div>

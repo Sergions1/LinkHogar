@@ -8,7 +8,7 @@
     </div>
   } @else if (house()) {
     <app-house-form
-      [initialData]="house"
+      [initialData]="house()"
       (saveForm)="updateHouse($event)">
     </app-house-form>
   }

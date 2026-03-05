@@ -28,20 +28,26 @@ export class SelectInput {
     return this.additionalAttributes != null && 'required' in this.additionalAttributes;
   }
 
-  onValueChanged(e:string){
-    if(e == null){
-      this.selectedValue = null;
-    }else{
-      this.selectedValue =
-    }
+  onValueChanged(e: Event){
+    const value = (e.target as HTMLSelectElement).value;
+    this.selectedValue = this.convertValue(value);
+    this.selectedValueChange.emit(this.selectedValue);
 
   }
 
-  private convertValue(value : string) : any{
-    if (value == null || value.trim() == ""){
+  private convertValue(value: string): any {
+    if (value == null || value.trim() === '') {
       return null;
     }
+    return value;
+  }
 
+  GetValue(item: any): any{
+    return this.valueSelector(item);
+  }
+
+  GetText(item: any): string {
+    return this.textSelector(item);
   }
 
 }
