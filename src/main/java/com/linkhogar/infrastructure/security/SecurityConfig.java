@@ -58,7 +58,12 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Permitir solo tu frontend (Ojo: sin barra al final)
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:4200",         // Para tus pruebas en local
+                "https://linkhogar.com",         // Tu dominio principal
+                "https://www.linkhogar.com",     // Variante con www
+                "https://tu-app.netlify.app"     // (Opcional) La URL temporal de Netlify si aún no tienes el dominio ahí
+        ));
 
         // Permitir todos los verbos HTTP (GET, POST, PUT, DELETE...)
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
