@@ -64,7 +64,7 @@ export class Create {
       size: null, rooms: null, baths: null,
       lift: false, furnished: false, airConditioned: false,
       terrace: false, balcony: false, garage: false,
-      pool: false, petsAllowed: false
+      pool: false, petsAllowed: false, storage: false, commonAreas: false
     },
     price: null,
     photos: [],

@@ -15,13 +15,15 @@ export interface FeaturesData {
   garage: boolean;
   pool: boolean;
   petsAllowed: boolean;
+  storage: boolean;
+  commonAreas: boolean;
 }
 
 const DEFAULT: FeaturesData = {
   size: null, rooms: null, baths: null,
   lift: false, furnished: false, airConditioned: false,
   terrace: false, balcony: false, garage: false,
-  pool: false, petsAllowed: false
+  pool: false, petsAllowed: false, storage: false, commonAreas: false
 };
 
 @Component({
@@ -38,14 +40,16 @@ export class FeaturesStep implements OnInit {
   form = signal<FeaturesData>({ ...DEFAULT });
 
   readonly toggles: { key: keyof FeaturesData; label: string; icon: string }[] = [
-    { key: 'lift',          label: 'Lift',           icon: 'bi-arrow-up-square' },
-    { key: 'furnished',     label: 'Furnished',      icon: 'bi-lamp-fill' },
-    { key: 'airConditioned',label: 'A/C',            icon: 'bi-wind' },
-    { key: 'terrace',       label: 'Terrace',        icon: 'bi-flower1' },
-    { key: 'balcony',       label: 'Balcony',        icon: 'bi-door-open' },
-    { key: 'garage',        label: 'Garage',         icon: 'bi-car-front' },
-    { key: 'pool',          label: 'Pool',           icon: 'bi-droplet' },
-    { key: 'petsAllowed',   label: 'Pets allowed',   icon: 'bi-hearts' },
+    { key: 'lift',           label: 'Ascensor',            icon: 'bi-arrow-up-square' },
+    { key: 'furnished',      label: 'Amueblado',           icon: 'bi-lamp-fill' },
+    { key: 'airConditioned', label: 'Aire acondicionado',  icon: 'bi-wind' },
+    { key: 'terrace',        label: 'Terraza',             icon: 'bi-flower1' },
+    { key: 'balcony',        label: 'Balcón',              icon: 'bi-door-open' },
+    { key: 'garage',         label: 'Garaje',              icon: 'bi-car-front' },
+    { key: 'storage',        label: 'Trastero',            icon: 'bi-box-seam' },
+    { key: 'pool',           label: 'Piscina',             icon: 'bi-droplet' },
+    { key: 'commonAreas',    label: 'Zonas comunes',       icon: 'bi-people' },
+    { key: 'petsAllowed',    label: 'Admite mascotas',     icon: 'bi-hearts' },
   ];
 
   ngOnInit() {

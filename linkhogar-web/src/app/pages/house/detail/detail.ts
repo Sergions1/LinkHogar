@@ -3,6 +3,7 @@ import {HouseResponse} from '../../../Models/Houses/HouseResponse';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HouseService} from '../../../services/house/house-service';
 import {DecimalPipe} from '@angular/common';
+import {HouseForm} from '../create/create';
 
 @Component({
   selector: 'app-detail',
@@ -22,8 +23,10 @@ export class Detail implements OnInit{
 
  houseId : string | null = null;
 
+ @Input() previewData : HouseForm | null = null;
 
   ngOnInit() {
+    if(this.previewData) return;
     this.loadHouse();
   }
 

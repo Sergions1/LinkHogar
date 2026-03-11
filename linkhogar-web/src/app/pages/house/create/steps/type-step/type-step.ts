@@ -3,12 +3,15 @@ import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular
 import { CommonModule } from '@angular/common';
 
 const TYPES = [
-  { value: 'Piso',    icon: 'bi-building',   label: 'Flat' },
-  { value: 'Casa',    icon: 'bi-house',       label: 'House' },
-  { value: 'Chalet',  icon: 'bi-house-door',  label: 'Chalet' },
-  { value: 'Estudio', icon: 'bi-lamp',        label: 'Studio' },
-  { value: 'Atico',   icon: 'bi-building-up', label: 'Penthouse' },
-  { value: 'Local',   icon: 'bi-shop',        label: 'Commercial' },
+  { value: 'Piso',        icon: 'bi-building',        label: 'Piso' },
+  { value: 'Adosado',     icon: 'bi-house-door',      label: 'Adosado' },
+  { value: 'Estudio',     icon: 'bi-lamp',            label: 'Estudio' },
+  { value: 'Apartamento', icon: 'bi-building-gear',   label: 'Apartamento' },
+  { value: 'Chalet',      icon: 'bi-house-heart',     label: 'Chalet' },
+  { value: 'Atico',       icon: 'bi-building-up',     label: 'Ático' },
+  { value: 'Loft',        icon: 'bi-layout-text-sidebar', label: 'Loft' },
+  { value: 'Habitacion',  icon: 'bi-door-closed',     label: 'Habitación' },
+  { value: 'Residencia',  icon: 'bi-houses',          label: 'Residencia' },
 ];
 
 @Component({
