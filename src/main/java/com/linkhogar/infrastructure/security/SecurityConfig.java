@@ -62,7 +62,8 @@ public class SecurityConfig {
                 "http://localhost:4200",         // Para tus pruebas en local
                 "https://linkhogar.com",         // Tu dominio principal
                 "https://www.linkhogar.com",     // Variante con www
-                "https://tu-app.netlify.app"     // (Opcional) La URL temporal de Netlify si aún no tienes el dominio ahí
+                "https://tu-app.netlify.app",     // (Opcional) La URL temporal de Netlify si aún no tienes el dominio ahí
+                "https://api.linkhogar.com"     // Servidor
         ));
 
         // Permitir todos los verbos HTTP (GET, POST, PUT, DELETE...)
