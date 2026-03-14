@@ -5,11 +5,13 @@ import com.linkhogar.domain.address.AddressRepository;
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.HouseRepository;
+import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.user.User;
 import com.linkhogar.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -42,6 +44,9 @@ public class CreateHouseCommandHandler {
                 .title(command.getTitle())
                 .description(command.getDescription())
                 .creationDate(LocalDateTime.now())
+                .publicationDate(LocalDateTime.now())
+                .updateDate(null)
+                .status(HouseStatus.Disponible)
                 .houseType(command.getHouseType())
                 .publicationStatus(command.getPublicationStatus())
                 .size(command.getSize())

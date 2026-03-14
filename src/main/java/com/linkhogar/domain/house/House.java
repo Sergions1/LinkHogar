@@ -2,11 +2,11 @@ package com.linkhogar.domain.house;
 
 import com.linkhogar.domain.address.Address;
 import com.linkhogar.domain.common.enums.PublicationStatus;
-import com.linkhogar.domain.house.enums.*;
+import com.linkhogar.domain.house.enums.HouseStatus;
+import com.linkhogar.domain.house.enums.HouseType;
 import com.linkhogar.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-import jakarta.persistence.CascadeType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,16 +37,26 @@ public class House {
     private int rooms;
     private int baths;
 
-    private boolean lift = false;
-    private boolean furnished = false;
-    private boolean airConditioned = false;
-    private boolean terrace = false;
-    private boolean balcony = false;
-    private boolean garage = false;
-    private boolean storage = false;
-    private boolean pool = false;
-    private boolean commonAreas = false;
-    private boolean petsAllowed = false;
+    @Builder.Default
+    private Boolean lift = Boolean.FALSE;
+    @Builder.Default
+    private Boolean furnished = Boolean.FALSE;
+    @Builder.Default
+    private Boolean airConditioned = Boolean.FALSE;
+    @Builder.Default
+    private Boolean terrace = Boolean.FALSE;
+    @Builder.Default
+    private Boolean balcony = Boolean.FALSE;
+    @Builder.Default
+    private Boolean garage = Boolean.FALSE;
+    @Builder.Default
+    private Boolean storage = Boolean.FALSE;
+    @Builder.Default
+    private Boolean pool = Boolean.FALSE;
+    @Builder.Default
+    private Boolean commonAreas = Boolean.FALSE;
+    @Builder.Default
+    private Boolean petsAllowed = Boolean.FALSE;
 
     private long price;
 

@@ -1,5 +1,5 @@
 // create.ts
-import { Component, signal, computed } from '@angular/core';
+import {Component, signal, computed, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TypeStep } from './steps/type-step/type-step';
 import { FeaturesStep, FeaturesData } from './steps/features-step/features-step';
@@ -8,6 +8,9 @@ import { PhotosStep } from './steps/photos-step/photos-step';
 import { ReviewStep } from './steps/review-step/review-step';
 import {UbicationData, UbicationStep} from './steps/ubication-step/ubication-step';
 import {  AnnouncementDetailData,  AnnouncementDetailStep} from './steps/announcement-detail-step/announcement-detail-step';
+import {HouseService} from '../../../services/house/house-service';
+import {Router} from '@angular/router';
+import Swal from 'sweetalert2';
 
 export interface HouseForm {
   location: UbicationData;
@@ -35,6 +38,8 @@ export interface HouseForm {
   styleUrl: './create.scss'
 })
 export class Create {
+  private houseService = inject(HouseService);
+  private router = inject(Router);
 
   readonly steps = [
     { label: 'Location',    icon: 'bi-geo-alt' },
@@ -48,6 +53,7 @@ export class Create {
 
   currentStep = signal(0);
   stepValid = signal(false);
+  isLoading = signal(false);
 
   formData = signal<HouseForm>({
     location: {
@@ -123,9 +129,46 @@ export class Create {
     this.formData.update(d => ({ ...d, details }));
   }
 
+  showCreatingError(){
+    Swal.fire({
+      title: 'Error al publicar',
+      text: 'No ha sido posible publicar el anuncio',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: 'var(--color-primario)'
+    })
+  }
+
+  showSuccesfullCreating(){
+
+  }
+
   submit() {
     console.log('Publishing:', this.formData());
-    // llamada al servicio
+
+    this.isLoading.set(true);
+    this.houseService.createHouse(this.formData()).subscribe({
+      next: (response: any) =>{
+        const tituloLimpio = this.formData().details.title
+          .toLowerCase()
+          .replace(/\s+/g, '-');
+        this.isLoading.set(false);
+        Swal.fire({
+          title: '¡Anuncio publicado!',
+          text: 'Su anuncio ha sido publicado con éxito',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: 'var(--color-primario)'
+        }).then((result) =>{
+          this.router.navigate(['/inmueble', tituloLimpio, response.id]);
+        })
+      },
+      error: (err) =>{
+        console.log(err);
+        this.isLoading.set(false);
+        this.showCreatingError();
+      }
+    })
   }
 
 }
