@@ -1,10 +1,11 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {HouseCardResponse} from '../../Models/Houses/house-card-response.interface';
 import {Observable} from 'rxjs';
 import {PageResponse} from '../../Models/Shared/PageResponse';
 import {HouseResponse} from '../../Models/Houses/HouseResponse';
+import {HouseForm} from '../../pages/house/create/create';
 
 @Injectable({
   providedIn: 'root',
@@ -44,5 +45,51 @@ export class HouseService {
 
   getHouseById( houseId:string): Observable<HouseResponse> {
     return this.http.get<HouseResponse>(`${this.apiUrl}/${houseId}`);
+  }
+
+  /**
+   * Crea una nueva vivienda en el sistema
+   *
+   * @param data Objeto HouseForm con los datos del formulario de creación
+   * @returns Un Observable con la respuesta de la creación
+   */
+  createHouse(data: HouseForm) {
+    const payload = {
+      title: data.details.title,
+      description: data.details.description,
+      houseType: data.type, // Asegura que coincida con tu Enum de Java
+      publicationStatus: "PUBLISHED", // O el valor que corresponda de tu Enum
+      status: "Disponible",
+      size: data.features.size,
+      rooms: data.features.rooms,
+      baths: data.features.baths,
+      price: data.price,
+      street: data.location.street,
+      number: Number(data.location.number),
+      floor: data.location.floor,
+      door: data.location.door,
+      city: data.location.city,
+      cp: Number(data.location.cp),
+      province: data.location.province,
+      country: "España", // Por defecto o lo añades a la vista
+      lift: data.features.lift,
+      furnished: data.features.furnished,
+      airConditioned: data.features.airConditioned,
+      terrace: data.features.terrace,
+      balcony: data.features.balcony,
+      garage: data.features.garage,
+      storage: data.features.storage,
+      pool: data.features.pool,
+      commonAreas: data.features.commonAreas,
+      petsAllowed: data.features.petsAllowed
+    };
+
+    const token = localStorage.getItem('token'); // O el servicio donde guardes tu JWT
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.post(`${environment.apiUrl}/houses`, payload, {headers});
   }
 }

@@ -4,7 +4,7 @@
   <!-- HEADER -->
   <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center gap-3">
     <i class="bi bi-house-add fs-4 text-primario"></i>
-    <h5 class="mb-0 fw-bold">Publish a listing</h5>
+    <h5 class="mb-0 fw-bold">Publica un anuncio</h5>
     <span class="text-muted small ms-auto">
       Step {{ currentStep() + 1 }} of {{ steps.length }} — {{ steps[currentStep()].label }}
     </span>
@@ -115,22 +115,22 @@
       <button class="btn btn-outline-secondary px-4"
               [disabled]="isFirst()"
               (click)="prev()">
-        <i class="bi bi-chevron-left me-1"></i> Back
+        <i class="bi bi-chevron-left me-1"></i> Atras
       </button>
 
-      <span class="text-muted small">{{ progress() }}% completed</span>
+      <span class="text-muted small">{{ progress() }}% completado</span>
 
       @if (isLast()) {
         <button class="btn primary-btn px-4 fw-semibold"
                 [disabled]="!stepValid()"
                 (click)="submit()">
-          Publish listing <i class="bi bi-send ms-1"></i>
+          Publicar anuncio <i class="bi bi-send ms-1"></i>
         </button>
       } @else {
         <button class="btn primary-btn px-4 fw-semibold"
                 [disabled]="!stepValid()"
                 (click)="next()">
-          Next <i class="bi bi-chevron-right ms-1"></i>
+          Siguiente <i class="bi bi-chevron-right ms-1"></i>
         </button>
       }
 

@@ -1,13 +1,11 @@
-<!-- steps/review-step/review-step.html -->
 <div>
-  <h4 class="fw-bold mb-1">Review your listing</h4>
-  <p class="text-muted mb-4">Check all the details before publishing.</p>
+  <h4 class="fw-bold mb-1">Revisa tu anuncio</h4>
+  <p class="text-muted mb-4">Comprueba todos los detalles antes de publicar.</p>
 
-  <!-- Location -->
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
     <div class="d-flex align-items-center gap-2 mb-3">
       <i class="bi bi-geo-alt-fill text-primario fs-5"></i>
-      <h6 class="fw-bold mb-0">Location</h6>
+      <h6 class="fw-bold mb-0">Ubicación</h6>
     </div>
     <div class="row g-1 text-muted small">
       <div class="col-12">
@@ -24,20 +22,18 @@
     </div>
   </div>
 
-  <!-- Type -->
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
     <div class="d-flex align-items-center gap-2 mb-3">
       <i class="bi bi-house-fill text-primario fs-5"></i>
-      <h6 class="fw-bold mb-0">Property type</h6>
+      <h6 class="fw-bold mb-0">Tipo de propiedad</h6>
     </div>
     <span class="badge bg-primario rounded-pill px-3 py-2">{{ data.type }}</span>
   </div>
 
-  <!-- Features -->
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
     <div class="d-flex align-items-center gap-2 mb-3">
       <i class="bi bi-list-check text-primario fs-5"></i>
-      <h6 class="fw-bold mb-0">Features</h6>
+      <h6 class="fw-bold mb-0">Características</h6>
     </div>
 
     <div class="row g-3 mb-3">
@@ -47,11 +43,11 @@
       </div>
       <div class="col-4 text-center">
         <div class="fw-bold fs-5">{{ data.features.rooms }}</div>
-        <div class="text-muted small">Bedrooms</div>
+        <div class="text-muted small">Habitaciones</div>
       </div>
       <div class="col-4 text-center">
         <div class="fw-bold fs-5">{{ data.features.baths }}</div>
-        <div class="text-muted small">Bathrooms</div>
+        <div class="text-muted small">Baños</div>
       </div>
     </div>
 
@@ -67,21 +63,22 @@
     }
   </div>
 
-  <!-- Price -->
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
     <div class="d-flex align-items-center gap-2 mb-3">
       <i class="bi bi-tag-fill text-primario fs-5"></i>
-      <h6 class="fw-bold mb-0">Price</h6>
+      <h6 class="fw-bold mb-0">Precio</h6>
     </div>
-    <span class="fs-3 fw-bold">{{ data.price }} €</span>
-    <span class="text-muted small ms-1">/ month</span>
+    <div class="justify-content-center">
+      <span class="fs-3 fw-bold">{{ data.price }} €</span>
+      <span class="text-muted small ms-1">/ mes</span>
+    </div>
+
   </div>
 
-  <!-- Photos -->
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-4">
     <div class="d-flex align-items-center gap-2 mb-3">
       <i class="bi bi-images text-primario fs-5"></i>
-      <h6 class="fw-bold mb-0">Photos</h6>
+      <h6 class="fw-bold mb-0">Fotos</h6>
     </div>
     <div class="row g-2">
       @for (photo of data.photos; track photo.name; let i = $index) {
@@ -89,23 +86,22 @@
           <img [src]="getPreview(photo)"
                class="w-100 rounded-3 object-fit-cover"
                style="height: 70px;"
-               [alt]="'Photo ' + (i + 1)">
+               [alt]="'Foto ' + (i + 1)">
         </div>
       }
     </div>
     <p class="text-muted small mt-2 mb-0">
-      {{ data.photos.length }} photo{{ data.photos.length !== 1 ? 's' : '' }} added
+      {{ data.photos.length }} {{ data.photos.length === 1 ? 'foto añadida' : 'fotos añadidas' }}
     </p>
   </div>
 
-  <!-- Ready notice -->
   <div class="alert border-0 bg-fondo-secundario rounded-4 d-flex gap-3 align-items-start">
     <i class="bi bi-shield-check text-success fs-4"></i>
     <div>
-      <p class="fw-semibold mb-1">Ready to publish</p>
+      <p class="fw-semibold mb-1">Todo listo para publicar</p>
       <p class="text-muted small mb-0">
-        Your listing will be visible immediately after publishing.
-        You can edit or pause it at any time from your dashboard.
+        Tu anuncio será visible inmediatamente después de publicar.
+        Puedes editarlo o pausarlo en cualquier momento desde tu panel de control.
       </p>
     </div>
   </div>
