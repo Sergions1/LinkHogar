@@ -7,8 +7,5 @@ CREATE TABLE IF NOT EXISTS house_images
 ALTER TABLE house_images
     ADD CONSTRAINT fk_house_images_on_house FOREIGN KEY (house_id) REFERENCES houses (id);
 
-ALTER TABLE houses
-    DROP COLUMN images;
-
 ALTER TABLE users
     MODIFY `role` VARCHAR(255);
