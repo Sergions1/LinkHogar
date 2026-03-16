@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -51,6 +52,8 @@ public class HouseResponse {
     private AddressResponse address;
     private UserResponse owner;
 
+    private List<String> images;
+
     public static HouseResponse mapToResponse(House house) {
         if (house == null) return null;
 
@@ -81,12 +84,13 @@ public class HouseResponse {
                 .petsAllowed(house.getPetsAllowed())
 
                 .price(house.getPrice())
-
+                .images(house.getImages())
                 // 👇 Mapeo MANUAL de la Dirección para romper el bucle infinito
                 .address(AddressResponse.mapAddress(house.getAddress()))
 
                 // 👇 Mapeo SEGURO del Usuario (solo info pública)
                 .owner(UserResponse.mapToResponse(house.getOwner()))
+
 
                 .build();
     }

@@ -22,7 +22,7 @@ public class CreateHouseCommandHandler {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
 
-    public void handle(CreateHouseCommand command, String userId) {
+    public UUID handle(CreateHouseCommand command, String userId) {
         User owner = userRepository.userById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException(("El usuario del token no existe")));
 
         Address address = Address.builder()
@@ -69,5 +69,7 @@ public class CreateHouseCommandHandler {
         house.setPetsAllowed(Boolean.TRUE.equals(command.getPetsAllowed()));
 
         houseRepository.save(house);
+
+        return house.getId();
     }
 }
