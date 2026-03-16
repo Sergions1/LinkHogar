@@ -35,6 +35,8 @@ export interface HouseResponse {
 
   price: number;
 
+  images: string[];
+
   // 🏠 Objetos anidados
   address: AddressResponse;
   owner: UserResponse;

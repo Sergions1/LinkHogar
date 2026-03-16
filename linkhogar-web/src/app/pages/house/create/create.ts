@@ -152,16 +152,37 @@ export class Create {
         const tituloLimpio = this.formData().details.title
           .toLowerCase()
           .replace(/\s+/g, '-');
-        this.isLoading.set(false);
-        Swal.fire({
-          title: '¡Anuncio publicado!',
-          text: 'Su anuncio ha sido publicado con éxito',
-          icon: 'success',
-          confirmButtonText: 'Aceptar',
-          confirmButtonColor: 'var(--color-primario)'
-        }).then((result) =>{
-          this.router.navigate(['/inmueble', tituloLimpio, response.id]);
-        })
+        const photos = this.formData().photos;
+
+        if (photos && photos.length > 0){
+          this.houseService.uploadHouseImages(response.id, photos).subscribe({
+            next: () => {
+              this.isLoading.set(false);
+              Swal.fire({
+                title: '¡Anuncio publicado!',
+                text: 'Su anuncio ha sido publicado con éxito',
+                icon: 'success',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: 'var(--color-primario)'
+              }).then((result) =>{
+                this.router.navigate(['/inmueble', tituloLimpio, response.id]);
+              })
+            },
+            error: (imgErr: any) => {
+              console.log(imgErr);
+              Swal.fire({
+                title: 'Atención!',
+                text: 'Su anuncio ha sido publicado con éxito, pero hubo un error con las imagenes',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: 'var(--color-primario)'
+              }).then((result) =>{
+                this.router.navigate(['/inmueble', tituloLimpio, response.id]);
+              })
+            }
+          })
+        }
+
       },
       error: (err) =>{
         console.log(err);

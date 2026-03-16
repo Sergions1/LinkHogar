@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -68,4 +69,15 @@ public class House {
     @ManyToOne(fetch = FetchType.LAZY) //No carga los datos a menos que se pidan
     private User owner;
 
+    @ElementCollection
+    @CollectionTable(name = "house_images", joinColumns = @JoinColumn(name = "house_id"))
+    @Column(name = "image_url")
+    private List<String> images;
+
+
+    public void addImage(String imageUrl){
+        if (this.images == null) return;
+
+        this.images.add(imageUrl);
+    }
 }

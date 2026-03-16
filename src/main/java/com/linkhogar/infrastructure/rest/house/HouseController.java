@@ -1,5 +1,7 @@
 package com.linkhogar.infrastructure.rest.house;
 
+import com.linkhogar.application.house.Image.addImage.AddHouseImagesCommand;
+import com.linkhogar.application.house.Image.addImage.AddHouseImagesCommandHandler;
 import com.linkhogar.application.house.create.CreateHouseCommand;
 import com.linkhogar.application.house.create.CreateHouseCommandHandler;
 import com.linkhogar.application.house.get.GetQuery;
@@ -11,6 +13,7 @@ import com.linkhogar.application.house.getByCity.HouseCardResponse;
 import com.linkhogar.application.house.getById.GetByIdQuery;
 import com.linkhogar.application.house.getById.GetByIdQueryHandler;
 import com.linkhogar.domain.house.House;
+import com.linkhogar.infrastructure.externalServices.CloudinaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,9 +24,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.*;
 
 import static com.linkhogar.domain.common.result.ErrorType.*;
 
@@ -36,6 +43,10 @@ public class HouseController {
     private final GetByCityQueryHandler getByCityQueryHandler;
     private final GetQueryHandle getQueryHandle;
     private final GetByIdQueryHandler getByIdQueryHandler;
+    private final AddHouseImagesCommandHandler addHouseImagesCommandHandler;
+
+    private final CloudinaryService cloudinaryService;
+
 
     @Operation(
             summary = "Obtención de todas las casas",
@@ -58,9 +69,12 @@ public class HouseController {
     public ResponseEntity<?> createHouse(@RequestBody CreateHouseCommand request, Authentication authentication){
         String userId = authentication.getName();
 
-        createHouseCommandHandler.handle(request, userId);
+        UUID houseId = createHouseCommandHandler.handle(request, userId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        Map<String, UUID> response = new HashMap<>();
+        response.put("id", houseId);
+
+        return ResponseEntity.ok(response);
     }
 
     @Operation(
@@ -97,6 +111,22 @@ public class HouseController {
         }
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = "/{houseId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadHouseImages(
+            @PathVariable UUID houseId,
+            @RequestParam("files") List<MultipartFile> files) {
+
+        try {
+            AddHouseImagesCommand command = new AddHouseImagesCommand(houseId, files);
+            addHouseImagesCommandHandler.handle(command);
+
+            return ResponseEntity.ok().body("Imagenes correctamente subidas");
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error subiendo las imágenes: " + e.getMessage());
+        }
     }
 
 }

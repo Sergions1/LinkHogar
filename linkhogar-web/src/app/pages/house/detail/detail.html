@@ -24,22 +24,51 @@
           </button>
         </div>
       </div>
-      <div id="pisoCarousel" class="carousel slide shadow-sm rounded mb-4" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-          <!-- Todo carruosel de imagenes cuando este operativo el tratado de imagenes -->
+      <!-- Reemplaza el bloque del carrusel vacío -->
+      @if (house.images && house.images.length > 0) {
+        <div id="pisoCarousel" class="carousel slide shadow-sm rounded mb-4" data-bs-ride="carousel">
+
+          <div class="carousel-indicators">
+            @for (img of house.images; track $index; let i = $index) {
+              <button type="button"
+                      data-bs-target="#pisoCarousel"
+                      [attr.data-bs-slide-to]="i"
+                      [class.active]="i === 0"
+                      [attr.aria-current]="i === 0 ? 'true' : null">
+              </button>
+            }
+          </div>
+
+          <div class="carousel-inner rounded">
+            @for (img of house.images; track $index; let i = $index) {
+              <div class="carousel-item" [class.active]="i === 0">
+                <img [src]="img"
+                     class="d-block w-100 object-fit-cover"
+                     style="height: 420px;"
+                     alt="Foto {{ i + 1 }}">
+              </div>
+            }
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#pisoCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#pisoCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+
         </div>
-        <div class="carousel-inner rounded">
-          <!-- carruosel de imagenes cuando este operativo el tratado de imagenes -->
+      } @else {
+        <div class="bg-fondo-secundario rounded mb-4 d-flex align-items-center justify-content-center"
+             style="height: 420px;">
+          <div class="text-center text-muted">
+            <i class="bi bi-image fs-1 d-block mb-2"></i>
+            <span>Sin fotos disponibles</span>
+          </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#pisoCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#pisoCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
+      }
 
       <h4 class="mb-3">Características principales</h4>
       <div class="row mb-4 border-bottom pb-3">

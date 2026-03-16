@@ -92,4 +92,31 @@ export class HouseService {
 
     return this.http.post(`${environment.apiUrl}/houses`, payload, {headers});
   }
+
+  /**
+   * Sube las imágenes de una vivienda ya creada
+   *
+   * @param houseId El ID de la vivienda a la que pertenecen las fotos
+   * @param files Un array de objetos File nativos seleccionados desde el input HTML
+   * @returns Un Observable con la respuesta de la subida
+   */
+  uploadHouseImages(houseId: string, files: File[]): Observable<any> {
+    const formData = new FormData();
+
+    files.forEach(file => {
+      formData.append('files', file);
+    });
+
+    const token = localStorage.getItem('token');
+
+    // NO ponemos el 'Content-Type'.
+    // Al usar FormData, el navegador (HttpClient) sabe que tiene que usar 'multipart/form-data'
+    // y generar su propio "boundary" automáticamente. Si lo pusiéramos a mano, fallaría.
+    const headers = new HttpHeaders({'Authorization': `Bearer ${token}`});
+
+    return this.http.post(`${this.apiUrl}/${houseId}/images`, formData, {
+      headers,
+      responseType: 'text'
+    });
+  }
 }
