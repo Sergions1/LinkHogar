@@ -24,40 +24,43 @@
           </button>
         </div>
       </div>
-      <!-- Reemplaza el bloque del carrusel vacío -->
       @if (house.images && house.images.length > 0) {
-        <div id="pisoCarousel" class="carousel slide shadow-sm rounded mb-4" data-bs-ride="carousel">
+        <div class="position-relative shadow-sm rounded mb-4 overflow-hidden" style="height: 420px;">
 
-          <div class="carousel-indicators">
-            @for (img of house.images; track $index; let i = $index) {
-              <button type="button"
-                      data-bs-target="#pisoCarousel"
-                      [attr.data-bs-slide-to]="i"
-                      [class.active]="i === 0"
-                      [attr.aria-current]="i === 0 ? 'true' : null">
-              </button>
-            }
-          </div>
+          <!-- Imagen activa -->
+          <img [src]="house.images[currentImageIndex]"
+               class="w-100 h-100 object-fit-cover"
+               alt="Foto {{ currentImageIndex + 1 }}">
 
-          <div class="carousel-inner rounded">
-            @for (img of house.images; track $index; let i = $index) {
-              <div class="carousel-item" [class.active]="i === 0">
-                <img [src]="img"
-                     class="d-block w-100 object-fit-cover"
-                     style="height: 420px;"
-                     alt="Foto {{ i + 1 }}">
-              </div>
-            }
-          </div>
+          <!-- Botón anterior -->
+          @if (house.images.length > 1) {
+            <button class="position-absolute top-50 start-0 translate-middle-y btn btn-dark btn-sm opacity-75 ms-2"
+                    (click)="prevImage(house.images)">
+              <i class="bi bi-chevron-left"></i>
+            </button>
 
-          <button class="carousel-control-prev" type="button" data-bs-target="#pisoCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#pisoCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
+            <!-- Botón siguiente -->
+            <button class="position-absolute top-50 end-0 translate-middle-y btn btn-dark btn-sm opacity-75 me-2"
+                    (click)="nextImage(house.images)">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+
+            <!-- Indicadores -->
+            <div class="position-absolute bottom-0 start-50 translate-middle-x d-flex gap-2 mb-3">
+              @for (img of house.images; track $index; let i = $index) {
+                <button class="rounded-circle border-0 p-0"
+                        style="width: 10px; height: 10px; transition: all 0.2s;"
+                        [style.background]="i === currentImageIndex ? 'white' : 'rgba(255,255,255,0.5)'"
+                        (click)="goToImage(i)">
+                </button>
+              }
+            </div>
+          }
+
+          <!-- Contador -->
+          <span class="position-absolute top-0 end-0 badge bg-dark opacity-75 m-2">
+      {{ currentImageIndex + 1 }} / {{ house.images.length }}
+    </span>
 
         </div>
       } @else {
