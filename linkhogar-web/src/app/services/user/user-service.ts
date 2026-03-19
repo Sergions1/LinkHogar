@@ -17,7 +17,6 @@ export class UserService {
 
     try {
       const decoded: any = jwtDecode(token);
-      console.log('Token decodificado:', decoded); // 👈
       return decoded.role ?? null;
     } catch (error) {
       return null;

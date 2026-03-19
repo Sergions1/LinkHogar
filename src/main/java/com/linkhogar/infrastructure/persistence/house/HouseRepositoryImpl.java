@@ -1,5 +1,6 @@
 package com.linkhogar.infrastructure.persistence.house;
 
+import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.HouseRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,6 +36,11 @@ public class HouseRepositoryImpl implements HouseRepository {
     public House getById(UUID houseId) {
         return jpaHouseRepository.findById(houseId)
                 .orElseThrow(() -> new EntityNotFoundException("No se encontro ninguna entidad `HOUSE` con el id " + houseId));
+    }
+
+    @Override
+    public long countByPublicationStatus(PublicationStatus status) {
+        return jpaHouseRepository.countByPublicationStatus(status);
     }
 
 

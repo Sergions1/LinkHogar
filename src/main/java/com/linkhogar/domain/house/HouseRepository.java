@@ -1,6 +1,7 @@
 package com.linkhogar.domain.house;
 
 import com.linkhogar.application.house.getByCity.HouseCardResponse;
+import com.linkhogar.domain.common.enums.PublicationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,4 +13,5 @@ public interface HouseRepository {
     Page<House> findByCity(String city, Pageable pageable);
     Page<House> getAll(Pageable pageable);
     House getById(UUID houseId);
+    long countByPublicationStatus(PublicationStatus status);
 }

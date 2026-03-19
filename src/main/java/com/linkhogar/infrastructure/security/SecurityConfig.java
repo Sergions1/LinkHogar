@@ -32,7 +32,8 @@ public class SecurityConfig {
                 // 2. Gestionar permisos de rutas
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/me").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/users/currentUser").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/admin/stats").authenticated()
                         .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",

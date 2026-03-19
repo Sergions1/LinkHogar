@@ -3,7 +3,9 @@
     <div>
       <h2 class="fw-bold mb-0">Dashboard</h2>
       <p class="text-muted mb-0">Bienvenido/a de nuevo, <strong>{{ user?.firstName }}</strong>
-        <span class="badge ms-2" [ngClass]="userRole === 'LinkHogar' ? 'bg-danger' : 'bg-primary'">
+        <span class="badge ms-2"
+              [class.bg-danger]="user?.role === 'LinkHogar'"
+              [class.bg-primary]="user?.role !== 'LinkHogar'">
           Rol: {{ user?.role }}
         </span>
       </p>
@@ -20,7 +22,7 @@
           </div>
           <div>
             <h6 class="text-muted mb-1">Usuarios Totales</h6>
-            <h3 class="fw-bold mb-0">{{ stats.usuariosTotales }}</h3>
+            <h3 class="fw-bold mb-0">{{ stats.totalUsers }}</h3>
           </div>
         </div>
       </div>
@@ -34,7 +36,7 @@
           </div>
           <div>
             <h6 class="text-muted mb-1">Pendientes de Revisión</h6>
-            <h3 class="fw-bold mb-0">{{ stats.casasPendientes }}</h3>
+            <h3 class="fw-bold mb-0">{{ stats.pendingHouses }}</h3>
           </div>
         </div>
       </div>
@@ -48,7 +50,7 @@
           </div>
           <div>
             <h6 class="text-muted mb-1">Casas Publicadas</h6>
-            <h3 class="fw-bold mb-0">{{ stats.casasPublicadas }}</h3>
+            <h3 class="fw-bold mb-0">{{ stats.publishedHouses }}</h3>
           </div>
         </div>
       </div>
