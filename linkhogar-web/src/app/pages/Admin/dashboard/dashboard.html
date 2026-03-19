@@ -1,0 +1,70 @@
+<div class="container-fluid py-3">
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <div>
+      <h2 class="fw-bold mb-0">Dashboard</h2>
+      <p class="text-muted mb-0">Bienvenido/a de nuevo, <strong>{{ user?.firstName }}</strong>
+        <span class="badge ms-2" [ngClass]="userRole === 'LinkHogar' ? 'bg-danger' : 'bg-primary'">
+          Rol: {{ user?.role }}
+        </span>
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <div class="col-12 col-md-4">
+      <div class="card stat-card shadow-sm h-100 border-0 border-start border-primary border-4">
+        <div class="card-body d-flex align-items-center">
+          <div class="stat-icon bg-primary bg-opacity-10 text-primary rounded p-3 me-3">
+            <i class="bi bi-people fs-3"></i>
+          </div>
+          <div>
+            <h6 class="text-muted mb-1">Usuarios Totales</h6>
+            <h3 class="fw-bold mb-0">{{ stats.usuariosTotales }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card stat-card shadow-sm h-100 border-0 border-start border-warning border-4">
+        <div class="card-body d-flex align-items-center">
+          <div class="stat-icon bg-warning bg-opacity-10 text-warning rounded p-3 me-3">
+            <i class="bi bi-hourglass-split fs-3"></i>
+          </div>
+          <div>
+            <h6 class="text-muted mb-1">Pendientes de Revisión</h6>
+            <h3 class="fw-bold mb-0">{{ stats.casasPendientes }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="card stat-card shadow-sm h-100 border-0 border-start border-success border-4">
+        <div class="card-body d-flex align-items-center">
+          <div class="stat-icon bg-success bg-opacity-10 text-success rounded p-3 me-3">
+            <i class="bi bi-house-door fs-3"></i>
+          </div>
+          <div>
+            <h6 class="text-muted mb-1">Casas Publicadas</h6>
+            <h3 class="fw-bold mb-0">{{ stats.casasPublicadas }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-body text-center py-5 text-muted">
+          <i class="bi bi-table fs-1 mb-3 text-secondary"></i>
+          <h5>Aquí pondremos una tabla con las últimas acciones o registros</h5>
+          <p>De momento vamos a dejarlo preparado para el siguiente paso.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,8 +1,9 @@
 import { Injectable, signal, inject } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, tap} from 'rxjs';
 import {jwtDecode} from 'jwt-decode';
 import {environment} from '../../../environments/environment';
+import {UserResponse} from '../../Models/Users/UserResponse';
 
 /**
  * Servicio encargado de gestionar la autenticación de la aplicación.
@@ -17,6 +18,14 @@ export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
 
   isLoggedIn = signal<boolean>(this.hasValidToken());
+  currentUser = signal<UserResponse | null>(null);
+
+  constructor() {
+    if (this.hasValidToken()) {
+      this.fetchCurrentUser();
+    }
+  }
+
 
   /**
    * Autentica a un usuario enviando sus credenciales al servidor.
@@ -33,6 +42,7 @@ export class AuthService {
       tap((token) => {
         localStorage.setItem('token', token);
         this.isLoggedIn.set(true);
+        this.fetchCurrentUser();
       })
     );
   }
@@ -84,5 +94,22 @@ export class AuthService {
     } catch (error) {
       return null;
     }
+  }
+
+  /**
+   * Obtiene la información del perfil del usuario autenticado actualmente desde el servidor.
+   * Realiza una petición GET al endpoint '/me' y actualiza la señal `currentUser` con la respuesta,
+   * o la establece en `null` en caso de error.
+   */
+  fetchCurrentUser() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    this.http.get<UserResponse>(`${environment.apiUrl}/users/currentUser`, { headers }).subscribe({
+      next: (user) => this.currentUser.set(user),
+      error: () => this.currentUser.set(null)
+    });
   }
 }

@@ -1,4 +1,4 @@
-<header class="p-3 bg-primario text-white">
+<header class="p-3 bg-primario text-white" [class.admin-theme]="isAdminRoute">
   <div class="container">
     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
       <a href="${pageContext.request.contextPath}/Home" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none rounded">
@@ -9,11 +9,14 @@
         <li><a href="/" class="nav-link px-2">Home</a></li>
         <li><a href="/explore"  class="nav-link px-2">Explorar</a></li>
         <li><a href="${pageContext.request.contextPath}/Pisos/NuevoPiso"  class="nav-link px-2">Publicar</a></li>
-
+        @if(authService.isLoggedIn() && userService.isAdmin()){
+          <button class="btn text-danger" (click)="admin()"><i class="bi bi-gear-fill text-danger me-2"></i>Administración</button>
+        }
       </ul>
 
 
       <div class="text-end" id="SeccionUsuario">
+
         <button type="button" class="btn light-btn-outline me-2" id="btnCreate" (click)="publicate()">Publicar gratis</button>
         @if (authService.isLoggedIn()) {
           <a href="${pageContext.request.contextPath}/Pisos/Fav" class="btn me-1 text-acento" id="favorito"><span class="material-icons">favorite</span></a>

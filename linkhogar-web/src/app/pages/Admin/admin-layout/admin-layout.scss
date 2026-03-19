@@ -1,0 +1,35 @@
+.admin-container {
+  /* Calculamos el alto de la pantalla menos lo que ocupe tu Header normal */
+  min-height: calc(100vh - 70px);
+}
+
+.sidebar {
+  width: 260px;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+
+  &.collapsed {
+    width: 80px;
+
+    .nav-link {
+      text-align: center;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .me-2 {
+      margin-right: 0 !important; /* Quitamos el margen del icono si está colapsado */
+    }
+  }
+
+  /* Para que el botón routerLinkActive cambie de color al pulsarlo */
+  .nav-link.active {
+    background-color: var(--color-acento); /* Usa tu variable de color acento */
+    color: black;
+  }
+}
+
+.main-content {
+  overflow-y: auto;
+  max-height: calc(100vh - 70px);
+}

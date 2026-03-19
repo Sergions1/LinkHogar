@@ -6,4 +6,5 @@ export interface UserResponse {
   fechaNac: string;
   creationDate: string;
   phone : string;
+  role : string;
 }
