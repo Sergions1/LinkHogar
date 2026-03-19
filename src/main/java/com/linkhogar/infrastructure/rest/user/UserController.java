@@ -6,6 +6,9 @@ import com.linkhogar.application.user.delete.DeleteUserCommand;
 import com.linkhogar.application.user.delete.DeleteUserCommandHandler;
 import com.linkhogar.application.user.getById.GetUserByIdQueryHandler;
 import com.linkhogar.application.user.getById.GetUserByIdQuery;
+import com.linkhogar.application.user.getById.UserResponse;
+import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQuery;
+import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQueryHandler;
 import com.linkhogar.application.user.update.UpdateUserCommand;
 import com.linkhogar.application.user.update.UpdateUserCommandHandler;
 import com.linkhogar.application.user.update.UserUpdateDTO;
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -34,6 +38,7 @@ public class UserController {
     private final GetUserByIdQueryHandler getUserByIdQueryHandler;
     private final DeleteUserCommandHandler deleteUserCommandHandler;
     private final UpdateUserCommandHandler updateUserCommandHandler;
+    private final GetCurrentUserQueryHandler getCurrentUserQueryHandler;
 
     @Operation(
             summary = "Registrar un nuevo usuario",
@@ -115,6 +120,15 @@ public class UserController {
         }
 
         return mapErrorToResponse(result.getError());
+    }
+
+    @GetMapping("/currentUser")
+    public ResponseEntity<UserResponse> getCurrentUser(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        GetCurrentUserQuery query = new GetCurrentUserQuery(authentication.getName());
+        return ResponseEntity.ok(getCurrentUserQueryHandler.handle(query));
     }
 
     private ResponseEntity<?> mapErrorToResponse(Error error) {

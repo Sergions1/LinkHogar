@@ -12,7 +12,8 @@ public record UserResponse (
     String mail,
     LocalDateTime fechaNac,
     LocalDateTime creationDate,
-    String phone
+    String phone,
+    String role
 ){
 
     public static  UserResponse mapToResponse(User user) {
@@ -23,7 +24,8 @@ public record UserResponse (
                 user.getMail(),
                 user.getFecha_nac(),
                 user.getRegisterDate(),
-                user.getPhone() != null ? user.getPhone().toString() : null
+                user.getPhone() != null ? user.getPhone().toString() : null,
+                user.getRole() != null ? user.getRole().toString() : null
         );
     }
 }
