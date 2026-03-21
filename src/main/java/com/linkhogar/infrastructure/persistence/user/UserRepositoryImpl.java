@@ -3,6 +3,8 @@ package com.linkhogar.infrastructure.persistence.user;
 import com.linkhogar.domain.user.User;
 import com.linkhogar.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -37,6 +39,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(UUID userId) {
         jpaUserRepository.deleteById(userId);
+    }
+
+    @Override
+    public Page<User> findAllFiltered(String search, String role, Boolean enabled, Pageable pageable) {
+        return jpaUserRepository.findAllFiltered(search, role, enabled, pageable);
     }
 
 }

@@ -9,6 +9,8 @@ import {AdminLayoutComponent} from './pages/Admin/admin-layout/admin-layout';
 import {adminGuard} from './guards/admin.guard';
 import {NotFound} from './pages/shared/error/not-found/not-found';
 import {DashboardComponent} from './pages/Admin/dashboard/dashboard';
+import {AdminHousesComponent} from './pages/Admin/HouseGrid/admin-houses/admin-houses';
+import {AdminUsersComponent} from './pages/Admin/usersgrid/admin-users/admin-users';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -25,8 +27,8 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Si entran a /admin, los manda al dashboard
       { path: 'dashboard', component: DashboardComponent },
-      // { path: 'casas', component: AdminCasasComponent }, // Lo añadiremos luego
-      // { path: 'usuarios', component: AdminUsuariosComponent } // Lo añadiremos luego
+      { path: 'houses', component: AdminHousesComponent },
+      { path: 'users', component: AdminUsersComponent }
     ]
   },
   { path: '**', component: NotFound }

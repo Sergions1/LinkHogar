@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/currentUser").authenticated()
                         .requestMatchers(HttpMethod.GET, "/admin/stats").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {AuthService} from '../../../services/auth/auth.service';
 import {UserService} from '../../../services/user/user-service';
@@ -18,25 +18,22 @@ export class DashboardComponent implements OnInit {
   private userService = inject(UserService);
   private adminService = inject(AdminService);
 
-  user: UserResponse | null = null;
+  user = this.authService.currentUser;
 
   userEmail: string | null = '';
   userRole: string | null = '';
 
-  // Datos simulados (Mocks). ¡Luego los traeremos de Spring Boot!
-  stats: DashboardStatsResponse = {
+  stats = signal<DashboardStatsResponse>({  // 👈 WritableSignal con valores por defecto
     totalUsers: 0,
     pendingHouses: 0,
     publishedHouses: 0
-  };
+  });
 
   ngOnInit() {
-    this.user = this.authService.currentUser();
-
     this.adminService.getDashboardStats().subscribe({
       next: (data) => {
         console.log('Stats recibidas:', data);
-        this.stats = data; // ¡Sobrescribimos los ceros con los datos reales de la BD!
+        this.stats.set(data);
       },
       error: (err) => console.error("Error cargando estadísticas", err)
     });

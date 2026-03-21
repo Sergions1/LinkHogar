@@ -4,6 +4,8 @@ import com.linkhogar.application.user.create.CreateUserCommand;
 import com.linkhogar.application.user.create.CreateUserCommandHandler;
 import com.linkhogar.application.user.delete.DeleteUserCommand;
 import com.linkhogar.application.user.delete.DeleteUserCommandHandler;
+import com.linkhogar.application.user.getAll.GetAllQuery;
+import com.linkhogar.application.user.getAll.GetAllQueryHandler;
 import com.linkhogar.application.user.getById.GetUserByIdQueryHandler;
 import com.linkhogar.application.user.getById.GetUserByIdQuery;
 import com.linkhogar.application.user.getById.UserResponse;
@@ -20,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -39,6 +42,7 @@ public class UserController {
     private final DeleteUserCommandHandler deleteUserCommandHandler;
     private final UpdateUserCommandHandler updateUserCommandHandler;
     private final GetCurrentUserQueryHandler getCurrentUserQueryHandler;
+    private final GetAllQueryHandler getAllQueryHandler;
 
     @Operation(
             summary = "Registrar un nuevo usuario",
@@ -129,6 +133,20 @@ public class UserController {
         }
         GetCurrentUserQuery query = new GetCurrentUserQuery(authentication.getName());
         return ResponseEntity.ok(getCurrentUserQueryHandler.handle(query));
+    }
+
+    @GetMapping
+    @Operation(summary = "Obtiene lista paginada de usuarios con filtros opcionales")
+    public ResponseEntity<Page<UserResponse>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) Boolean enabled,
+            Authentication authentication) {
+
+        GetAllQuery query = new GetAllQuery(page, size, search, role, enabled);
+        return ResponseEntity.ok(getAllQueryHandler.handle(query));
     }
 
     private ResponseEntity<?> mapErrorToResponse(Error error) {

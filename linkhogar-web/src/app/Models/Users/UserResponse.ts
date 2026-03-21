@@ -7,4 +7,5 @@ export interface UserResponse {
   creationDate: string;
   phone : string;
   role : string;
+  enabled : boolean;
 }

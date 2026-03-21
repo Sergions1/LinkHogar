@@ -1,0 +1,205 @@
+<!-- admin/usuarios/admin-usuarios.html -->
+<div class="container-fluid py-3">
+
+  <!-- Cabecera -->
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <div>
+      <h2 class="fw-bold mb-0">Gestión de Usuarios</h2>
+      <p class="text-muted mb-0">Administra todos los usuarios registrados en la plataforma</p>
+    </div>
+    <span class="badge bg-secondary fs-6">{{ totalElements }} usuarios</span>
+  </div>
+
+  <!-- Filtros -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+
+        <div class="col-12 col-md-4">
+          <label class="form-label small fw-semibold text-muted">Buscar</label>
+          <input type="text"
+                 class="form-control"
+                 placeholder="Nombre, apellido o email..."
+                 [(ngModel)]="searchText"
+                 (keyup.enter)="applyFilters()">
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label small fw-semibold text-muted">Rol</label>
+          <select class="form-select" [(ngModel)]="selectedRole">
+            <option value="">Todos</option>
+            <option value="LinkHogar">LinkHogar</option>
+            <option value="Admin">Admin</option>
+            <option value="Owner">Owner</option>
+          </select>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label small fw-semibold text-muted">Estado</label>
+          <select class="form-select" [(ngModel)]="selectedEnabled">
+            <option [ngValue]="undefined">Todos</option>
+            <option [ngValue]="true">Activos</option>
+            <option [ngValue]="false">Desactivados</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-md-2 d-flex gap-2">
+          <button class="btn primary-btn w-100" (click)="applyFilters()">
+            <i class="bi bi-search me-1"></i> Buscar
+          </button>
+          <button class="btn btn-outline-secondary" (click)="clearFilters()" title="Limpiar filtros">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="d-flex justify-content-center align-items-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <span class="ms-3 text-muted">Cargando usuarios...</span>
+    </div>
+  }
+
+  <!-- Tabla -->
+  @else if (usersList.length > 0) {
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+              <th class="ps-4">Usuario</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Registro</th>
+              <th class="text-center pe-4">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (user of usersList; track user.id) {
+                <tr>
+                  <!-- Usuario -->
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="rounded-circle bg-fondo-secundario d-flex align-items-center justify-content-center fw-bold"
+                           style="width: 40px; height: 40px; color: var(--color-primario);">
+                        {{ user.firstName.charAt(0).toUpperCase() }}{{ user.lastName.charAt(0).toUpperCase() }}
+                      </div>
+                      <div>
+                        <p class="fw-semibold mb-0">{{ user.firstName }} {{ user.lastName }}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- Email -->
+                  <td>
+                    <small>{{ user.mail }}</small>
+                  </td>
+
+                  <!-- Teléfono -->
+                  <td>
+                    <small class="text-muted">{{ user.phone ?? '—' }}</small>
+                  </td>
+
+                  <!-- Rol -->
+                  <td>
+                    <span class="badge rounded-pill {{ getRoleBadgeClass(user.role) }}">
+                      {{ user.role }}
+                    </span>
+                  </td>
+
+                  <!-- Estado -->
+                  <td>
+                    @if (user.enabled) {
+                      <span class="badge bg-success rounded-pill">Activo</span>
+                    } @else {
+                      <span class="badge bg-danger rounded-pill">Desactivado</span>
+                    }
+                  </td>
+
+                  <!-- Fecha registro -->
+                  <td>
+                    <small class="text-muted">{{ user.creationDate | date:'dd/MM/yyyy' }}</small>
+                  </td>
+
+                  <!-- Acciones -->
+                  <td class="text-center pe-4">
+                    <div class="d-flex gap-2 justify-content-center">
+                      <!-- Activar/Desactivar -->
+                      <button class="btn btn-sm"
+                              [class.btn-outline-success]="!user.enabled"
+                              [class.btn-outline-warning]="user.enabled"
+                              [title]="user.enabled ? 'Desactivar' : 'Activar'"
+                              (click)="toggleEnabled(user)">
+                        <i class="bi" [class.bi-toggle-on]="user.enabled" [class.bi-toggle-off]="!user.enabled"></i>
+                      </button>
+
+                      <!-- Eliminar -->
+                      <button class="btn btn-sm btn-outline-danger"
+                              title="Eliminar"
+                              (click)="deleteUser(user.id)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Paginación -->
+      @if (totalPages > 1) {
+        <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center px-4 py-3">
+          <small class="text-muted">
+            Página {{ currentPage() + 1 }} de {{ totalPages }} · {{ totalElements }} usuarios
+          </small>
+          <nav>
+            <ul class="pagination pagination-sm mb-0 gap-1">
+              <li class="page-item" [class.disabled]="isFirstPage">
+                <button class="page-link rounded"
+                        (click)="goToPage(currentPage() - 1)"
+                        [disabled]="isFirstPage">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+              </li>
+              @for (page of getPages; track page) {
+                <li class="page-item" [class.active]="page === currentPage()">
+                  <button class="page-link rounded"
+                          [style.background-color]="page === currentPage() ? 'var(--color-acento)' : ''"
+                          [style.border-color]="page === currentPage() ? 'var(--color-acento)' : ''"
+                          (click)="goToPage(page)">
+                    {{ page + 1 }}
+                  </button>
+                </li>
+              }
+              <li class="page-item" [class.disabled]="isLastPage">
+                <button class="page-link rounded"
+                        (click)="goToPage(currentPage() + 1)"
+                        [disabled]="isLastPage">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      }
+    </div>
+
+  } @else {
+  <div class="card shadow-sm border-0">
+    <div class="card-body text-center py-5 text-muted">
+      <i class="bi bi-people fs-1 mb-3 text-secondary d-block"></i>
+      <h5>No se encontraron usuarios</h5>
+    </div>
+  </div>
+}
+
+</div>

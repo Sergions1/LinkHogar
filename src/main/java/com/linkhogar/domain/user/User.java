@@ -38,12 +38,15 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING) //Guardamos el texto, no el numero
     private Role role;
+    private boolean enabled = true;
 
     //Relaciones
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true) //En caso de ser eliminada una casa del listado, esta se elimina
     @ToString.Exclude // ¡VITAL! Evita bucle infinito
     @Builder.Default  // Para que el Builder no la ponga a null
     private List<House> houses = new ArrayList<>();
+
+
 
 
 
@@ -80,6 +83,8 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.enabled;
     }
+
+
 }
