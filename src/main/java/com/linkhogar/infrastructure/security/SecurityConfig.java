@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/currentUser").authenticated()
                         .requestMatchers(HttpMethod.GET, "/admin/stats").authenticated()
                         .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.PATCH, "/users/*/toggle-enabled").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
@@ -70,7 +71,7 @@ public class SecurityConfig {
         ));
 
         // Permitir todos los verbos HTTP (GET, POST, PUT, DELETE...)
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
         // Permitir cabeceras (Tokens, Content-Type...)
         configuration.setAllowedHeaders(List.of("*"));

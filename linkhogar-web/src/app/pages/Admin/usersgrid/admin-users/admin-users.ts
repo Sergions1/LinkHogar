@@ -5,6 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {UserService} from '../../../../services/user/user-service';
 import {PageResponse} from '../../../../Models/Shared/PageResponse';
 import {UserResponse} from '../../../../Models/Users/UserResponse';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -70,13 +71,99 @@ export class AdminUsersComponent implements OnInit {
   }
 
   toggleEnabled(user: UserResponse) {
-    // TODO: conectar con endpoint de activar/desactivar
-    console.log('Toggle enabled:', user.id, user.enabled);
+    const accion = user.enabled ? 'desactivar' : 'activar';
+    const accionPasado = user.enabled ? 'desactivado' : 'activado';
+
+    Swal.fire({
+      title: `¿${accion.charAt(0).toUpperCase() + accion.slice(1)} usuario?`,
+      text: `Vas a ${accion} a ${user.firstName} ${user.lastName}.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: `Sí, ${accion}`,
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: 'var(--color-acento)',
+      cancelButtonColor: '#6c757d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.toggleUserEnabled(user.id).subscribe({
+          next: () => {
+            this.users.update(page => {
+              if (!page) return page;
+              return {
+                ...page,
+                content: page.content.map(u =>
+                  u.id === user.id ? { ...u, enabled: !u.enabled } : u
+                )
+              };
+            });
+
+            Swal.fire({
+              title: '¡Hecho!',
+              text: `Usuario ${accionPasado} correctamente.`,
+              icon: 'success',
+              confirmButtonColor: 'var(--color-acento)',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          },
+          error: (err) => {
+            console.error('Error al cambiar estado');
+            Swal.fire({
+              title: 'Error',
+              text: 'No se pudo cambiar el estado del usuario.',
+              icon: 'error',
+              confirmButtonColor: 'var(--color-acento)'
+            });
+          }
+        });
+      }
+    });
   }
 
-  deleteUser(id: string) {
-    // TODO: conectar con endpoint de borrado
-    console.log('Eliminar usuario:', id);
+  deleteUser(user: UserResponse) {
+    Swal.fire({
+      title: '¿Eliminar usuario?',
+      text: `Vas a eliminar a ${user.firstName} ${user.lastName}. Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.deleteUser(user.id).subscribe({
+          next: () => {
+            this.users.update(page => {
+              if (!page) return page;
+              return {
+                ...page,
+                content: page.content.filter(u => u.id !== user.id),
+                totalElements: page.totalElements - 1
+              };
+            });
+
+            Swal.fire({
+              title: '¡Eliminado!',
+              text: `${user.firstName} ${user.lastName} ha sido eliminado correctamente.`,
+              icon: 'success',
+              confirmButtonColor: 'var(--color-acento)',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          },
+          error: (err) => {
+            console.error('Error al eliminar usuario:', err);
+            Swal.fire({
+              title: 'Error',
+              text: 'No se pudo eliminar el usuario.',
+              icon: 'error',
+              confirmButtonColor: 'var(--color-acento)'
+            });
+          }
+        });
+      }
+    });
   }
 
   getRoleBadgeClass(role: string): string {

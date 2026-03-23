@@ -11,6 +11,8 @@ import com.linkhogar.application.user.getById.GetUserByIdQuery;
 import com.linkhogar.application.user.getById.UserResponse;
 import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQuery;
 import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQueryHandler;
+import com.linkhogar.application.user.toggleUserEnabled.ToggleUserEnabledCommand;
+import com.linkhogar.application.user.toggleUserEnabled.ToggleUserEnabledHandler;
 import com.linkhogar.application.user.update.UpdateUserCommand;
 import com.linkhogar.application.user.update.UpdateUserCommandHandler;
 import com.linkhogar.application.user.update.UserUpdateDTO;
@@ -43,6 +45,7 @@ public class UserController {
     private final UpdateUserCommandHandler updateUserCommandHandler;
     private final GetCurrentUserQueryHandler getCurrentUserQueryHandler;
     private final GetAllQueryHandler getAllQueryHandler;
+    private final ToggleUserEnabledHandler toggleUserEnabledHandler;
 
     @Operation(
             summary = "Registrar un nuevo usuario",
@@ -147,6 +150,17 @@ public class UserController {
 
         GetAllQuery query = new GetAllQuery(page, size, search, role, enabled);
         return ResponseEntity.ok(getAllQueryHandler.handle(query));
+    }
+
+    @PatchMapping("/{id}/toggle-enabled")
+    @Operation(summary = "Activa o desactiva un usuario")
+    public ResponseEntity<Void> toggleEnabled(
+            @PathVariable UUID id,
+            Authentication authentication) {
+
+        ToggleUserEnabledCommand command = new ToggleUserEnabledCommand(id);
+        toggleUserEnabledHandler.handle(command);
+        return ResponseEntity.noContent().build();
     }
 
     private ResponseEntity<?> mapErrorToResponse(Error error) {
