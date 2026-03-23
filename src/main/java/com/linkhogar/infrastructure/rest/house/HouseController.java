@@ -12,18 +12,14 @@ import com.linkhogar.application.house.getByCity.GetByCityQueryHandler;
 import com.linkhogar.application.house.getByCity.HouseCardResponse;
 import com.linkhogar.application.house.getById.GetByIdQuery;
 import com.linkhogar.application.house.getById.GetByIdQueryHandler;
-import com.linkhogar.domain.house.House;
 import com.linkhogar.infrastructure.externalServices.CloudinaryService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
-import static com.linkhogar.domain.common.result.ErrorType.*;
 
 @RestController
 @RequestMapping("/houses") // (Spring) Define la ruta base.

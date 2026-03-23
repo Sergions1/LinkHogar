@@ -1,11 +1,14 @@
 // admin/usuarios/admin-usuarios.component.ts
 import {Component, inject, OnInit, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, formatDate} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {UserService} from '../../../../services/user/user-service';
 import {PageResponse} from '../../../../Models/Shared/PageResponse';
 import {UserResponse} from '../../../../Models/Users/UserResponse';
 import Swal from 'sweetalert2';
+import {CreateUserByAdminRequest} from '../../../../Models/Admin/CreateUserByAdminRequest';
+import {AdminService} from '../../../../services/admin/admin-service';
+import {AuthService} from '../../../../services/auth/auth.service';
 
 
 @Component({
@@ -17,6 +20,8 @@ import Swal from 'sweetalert2';
 })
 export class AdminUsersComponent implements OnInit {
   private userService = inject(UserService);
+  private adminService = inject(AdminService);
+  private authService = inject(AuthService);
 
   users = signal<PageResponse<UserResponse> | null>(null);
   isLoading = signal(false);
@@ -28,8 +33,79 @@ export class AdminUsersComponent implements OnInit {
   selectedRole = '';
   selectedEnabled: boolean | undefined = undefined;
 
+  //Modal de creacion de usuarios
+  showModal = false;
+  isSubmitting = false;
+  newUser: CreateUserByAdminRequest = this.emptyForm();
+
+  // Para el modal al editar
+  isEditing = false;
+  editingUserId: string | null = null;
+  editUser: CreateUserByAdminRequest = this.emptyForm();
+
   ngOnInit() {
     this.loadUsers();
+  }
+
+  get isLinkHogar(): boolean {
+    return this.userService.getRole() === 'LinkHogar'; // 👈 síncrono, del token
+  }
+
+  get availableRoles(): string[] {
+    if (this.isLinkHogar) {
+      return ['LinkHogar', 'Admin', 'Propietario', 'User'];
+    }
+    return ['Propietario', 'User'];
+  }
+
+  emptyForm(): CreateUserByAdminRequest {
+    return {
+      firstName: '',
+      lastName: '',
+      mail: '',
+      phone: '',
+      fechaNac: '',
+      role: this.isLinkHogar ? 'User' : 'User'
+    };
+  }
+
+
+  closeModal() {
+    this.showModal = false;
+  }
+
+  submitNewUser() {
+    this.isSubmitting = true;
+    this.adminService.createUser(this.newUser).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        this.showModal = false;
+
+        Swal.fire({
+          title: '¡Usuario creado!',
+          html: `
+            <p>El usuario ha sido creado correctamente.</p>
+            <p class="mt-2">Contraseña generada:</p>
+            <div class="alert alert-warning fw-bold fs-5 mt-1">${response.generatedPassword}</div>
+            <p class="text-muted small">Anota esta contraseña, no se volverá a mostrar.</p>
+          `,
+          icon: 'success',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: 'var(--color-acento)'
+        });
+
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo crear el usuario.',
+          icon: 'error',
+          confirmButtonColor: 'var(--color-acento)'
+        });
+      }
+    });
   }
 
   loadUsers() {
@@ -182,5 +258,68 @@ export class AdminUsersComponent implements OnInit {
   get totalElements() { return this.users()?.totalElements ?? 0; }
   get getPages(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i);
+  }
+
+  openEditModal(user: UserResponse) {
+    this.isEditing = true;
+    this.editingUserId = user.id;
+
+    const formatedDate = user.fechaNac ? user.fechaNac.substring(0, 10) : '';
+
+    this.editUser = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      mail: user.mail,
+      phone: user.phone ?? '',
+      fechaNac: formatedDate,
+      role: user.role
+    };
+    this.showModal = true;
+  }
+
+  openModal() {
+    this.isEditing = false;
+    this.editingUserId = null;
+    this.newUser = this.emptyForm();
+    this.showModal = true;
+  }
+
+  submitModal() {
+    if (this.isEditing) {
+      this.submitEditUser();
+    } else {
+      this.submitNewUser();
+    }
+  }
+
+  submitEditUser() {
+    this.isSubmitting = true;
+    this.adminService.updateUser(this.editingUserId!, this.editUser).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.showModal = false;
+        Swal.fire({
+          title: '¡Usuario actualizado!',
+          icon: 'success',
+          confirmButtonColor: 'var(--color-acento)',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        this.loadUsers();
+      },
+      error: () => {
+        this.isSubmitting = false;
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo actualizar el usuario.',
+          icon: 'error',
+          confirmButtonColor: 'var(--color-acento)'
+        });
+      }
+    });
+  }
+
+  get currentForm(): CreateUserByAdminRequest {
+    return this.isEditing ? this.editUser : this.newUser;
   }
 }

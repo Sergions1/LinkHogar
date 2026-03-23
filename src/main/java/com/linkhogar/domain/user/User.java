@@ -50,10 +50,13 @@ public class User implements UserDetails {
 
 
 
-    public void updateUser(String firstName, String lastName, LocalDateTime fechaNac) {
+    public void updateUser(String firstName, String lastName, LocalDateTime fechaNac, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.fecha_nac = fechaNac;
+        if (phone != null && !phone.isBlank()) {
+            this.phone = Long.parseLong(phone); // O simplemente this.phone = phone; si es un String en tu base de datos
+        }
     }
 
     @Override

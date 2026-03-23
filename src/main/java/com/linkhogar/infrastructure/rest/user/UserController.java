@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -117,12 +118,35 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable UUID id, @RequestBody UserUpdateDTO updateDTO){
-        UpdateUserCommand command = new UpdateUserCommand(id, updateDTO.firstName(), updateDTO.lastName(), updateDTO.fecha_Nac());
+    public ResponseEntity<?> updateUser(
+            @PathVariable UUID id,
+            @RequestBody UserUpdateDTO updateDTO,
+            Authentication authentication) {
+
+        // Obtenemos el rol del usuario que hace la petición
+        String requestingUserRole = authentication.getAuthorities()
+                .stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("");
+
+        // Solo LinkHogar puede cambiar el rol
+        String roleToSet = requestingUserRole.equals("LinkHogar")
+                ? updateDTO.role()
+                : null;
+
+        UpdateUserCommand command = new UpdateUserCommand(
+                id,
+                updateDTO.firstName(),
+                updateDTO.lastName(),
+                updateDTO.fecha_Nac(),
+                roleToSet,
+                updateDTO.phone()
+        );
 
         Result<Void> result = updateUserCommandHandler.handle(command);
 
-        if (result.isSuccess()){
+        if (result.isSuccess()) {
             return ResponseEntity.ok().build();
         }
 
