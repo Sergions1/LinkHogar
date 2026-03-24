@@ -38,4 +38,17 @@ export class AdminService {
     };
     return this.http.put<void>(`${environment.apiUrl}/users/${userId}`, payload, { headers });
   }
+
+  setHouseStatus(houseId: string, status: string): Observable<void> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    return this.http.put<void>(`${environment.apiUrl}/houses/${houseId}/status`, { status }, { headers });
+  }
+
+  // admin-service.ts
+  deleteHouse(houseId: string): Observable<void> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    return this.http.delete<void>(`${environment.apiUrl}/houses/${houseId}`, { headers });
+  }
 }

@@ -8,7 +8,11 @@
       <p class="text-muted mb-0">Administra todos los anuncios publicados en la plataforma</p>
     </div>
     <span class="badge bg-secondary fs-6">
-      {{ totalElements }} anuncios
+      @if(totalElements == 1){
+        1 Anuncio
+      }@else{
+        {{ totalElements }} Anuncios
+      }
     </span>
   </div>
 
@@ -173,3 +177,42 @@
 }
 
 </div>
+
+@if (showStatusModal) {
+  <div class="modal d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content rounded-4 border-0 shadow">
+
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold">
+            <i class="bi bi-tag me-2 text-acento"></i>Cambiar estado
+          </h5>
+          <button class="btn-close" (click)="closeStatusModal()"></button>
+        </div>
+
+        <div class="modal-body pt-3">
+          <label class="form-label small fw-semibold">Nuevo estado</label>
+          <select class="form-select" [(ngModel)]="selectedStatus">
+            @for (status of availableStatuses; track status) {
+              <option [value]="status">{{ getStatusLabel(status) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="modal-footer border-0 pt-0">
+          <button class="btn btn-outline-secondary" (click)="closeStatusModal()" [disabled]="isSubmittingStatus">
+            Cancelar
+          </button>
+          <button class="btn primary-btn fw-semibold" (click)="submitStatusChange()" [disabled]="isSubmittingStatus">
+            @if (isSubmittingStatus) {
+              <span class="spinner-border spinner-border-sm me-2"></span>...
+            } @else {
+              <i class="bi bi-floppy me-2"></i>Guardar
+            }
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+}

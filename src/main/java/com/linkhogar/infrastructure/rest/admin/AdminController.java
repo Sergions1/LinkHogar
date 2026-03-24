@@ -4,7 +4,10 @@ import com.linkhogar.application.admin.DashboardStatsResponse;
 import com.linkhogar.application.admin.createUserbyAdmin.CreateUserByAdminCommand;
 import com.linkhogar.application.admin.createUserbyAdmin.CreateUserByAdminHandler;
 import com.linkhogar.application.admin.createUserbyAdmin.CreateUserByAdminResponse;
+import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommand;
+import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommandHandler;
 import com.linkhogar.domain.common.enums.PublicationStatus;
+import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.infrastructure.persistence.user.JpaUserRepository;
 import com.linkhogar.infrastructure.persistence.house.JpaHouseRepository;
 // ... tus imports
@@ -16,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/admin")
@@ -48,4 +53,6 @@ public class AdminController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
 }

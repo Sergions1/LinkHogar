@@ -6,12 +6,14 @@ import {HouseService} from '../../../../services/house/house-service';
 import {AdminService} from '../../../../services/admin/admin-service';
 import {PageResponse} from '../../../../Models/Shared/PageResponse';
 import {HouseResponse} from '../../../../Models/Houses/HouseResponse';
+import Swal from 'sweetalert2';
+import {FormsModule} from '@angular/forms';
 
 
 @Component({
   selector: 'app-admin-houses',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './admin-houses.html',
   styleUrls: ['./admin-houses.scss']
 })
@@ -23,6 +25,16 @@ export class AdminHousesComponent implements OnInit {
   isLoading = signal(false);
   currentPage = signal(0);
   readonly pageSize = 10;
+
+  // Variables para el Modal de Estado
+  showStatusModal = false;
+  isSubmittingStatus = false;
+  selectedHouseId: string | null = null;
+  selectedStatus: string = '';
+
+  readonly availableStatuses = [
+    'DRAFT', 'PENDING_REVIEW', 'PUBLISHED', 'PAUSED', 'EXPIRED', 'ARCHIVED'
+  ];
 
   ngOnInit() {
     this.loadHouses();
@@ -53,13 +65,48 @@ export class AdminHousesComponent implements OnInit {
   }
 
   deleteHouse(id: string) {
-    // TODO: conectar con handler de borrado
-    console.log('Eliminar casa:', id);
-  }
-
-  toggleStatus(id: string, currentStatus: string) {
-    // TODO: conectar con handler de cambio de estado
-    console.log('Cambiar estado:', id, currentStatus);
+    Swal.fire({
+      title: '¿Eliminar anuncio?',
+      text: 'Esta acción eliminará la publicación de forma permanente.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#FF0000',
+      cancelButtonColor: 'var(--color-acento)'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.adminService.deleteHouse(id).subscribe({
+          next: () => {
+            this.houses.update(page => {
+              if (!page) return page;
+              return {
+                ...page,
+                content: page.content.filter(h => h.id !== id),
+                totalElements: page.totalElements - 1
+              };
+            });
+            Swal.fire({
+              title: '¡Eliminado!',
+              text: 'El anuncio ha sido eliminado correctamente.',
+              icon: 'success',
+              confirmButtonColor: 'var(--color-acento)',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          },
+          error: (err) => {
+            console.error('Error al eliminar:', err);
+            Swal.fire({
+              title: 'Error',
+              text: 'No se pudo eliminar el anuncio.',
+              icon: 'error',
+              confirmButtonColor: 'var(--color-acento)'
+            });
+          }
+        });
+      }
+    });
   }
 
   getStatusBadgeClass(status: string): string {
@@ -75,8 +122,23 @@ export class AdminHousesComponent implements OnInit {
     switch (status) {
       case 'PUBLISHED': return 'Publicado';
       case 'PAUSED': return 'Pausado';
-      case 'DELETED': return 'Eliminado';
+      case 'ARCHIVED': return 'Archivado';
+      case 'DRAFT': return 'En edición';
+      case 'PENDING_REVIEW': return 'Pendiente de revisión';
+      case 'EXPIRED': return 'Expirado';
       default: return status;
+    }
+  }
+
+  parseStatusLabel(label: string): string {
+    switch (label) {
+      case 'Publicado': return 'PUBLISHED';
+      case 'Pausado': return 'PAUSED';
+      case 'Archivado': return 'ARCHIVED';
+      case 'En edición': return 'DRAFT';
+      case 'Pendiente de revisión': return 'PENDING_REVIEW';
+      case 'Expirado': return 'EXPIRED';
+      default: return label;
     }
   }
 
@@ -98,5 +160,50 @@ export class AdminHousesComponent implements OnInit {
 
   get totalElements() {
     return this.houses()?.totalElements ?? 0;
+  }
+
+  toggleStatus(id: string, currentStatus: string) {
+    this.selectedHouseId = id;
+    this.selectedStatus = currentStatus;
+    this.showStatusModal = true;
+  }
+
+  closeStatusModal() {
+    this.showStatusModal = false;
+    this.selectedHouseId = null;
+    this.selectedStatus = '';
+  }
+
+  submitStatusChange() {
+    if (!this.selectedHouseId || !this.selectedStatus) return;
+
+    console.log("PublicationStatus");
+    console.log(this.parseStatusLabel(this.selectedStatus));
+
+    this.isSubmittingStatus = true;
+    this.adminService.setHouseStatus(this.selectedHouseId, this.parseStatusLabel(this.selectedStatus)).subscribe({
+      next: () => {
+        this.isSubmittingStatus = false;
+        this.closeStatusModal();
+        Swal.fire({
+          title: '¡Estado actualizado!',
+          icon: 'success',
+          confirmButtonColor: 'var(--color-acento)',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        this.loadHouses();
+      },
+      error: (err) => {
+        console.error(err);
+        this.isSubmittingStatus = false;
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo actualizar el estado.',
+          icon: 'error',
+          confirmButtonColor: 'var(--color-acento)'
+        });
+      }
+    });
   }
 }
