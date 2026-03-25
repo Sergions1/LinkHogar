@@ -43,5 +43,18 @@ public class HouseRepositoryImpl implements HouseRepository {
         return jpaHouseRepository.countByPublicationStatus(status);
     }
 
+    @Override
+    public Boolean delete(UUID houseID) {
+        try {
+            jpaHouseRepository.deleteById(houseID);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
+    @Override
+    public Page<House> findByPublicationStatus(PublicationStatus status, Pageable pageable) {
+        return jpaHouseRepository.findByPublicationStatus(status, pageable);
+    }
 }

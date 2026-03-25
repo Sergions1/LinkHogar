@@ -14,4 +14,5 @@ import java.util.UUID;
 public interface JpaHouseRepository extends JpaRepository<House, UUID> {
     Page<House> findByAddress_City(String City, Pageable pageable);
     long countByPublicationStatus(PublicationStatus status);
+    Page<House> findByPublicationStatus(PublicationStatus status, Pageable pageable);
 }

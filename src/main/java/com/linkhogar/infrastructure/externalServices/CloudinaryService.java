@@ -24,4 +24,15 @@ public class CloudinaryService {
         // Extraemos solo la URL segura (https)
         return uploadResult.get("secure_url").toString();
     }
+
+    public boolean deleteImage(String publicId){
+        try {
+            // Cloudinary devuelve un Map. Si va bien, contiene { "result": "ok" }
+            Map<?, ?> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            return "ok".equals(result.get("result"));
+        } catch (IOException e) {
+            System.err.println("Error de conexión al eliminar en Cloudinary (publicId: " + publicId + "): " + e.getMessage());
+            return false;
+        }
+    }
 }

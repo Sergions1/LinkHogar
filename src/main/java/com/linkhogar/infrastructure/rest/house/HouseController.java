@@ -2,8 +2,12 @@ package com.linkhogar.infrastructure.rest.house;
 
 import com.linkhogar.application.house.Image.addImage.AddHouseImagesCommand;
 import com.linkhogar.application.house.Image.addImage.AddHouseImagesCommandHandler;
+import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommand;
+import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommandHandler;
 import com.linkhogar.application.house.create.CreateHouseCommand;
 import com.linkhogar.application.house.create.CreateHouseCommandHandler;
+import com.linkhogar.application.house.delete.DeleteHouseCommand;
+import com.linkhogar.application.house.delete.DeleteHouseCommandHandler;
 import com.linkhogar.application.house.get.GetQuery;
 import com.linkhogar.application.house.get.GetQueryHandle;
 import com.linkhogar.application.house.get.HouseResponse;
@@ -12,18 +16,15 @@ import com.linkhogar.application.house.getByCity.GetByCityQueryHandler;
 import com.linkhogar.application.house.getByCity.HouseCardResponse;
 import com.linkhogar.application.house.getById.GetByIdQuery;
 import com.linkhogar.application.house.getById.GetByIdQueryHandler;
-import com.linkhogar.domain.house.House;
+import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.infrastructure.externalServices.CloudinaryService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
-import static com.linkhogar.domain.common.result.ErrorType.*;
 
 @RestController
 @RequestMapping("/houses") // (Spring) Define la ruta base.
@@ -44,6 +44,8 @@ public class HouseController {
     private final GetQueryHandle getQueryHandle;
     private final GetByIdQueryHandler getByIdQueryHandler;
     private final AddHouseImagesCommandHandler addHouseImagesCommandHandler;
+    private final SetHouseStatusCommandHandler setHouseStatusCommandHandler;
+    private final DeleteHouseCommandHandler deleteHouseCommandHandler;
 
     private final CloudinaryService cloudinaryService;
 
@@ -126,6 +128,41 @@ public class HouseController {
 
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error subiendo las imágenes: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> changeHouseStatus(
+            @PathVariable UUID id,
+            @RequestBody SetHouseStatusCommand request) {
+
+        SetHouseStatusCommand command = new SetHouseStatusCommand(
+                id,
+                request.status()
+        );
+
+        //TODO queda revisar que el usuario dueño tambien pueda realizar el cambio
+
+        try{
+            Result<Void> result = setHouseStatusCommandHandler.handle(command);
+
+            return ResponseEntity.ok().build();
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteHouse(@PathVariable UUID id) {
+        DeleteHouseCommand command = new DeleteHouseCommand(id);
+
+        try{
+        Result<Void> result = deleteHouseCommandHandler.handle(command); // Inyecta el DeleteHouseCommandHandler
+
+
+            return ResponseEntity.ok().build();
+        }catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

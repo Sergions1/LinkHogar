@@ -38,6 +38,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING) //Guardamos el texto, no el numero
     private Role role;
+    private boolean enabled = true;
 
     //Relaciones
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true) //En caso de ser eliminada una casa del listado, esta se elimina
@@ -47,10 +48,15 @@ public class User implements UserDetails {
 
 
 
-    public void updateUser(String firstName, String lastName, LocalDateTime fechaNac) {
+
+
+    public void updateUser(String firstName, String lastName, LocalDateTime fechaNac, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.fecha_nac = fechaNac;
+        if (phone != null && !phone.isBlank()) {
+            this.phone = Long.parseLong(phone); // O simplemente this.phone = phone; si es un String en tu base de datos
+        }
     }
 
     @Override
@@ -80,6 +86,8 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.enabled;
     }
+
+
 }

@@ -34,7 +34,15 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/currentUser").authenticated()
                         .requestMatchers(HttpMethod.GET, "/admin/stats").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.PUT, "/users/*").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.PATCH, "/users/*/toggle-enabled").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.POST, "/admin/create-user").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.GET, "/admin/pendind").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/houses/*/status").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.DELETE, "/houses/*").hasAnyAuthority("Admin", "LinkHogar")
+
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -69,7 +77,7 @@ public class SecurityConfig {
         ));
 
         // Permitir todos los verbos HTTP (GET, POST, PUT, DELETE...)
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
         // Permitir cabeceras (Tokens, Content-Type...)
         configuration.setAllowedHeaders(List.of("*"));

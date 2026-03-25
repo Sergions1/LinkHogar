@@ -13,7 +13,8 @@ public record UserResponse (
     LocalDateTime fechaNac,
     LocalDateTime creationDate,
     String phone,
-    String role
+    String role,
+    Boolean enabled
 ){
 
     public static  UserResponse mapToResponse(User user) {
@@ -25,7 +26,8 @@ public record UserResponse (
                 user.getFecha_nac(),
                 user.getRegisterDate(),
                 user.getPhone() != null ? user.getPhone().toString() : null,
-                user.getRole() != null ? user.getRole().toString() : null
+                user.getRole() != null ? user.getRole().toString() : null,
+                user.isEnabled()
         );
     }
 }
