@@ -52,4 +52,9 @@ public class HouseRepositoryImpl implements HouseRepository {
             return false;
         }
     }
+
+    @Override
+    public Page<House> findByPublicationStatus(PublicationStatus status, Pageable pageable) {
+        return jpaHouseRepository.findByPublicationStatus(status, pageable);
+    }
 }

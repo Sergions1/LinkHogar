@@ -5,11 +5,12 @@ import {UserService} from '../../../services/user/user-service';
 import {UserResponse} from '../../../Models/Users/UserResponse';
 import {AdminService} from '../../../services/admin/admin-service';
 import {DashboardStatsResponse} from '../../../Models/Admin/DashboardStatsResponse';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })

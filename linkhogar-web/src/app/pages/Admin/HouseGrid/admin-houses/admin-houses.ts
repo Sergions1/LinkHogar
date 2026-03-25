@@ -1,23 +1,24 @@
 // admin/casas/admin-casas.component.ts
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {RouterLink} from '@angular/router';
 import {HouseService} from '../../../../services/house/house-service';
 import {AdminService} from '../../../../services/admin/admin-service';
 import {PageResponse} from '../../../../Models/Shared/PageResponse';
 import {HouseResponse} from '../../../../Models/Houses/HouseResponse';
 import Swal from 'sweetalert2';
 import {FormsModule} from '@angular/forms';
+import {RouterModule, Router} from '@angular/router';
 
 
 @Component({
   selector: 'app-admin-houses',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule,RouterModule, FormsModule],
   templateUrl: './admin-houses.html',
   styleUrls: ['./admin-houses.scss']
 })
 export class AdminHousesComponent implements OnInit {
+  private router = inject(Router);
   private houseService = inject(HouseService);
   private adminService = inject(AdminService);
 
@@ -205,5 +206,9 @@ export class AdminHousesComponent implements OnInit {
         });
       }
     });
+  }
+
+  redirectToRequests(){
+    this.router.navigate(['/admin/houses/requests']);
   }
 }

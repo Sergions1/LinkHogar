@@ -4,20 +4,18 @@ import com.linkhogar.application.admin.DashboardStatsResponse;
 import com.linkhogar.application.admin.createUserbyAdmin.CreateUserByAdminCommand;
 import com.linkhogar.application.admin.createUserbyAdmin.CreateUserByAdminHandler;
 import com.linkhogar.application.admin.createUserbyAdmin.CreateUserByAdminResponse;
-import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommand;
-import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommandHandler;
+import com.linkhogar.application.house.get.HouseResponse;
+import com.linkhogar.application.house.getPendingHouses.GetPendingHousesQuery;
+import com.linkhogar.application.house.getPendingHouses.GetPendingHousesQueryHandler;
 import com.linkhogar.domain.common.enums.PublicationStatus;
-import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.infrastructure.persistence.user.JpaUserRepository;
 import com.linkhogar.infrastructure.persistence.house.JpaHouseRepository;
-// ... tus imports
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -31,6 +29,8 @@ public class AdminController {
     private final JpaUserRepository userRepository;
     private final JpaHouseRepository houseRepository;
     private final CreateUserByAdminHandler createUserByAdminHandler;
+    private final GetPendingHousesQueryHandler getPendingHousesQueryHandler;
+
 
     @GetMapping("/stats")
     public DashboardStatsResponse getDashboardStats() {
@@ -52,6 +52,20 @@ public class AdminController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/houses/pending")
+    public ResponseEntity<Page<HouseResponse>> getPendingHouses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        try{
+            GetPendingHousesQuery query = new GetPendingHousesQuery(page, size);
+            return ResponseEntity.ok(getPendingHousesQueryHandler.handle(query));
+        }catch (RuntimeException e){
+            return ResponseEntity.noContent().build();
+        }
+
     }
 
 

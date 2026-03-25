@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/users/*").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.PATCH, "/users/*/toggle-enabled").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.POST, "/admin/create-user").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.GET, "/admin/pendind").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/houses/*/status").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.DELETE, "/houses/*").hasAnyAuthority("Admin", "LinkHogar")
