@@ -54,6 +54,9 @@ export class HouseService {
    * @returns Un Observable con la respuesta de la creación
    */
   createHouse(data: HouseForm) {
+    console.log('latitude:', data.location.latitude);   // 👈
+    console.log('longitude:', data.location.longitude); // 👈
+
     const payload = {
       title: data.details.title,
       description: data.details.description,
@@ -81,7 +84,9 @@ export class HouseService {
       storage: data.features.storage,
       pool: data.features.pool,
       commonAreas: data.features.commonAreas,
-      petsAllowed: data.features.petsAllowed
+      petsAllowed: data.features.petsAllowed,
+      latitude: data.location.latitude,
+      longitude: data.location.longitude,
     };
 
     const token = localStorage.getItem('token'); // O el servicio donde guardes tu JWT

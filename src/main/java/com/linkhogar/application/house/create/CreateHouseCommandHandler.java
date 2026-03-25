@@ -35,6 +35,8 @@ public class CreateHouseCommandHandler {
                 .cp(command.getCp())
                 .province(command.getProvince())
                 .country(command.getCountry())
+                .latitude(command.getLatitude())
+                .longitude(command.getLongitude())
                 .build();
 
         addressRepository.save(address);

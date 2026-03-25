@@ -25,10 +25,19 @@ export class Explore implements OnInit {
   private citySlug: string | null = null;
 
   ngOnInit() {
-    // Leemos los parámetros de ruta
     this.route.paramMap.subscribe(params => {
       this.citySlug = params.get('municipio');
-      this.loadHouses(0);
+
+      // 👇 si no hay param de ruta, leemos el queryParam ?q=
+      if (!this.citySlug) {
+        this.route.queryParamMap.subscribe(queryParams => {
+          const q = queryParams.get('q');
+          this.citySlug = q ? this.toSlug(q) : null;
+          this.loadHouses(0);
+        });
+      } else {
+        this.loadHouses(0);
+      }
     });
   }
 
@@ -79,5 +88,12 @@ export class Explore implements OnInit {
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+
+  private toSlug(text: string): string {
+    return text.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '-');
   }
 }
