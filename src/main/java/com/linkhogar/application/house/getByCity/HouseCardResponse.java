@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -27,4 +28,6 @@ public class HouseCardResponse
     private int baths;
     private long price;
     private Address address;
+
+    private List<String> images;
 }

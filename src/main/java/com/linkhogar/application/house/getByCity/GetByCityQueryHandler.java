@@ -90,7 +90,8 @@ public class GetByCityQueryHandler {
                 house.getRooms(),
                 house.getBaths(),
                 house.getPrice(),
-                house.getAddress()
+                house.getAddress(),
+                house.getImages()
         );
     }
 }

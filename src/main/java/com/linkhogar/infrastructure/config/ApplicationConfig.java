@@ -1,7 +1,12 @@
 package com.linkhogar.infrastructure.config;
 
+import com.linkhogar.application.settings.getByKey.GetAppSettingsByKeyQuery;
+import com.linkhogar.application.settings.getByKey.GetAppSettingsByKeyQueryHandler;
+import com.linkhogar.application.settings.updateAppSetting.UpdateAppSettingCommand;
+import com.linkhogar.application.settings.updateAppSetting.UpdateAppSettingCommandHandler;
 import com.linkhogar.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -17,10 +22,13 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
 
+
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
     private final UserRepository userRepository;
+    private final GetAppSettingsByKeyQueryHandler getQueryHandler;
+    private final UpdateAppSettingCommandHandler updateCommandHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -60,5 +68,26 @@ public class ApplicationConfig {
                 return execution.execute(request, body);
             });
         }};
+    }
+
+    @Bean
+    public CommandLineRunner initDefaultSettings() {
+        return args -> {
+            String heroImageName = "HERO_INITIAL_IMAGE";
+            // Sustituye por la URL real de Cloudinary que quieras mostrar por defecto
+            String defaultHeroImageUrl = "https://res.cloudinary.com/dnhoytwpu/image/upload/v1774483515/fotoIndex_udtvaf.png";
+
+            GetAppSettingsByKeyQuery query = new GetAppSettingsByKeyQuery(heroImageName, null);
+            String currentSetting = getQueryHandler.handle(query);
+
+            if (currentSetting == null) {
+                UpdateAppSettingCommand command = new UpdateAppSettingCommand(
+                        heroImageName,
+                        defaultHeroImageUrl,
+                        "Imagen inicial del buscador en la página principal (Explore)"
+                );
+                updateCommandHandler.handle(command);
+            }
+        };
     }
 }
