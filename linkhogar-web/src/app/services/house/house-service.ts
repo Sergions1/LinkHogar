@@ -35,12 +35,12 @@ export class HouseService {
    * @param page Numero de página que queremos obtener (Por defecto la primera)
    * @param size Numero de elementos en la página (Por defecto 10)
    * @returns Un objeto PageResponse con elementos HouseResponse*/
-  getByCityPaginatedHouses(city:string, page: number = 0, size: number=10): Observable<PageResponse<HouseResponse>>{
+  getByCityPaginatedHouses(city:string, page: number = 0, size: number=10): Observable<PageResponse<HouseCardResponse>>{
     const params = new HttpParams()
       .set('page', page)
       .set('size', size);
 
-    return this.http.get<PageResponse<HouseResponse>>(`${this.apiUrl}/city/${city}`, {params});
+    return this.http.get<PageResponse<HouseCardResponse>>(`${this.apiUrl}/city/${city}`, {params});
   }
 
   getHouseById( houseId:string): Observable<HouseResponse> {
