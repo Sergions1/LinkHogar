@@ -1,47 +1,89 @@
+<!-- login.component.html -->
 <div class="container d-flex justify-content-center align-items-center vh-100 bg">
-
   <div class="col-12 col-md-8 col-lg-5 col-xl-4">
 
-    <div class="text-center mb-4">
-      <h1 class="h2 text-oscuro">Inicia sesión</h1>
-      <p class="text-muted">Bienvenido de vuelta. Entra en tu cuenta.</p>
-    </div>
-
-  <div class="card shadow-sm border-0 rounded-4">
-    <div class="card-body p-4 p-md-5">
 
 
-      <form (ngSubmit)="onSubmit()">
+    <div class="card shadow-sm border-0 rounded-4 bg-primario">
+      <!-- Cabecera -->
+      <div class="text-center text-white mt-5">
+        <h1 class="h2 fw-bold">Inicia sesión</h1>
+        <p class="">Bienvenido de vuelta. Entra en tu cuenta.</p>
+      </div>
 
-        <div class="mb-3 text-start">
-          <label for="mail" class="form-label">Email</label>
-          <input
-            type="email"
-            class="form-control"
-            id="mail"
-            [(ngModel)]="loginData.mail"
-            name="mail"
-            placeholder="nombre@ejemplo.com"
-            required>
-          <div id="errorMail"></div>
-        </div>
+      <div class="card-body pe-5 ps-5 pb-4">
 
-        <div class="mb-3 text-start">
-          <label for="password" class="form-label">Contraseña</label>
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            [(ngModel)]="loginData.password"
-            name="password"
-            required>
-          <div id="errorPwd"></div>
-        </div>
+        <form (ngSubmit)="onSubmit()" novalidate>
 
-        <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>
+          <!-- Email -->
+          <div class="mb-3 text-start">
+            <label for="mail" class="form-label fw-semibold text-white">Email</label>
+            <input type="email"
+                   class="form-control"
+                   [class.is-invalid]="mailError()"
+                   [class.is-valid]="!mailError() && loginData.mail"
+                   id="mail"
+                   [(ngModel)]="loginData.mail"
+                   name="mail"
+                   placeholder="nombre@ejemplo.com"
+                   (input)="mailError.set(null)">
+            @if (mailError()) {
+              <div class="invalid-feedback">
+                <i class="bi bi-exclamation-circle me-1"></i>{{ mailError() }}
+              </div>
+            }
+          </div>
 
-      </form>
+          <!-- Contraseña -->
+          <div class="mb-4 text-start">
+            <label for="password" class="form-label fw-semibold text-white">Contraseña</label>
+            <div class="input-group">
+              <input [type]="showPassword() ? 'text' : 'password'"
+                     class="form-control"
+                     [class.is-invalid]="passwordError()"
+                     [class.is-valid]="!passwordError() && loginData.password"
+                     id="password"
+                     [(ngModel)]="loginData.password"
+                     name="password"
+                     placeholder="Tu contraseña"
+                     (input)="passwordError.set(null)">
+              <button type="button"
+                      class="btn btn-outline-acento"
+                      (click)="togglePassword()"
+                      tabindex="-1">
+                <i class="bi" [class.bi-eye]="!showPassword()" [class.bi-eye-slash]="showPassword()"></i>
+              </button>
+              @if (passwordError()) {
+                <div class="invalid-feedback">
+                  <i class="bi bi-exclamation-circle me-1"></i>{{ passwordError() }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Botón -->
+          <button type="submit"
+                  class="btn primary-btn w-100 py-2 fw-semibold"
+                  [disabled]="isLoading()">
+            @if (isLoading()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>Entrando...
+            } @else {
+              <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+            }
+          </button>
+
+        </form>
+
+        <!-- Enlace registro -->
+        <hr class="my-4 opacity-25">
+        <p class="text-center text-muted small mb-0">
+          ¿No tienes cuenta?
+          <a routerLink="/register" class="text-white fw-semibold">
+            Regístrate aquí
+          </a>
+        </p>
+
+      </div>
     </div>
   </div>
-</div>
 </div>

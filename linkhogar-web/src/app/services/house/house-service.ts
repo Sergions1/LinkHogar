@@ -35,12 +35,12 @@ export class HouseService {
    * @param page Numero de página que queremos obtener (Por defecto la primera)
    * @param size Numero de elementos en la página (Por defecto 10)
    * @returns Un objeto PageResponse con elementos HouseResponse*/
-  getByCityPaginatedHouses(city:string, page: number = 0, size: number=10): Observable<PageResponse<HouseResponse>>{
+  getByCityPaginatedHouses(city:string, page: number = 0, size: number=10): Observable<PageResponse<HouseCardResponse>>{
     const params = new HttpParams()
       .set('page', page)
       .set('size', size);
 
-    return this.http.get<PageResponse<HouseResponse>>(`${this.apiUrl}/city/${city}`, {params});
+    return this.http.get<PageResponse<HouseCardResponse>>(`${this.apiUrl}/city/${city}`, {params});
   }
 
   getHouseById( houseId:string): Observable<HouseResponse> {
@@ -54,6 +54,9 @@ export class HouseService {
    * @returns Un Observable con la respuesta de la creación
    */
   createHouse(data: HouseForm) {
+    console.log('latitude:', data.location.latitude);   // 👈
+    console.log('longitude:', data.location.longitude); // 👈
+
     const payload = {
       title: data.details.title,
       description: data.details.description,
@@ -81,7 +84,9 @@ export class HouseService {
       storage: data.features.storage,
       pool: data.features.pool,
       commonAreas: data.features.commonAreas,
-      petsAllowed: data.features.petsAllowed
+      petsAllowed: data.features.petsAllowed,
+      latitude: data.location.latitude,
+      longitude: data.location.longitude,
     };
 
     const token = localStorage.getItem('token'); // O el servicio donde guardes tu JWT

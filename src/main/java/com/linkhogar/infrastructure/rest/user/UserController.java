@@ -49,26 +49,6 @@ public class UserController {
     private final ToggleUserEnabledHandler toggleUserEnabledHandler;
 
     @Operation(
-            summary = "Registrar un nuevo usuario",
-            description = "Crea un usuario en el sistema verificando que el email no exista previamente. Devuelve el UUID generado."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos (Validation Error)"),
-            @ApiResponse(responseCode = "409", description = "El email ya está registrado")
-    })
-    @PostMapping
-    public ResponseEntity<?> register(@RequestBody CreateUserCommand request){
-        Result<UUID> result = createUserCommandHandler.handle(request);
-
-        if(result.isSuccess()){
-            return ResponseEntity.created(URI.create("/users/"+result.getValue())).body(result.getValue());
-        }
-
-        return mapErrorToResponse(result.getError());
-    }
-
-    @Operation(
             summary = "Obtener usuario por Id",
             description = "Recupera la información pública de un usuario dado su UUID. No devuelve la contraseña."
     )

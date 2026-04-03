@@ -7,6 +7,8 @@ import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQuery;
 import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQueryHandler;
 import com.linkhogar.application.user.login.UserLoginCommand;
 import com.linkhogar.application.user.login.UserLoginCommandHandler;
+import com.linkhogar.application.user.verify.VerifyUserCommand;
+import com.linkhogar.application.user.verify.VerifyUserCommandHandler;
 import com.linkhogar.domain.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class AuthController {
     private final UserLoginCommandHandler userLoginCommandHandler;
     private final CreateUserCommandHandler createUserCommandHandler;
+    private final VerifyUserCommandHandler verifyUserCommandHandler;
 
 
     @Operation(
@@ -48,13 +51,22 @@ public class AuthController {
     )
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody CreateUserCommand command) {
-        Result<UUID> result = createUserCommandHandler.handle(command);
-
-        if (!result.isSuccess()) {
-            return ResponseEntity.badRequest().body(result.getError());
+        try {
+            createUserCommandHandler.handle(command);
+            return ResponseEntity.ok("Registro exitoso. Por favor, revisa tu correo para verificar la cuenta.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
 
-        return ResponseEntity.ok(result.getValue());
+    @GetMapping("/verify/{token}")
+    public ResponseEntity<String> verifyEmail(@PathVariable String token) {
+        try {
+            verifyUserCommandHandler.handle(new VerifyUserCommand(token));
+            return ResponseEntity.ok("Cuenta verificada con éxito. Ya puedes iniciar sesión.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }

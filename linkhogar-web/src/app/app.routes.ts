@@ -12,9 +12,13 @@ import {DashboardComponent} from './pages/Admin/dashboard/dashboard';
 import {AdminHousesComponent} from './pages/Admin/HouseGrid/admin-houses/admin-houses';
 import {AdminUsersComponent} from './pages/Admin/usersgrid/admin-users/admin-users';
 import {AdminRequests} from './pages/Admin/HouseGrid/admin-requests/admin-requests';
+import {Register} from './pages/auth/register/register';
+import {Verify} from './pages/auth/verify/verify';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
+  {path: 'register', component: Register},
+  {path: 'verify', component: Verify},
   {path:"", component: LandingComponent},
   {path:"explore", component: Explore},
   {path: 'explore/:provincia/:municipio', component: Explore },

@@ -1,9 +1,18 @@
 package com.linkhogar.infrastructure.config;
 
+import com.linkhogar.application.settings.getByName.GetAppSettingsByNameQuery;
+import com.linkhogar.application.settings.getByName.GetAppSettingsByNameQueryHandler;
+import com.linkhogar.application.settings.updateAppSetting.UpdateAppSettingCommand;
+import com.linkhogar.application.settings.updateAppSetting.UpdateAppSettingCommandHandler;
+import com.linkhogar.domain.settings.AppSettingsRepository;
 import com.linkhogar.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -12,13 +21,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
 
+
 @Configuration
+@EnableCaching
 @RequiredArgsConstructor
 public class ApplicationConfig {
     private final UserRepository userRepository;
+    private final GetAppSettingsByNameQueryHandler getQueryHandler;
+    private final UpdateAppSettingCommandHandler updateCommandHandler;
+    private final AppSettingsRepository appSettingsRepository;
+    private final CacheManager cacheManager;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -46,5 +62,45 @@ public class ApplicationConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        // Nominatim requiere un User-Agent
+        return new RestTemplate(factory) {{
+            getInterceptors().add((request, body, execution) -> {
+                request.getHeaders().set("User-Agent", "LinkHogar/1.0");
+                return execution.execute(request, body);
+            });
+        }};
+    }
+
+    @Bean
+    public CommandLineRunner initDefaultSettings() {
+        return args -> {
+            String heroImageName = "HERO_INITIAL_IMAGE";
+            // Sustituye por la URL real de Cloudinary que quieras mostrar por defecto
+            String defaultHeroImageUrl = "https://res.cloudinary.com/dnhoytwpu/image/upload/v1774483515/fotoIndex_udtvaf.png";
+
+            GetAppSettingsByNameQuery query = new GetAppSettingsByNameQuery(heroImageName, null);
+            String currentSetting = getQueryHandler.handle(query);
+
+            if (currentSetting == null) {
+                UpdateAppSettingCommand command = new UpdateAppSettingCommand(
+                        heroImageName,
+                        defaultHeroImageUrl,
+                        "Imagen inicial del buscador en la página principal (Explore)"
+                );
+                updateCommandHandler.handle(command);
+            }
+
+            var cache = cacheManager.getCache("appSettings");
+            if(cache != null){
+                appSettingsRepository.findAll().forEach(setting -> {
+                    cache.put(setting.getName(), setting.getValue());
+                });
+            }
+        };
     }
 }

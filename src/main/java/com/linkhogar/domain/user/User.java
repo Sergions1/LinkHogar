@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +34,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String mail;
     private String password;
-    private LocalDateTime fecha_nac;
+    private LocalDate fecha_nac;
     private LocalDateTime registerDate;
 
     @Enumerated(EnumType.STRING) //Guardamos el texto, no el numero
@@ -50,7 +51,7 @@ public class User implements UserDetails {
 
 
 
-    public void updateUser(String firstName, String lastName, LocalDateTime fechaNac, String phone) {
+    public void updateUser(String firstName, String lastName, LocalDate fechaNac, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.fecha_nac = fechaNac;

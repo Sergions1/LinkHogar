@@ -1,8 +1,9 @@
-// steps/ubication-step/ubication-step.ts
 import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, from, Subject, switchMap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { inject } from '@angular/core';
 
 export interface UbicationData {
   street: string;
@@ -12,6 +13,14 @@ export interface UbicationData {
   cp: string;
   floor?: string;
   door?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+interface NominatimResult {
+  lat: string;
+  lon: string;
+  display_name: string;
 }
 
 @Component({
@@ -25,14 +34,18 @@ export class UbicationStep implements OnInit {
   @Output() validChange = new EventEmitter<boolean>();
   @Output() dataChange = new EventEmitter<UbicationData>();
 
+  private http = inject(HttpClient);
+
   form = signal<UbicationData>({
     street: '', number: '', city: '',
-    province: '', cp: '', floor: '', door: ''
+    province: '', cp: '', floor: '', door: '',
+    latitude: undefined, longitude: undefined
   });
 
   isValidating = signal(false);
   isValid = signal(false);
   errorMessage = signal<string | null>(null);
+  foundAddress = signal<string | null>(null);
 
   private searchSubject = new Subject<UbicationData>();
 
@@ -40,28 +53,37 @@ export class UbicationStep implements OnInit {
     if (this.data) this.form.set({ ...this.data });
 
     this.searchSubject.pipe(
-      debounceTime(600),
+      debounceTime(800),
       distinctUntilChanged(),
       switchMap(data => {
         this.isValidating.set(true);
         this.errorMessage.set(null);
+        this.foundAddress.set(null);
         return from(this.validateAddress(data));
       })
     ).subscribe({
-      next: (valid: boolean) => {
+      next: (result) => {
         this.isValidating.set(false);
-        this.isValid.set(valid);
-        this.validChange.emit(valid);
-        if (!valid) {
-          this.errorMessage.set('Address not found. Please check the details.');
-        } else {
+        if (result) {
+          this.isValid.set(true);
+          this.foundAddress.set(result.display_name);
+          this.form.update(f => ({
+            ...f,
+            latitude: parseFloat(result.lat),
+            longitude: parseFloat(result.lon)
+          }));
+          this.validChange.emit(true);
           this.dataChange.emit(this.form());
+        } else {
+          this.isValid.set(false);
+          this.errorMessage.set('Dirección no encontrada. Comprueba los datos.');
+          this.validChange.emit(false);
         }
       },
       error: () => {
         this.isValidating.set(false);
         this.isValid.set(false);
-        this.errorMessage.set('Error validating address. Please try again.');
+        this.errorMessage.set('Error al validar la dirección. Inténtalo de nuevo.');
         this.validChange.emit(false);
       }
     });
@@ -71,6 +93,7 @@ export class UbicationStep implements OnInit {
     const f = this.form();
     this.isValid.set(false);
     this.validChange.emit(false);
+    this.foundAddress.set(null);
     if (f.street.trim() && f.number.trim() && f.city.trim() && f.cp.trim()) {
       this.searchSubject.next(f);
     }
@@ -81,12 +104,26 @@ export class UbicationStep implements OnInit {
     this.onFieldChange();
   }
 
-  private validateAddress(data: UbicationData): Promise<boolean> {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const valid = !!(data.street && data.number && data.city && data.cp);
-        resolve(valid);
-      }, 500);
-    });
+  private async validateAddress(data: UbicationData): Promise<NominatimResult | null> {
+    const query = `${data.street} ${data.number}, ${data.cp} ${data.city}, ${data.province}, España`;
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=es`;
+
+    try {
+      const results = await this.http.get<NominatimResult[]>(url, {
+        headers: { 'Accept-Language': 'es' }
+      }).toPromise();
+
+      if (results && results.length > 0) {
+        const result = results[0];
+        if (result.display_name.includes(data.cp)) {
+          return result;
+        }
+        // 👇 CP no coincide con el resultado
+        return null;
+      }
+      return null;
+    } catch {
+      return null;
+    }
   }
 }

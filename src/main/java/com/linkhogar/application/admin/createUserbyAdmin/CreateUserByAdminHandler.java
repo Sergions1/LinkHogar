@@ -30,7 +30,7 @@ public class CreateUserByAdminHandler {
                 .lastName(command.lastName())
                 .mail(command.mail())
                 .phone(command.phone() != null ? Long.parseLong(command.phone()) : null)
-                .fecha_nac(command.fechaNac() != null ? command.fechaNac().atStartOfDay() : null)
+                .fecha_nac(command.fechaNac() != null ? command.fechaNac().atStartOfDay().toLocalDate() : null)
                 .role(Role.valueOf(command.role()))
                 .password(passwordEncoder.encode(rawPassword))
                 .enabled(true)

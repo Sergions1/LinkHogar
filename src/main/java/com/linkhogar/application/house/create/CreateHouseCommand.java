@@ -48,4 +48,7 @@ public class CreateHouseCommand {
     private Boolean pool= false;
     private Boolean commonAreas= false;
     private Boolean petsAllowed= false;
+
+    private Double latitude;
+    private Double longitude;
 }

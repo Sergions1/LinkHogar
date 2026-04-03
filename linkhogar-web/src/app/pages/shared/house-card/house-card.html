@@ -1,9 +1,15 @@
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden card-hover h-100">
 
   <div class="position-relative" style="height: 400px; background-color: #eee;">
+    @if (house.images && house.images.length > 0) {
+      <img [src]="house.images[0]"
+           class="w-100 h-100 object-fit-cover"
+           alt="Foto principal de {{ house.title }}">
+    } @else {
       <span class="position-absolute top-50 start-50 translate-middle text-muted">
-         🏠 Foto
+         🏠 Sin foto
       </span>
+    }
   </div>
 
   <div class="card-body p-4 d-flex flex-column">

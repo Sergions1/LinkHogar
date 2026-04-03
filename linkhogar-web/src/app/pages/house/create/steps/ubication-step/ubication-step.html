@@ -81,19 +81,23 @@
   <!-- Validation status -->
   <div class="mt-4">
     @if (isValidating()) {
-      <div class="d-flex align-items-center gap-2 text-muted">
+      <div class="d-flex align-items-center gap-2 mt-2 text-muted small">
         <div class="spinner-border spinner-border-sm"></div>
-        <span>Validating address...</span>
+        Validando dirección...
       </div>
-    } @else if (isValid()) {
-      <div class="d-flex align-items-center gap-2 text-success">
-        <i class="bi bi-check-circle-fill"></i>
-        <span>Address validated successfully</span>
+    }
+
+    @if (foundAddress()) {
+      <div class="alert alert-success border-0 rounded-3 small mt-2 py-2">
+        <i class="bi bi-check-circle me-2"></i>
+        {{ foundAddress() }}
       </div>
-    } @else if (errorMessage()) {
-      <div class="d-flex align-items-center gap-2 text-danger">
-        <i class="bi bi-x-circle-fill"></i>
-        <span>{{ errorMessage() }}</span>
+    }
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger border-0 rounded-3 small mt-2 py-2">
+        <i class="bi bi-exclamation-circle me-2"></i>
+        {{ errorMessage() }}
       </div>
     }
   </div>

@@ -2,7 +2,6 @@ package com.linkhogar.application.house.create;
 
 import com.linkhogar.domain.address.Address;
 import com.linkhogar.domain.address.AddressRepository;
-import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.HouseRepository;
 import com.linkhogar.domain.house.enums.HouseStatus;
@@ -11,7 +10,6 @@ import com.linkhogar.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -35,6 +33,8 @@ public class CreateHouseCommandHandler {
                 .cp(command.getCp())
                 .province(command.getProvince())
                 .country(command.getCountry())
+                .latitude(command.getLatitude())
+                .longitude(command.getLongitude())
                 .build();
 
         addressRepository.save(address);

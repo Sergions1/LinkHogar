@@ -17,4 +17,6 @@ export interface HouseCardResponse {
   baths: number;
   price: number;
   address: AddressResponse;
+
+  images: string;
 }

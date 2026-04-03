@@ -1,5 +1,5 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {NavigationEnd, Router} from '@angular/router';
+import {NavigationEnd, Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../services/auth/auth.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {filter, Subscription} from 'rxjs';
@@ -9,7 +9,7 @@ import {UserService} from '../../../services/user/user-service';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [FontAwesomeModule],
+  imports: [FontAwesomeModule, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })

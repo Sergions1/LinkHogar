@@ -1,58 +1,31 @@
+<div class="d-flex justify-content-center py-3 row">
+  <div id="mainBuscador" class="d-flex col-10 justify-content-center">
+    <div id="foto" class="w-100 h-100 rounded-3" [style.background-image]="'url('+ getBackgroundUrl()+')'">
+      <h1>Encuentra tu próximo hogar</h1>
+      <h2>El alquiler perfecto te espera. Comienza tu búsqueda a continuación.</h2>
 
-  <body>
-  <div class="d-flex justify-content-center py-3 row">
-    <div id="mainBuscador" class="d-flex col-10 justify-content-center">
-      <div id="foto" class="w-100 h-100 rounded-3">
-        <h1>Encuentra tu próximo hogar</h1>
-        <h2>El alquiler perfecto te espera. Comienza tu búsqueda a continuación.</h2>
-
-        <div class="mt-4 col-md-8 col-lg-6">
-          <div class="input-group mb-3">
-            <input type="text"
-                    class="form-control"
-                    placeholder="Encuentra tu hogar"
-                    [value]="searchQuery()"
-                    (input)="onInput($event)">
-
-            <button
-              class="btn primary-btn"
-              (click)="search()"
-              [disabled]="!selectedCity()">
-              <i class="fa-brands fa-sistrix"></i> Buscar
-            </button>
-          </div>
-          @if (isSearching()) {
-            <ul class="list-group position-absolute" style="z-index: 1000">
-              <li class="list-group-item text-muted">
-                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                Buscando...
-              </li>
-            </ul>
-          } @else if (sugerencias().length > 0) {
-            <ul class="list-group position-absolute" style="z-index: 1000">
-              @for (municipio of sugerencias(); track municipio.id) {
-                <li class="list-group-item list-group-item-action"
-                    (click)="seleccionar(municipio)">
-                  <i class="bi bi-geo-alt me-2 text-primary"></i>
-                  {{ municipio.display }}
-                </li>
-              }
-            </ul>
-          }
+      <div class="mt-4 col-md-8 col-lg-6">
+        <div class="input-group mb-3">
+          <input type="text"
+                 class="form-control"
+                 placeholder="Busca por ciudad..."
+                 [value]="searchQuery()"
+                 (input)="onInput($event)"
+                 (keyup.enter)="search()">
+          <button class="btn primary-btn"
+                  (click)="search()"
+                  [disabled]="!searchQuery().trim()">
+            <i class="bi bi-search me-1"></i> Buscar
+          </button>
         </div>
-
       </div>
-    </div>
-    <div id="pisosRecientes" class="d-flex col-10 justify-content-center mt-5 row">
-      <div class="row">
-        <h3>Publicaciones recientes</h3>
-      </div>
-
 
     </div>
   </div>
 
-
-
-
-  </body>
+  <div id="pisosRecientes" class="d-flex col-10 justify-content-center mt-5 row">
+    <div class="row">
+      <h3>Publicaciones recientes</h3>
+    </div>
+  </div>
+</div>
