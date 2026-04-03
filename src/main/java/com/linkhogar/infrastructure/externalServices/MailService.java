@@ -24,6 +24,7 @@ public class MailService {
     @Async
     public void sendVerificationEmail(String toEmail, String token) {
         try {
+            System.out.println("Intentando enviar correo de verificación a: " + toEmail);
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -44,9 +45,11 @@ public class MailService {
 
             helper.setText(htmlMsg, true);
             mailSender.send(message);
-
+            System.out.println("¡Correo enviado con éxito a: " + toEmail + "!");
         } catch (MessagingException e) {
-            throw new RuntimeException("Error al enviar el correo de verificación", e);
+            System.err.println("EXPLOSIÓN AL ENVIAR CORREO a " + toEmail);
+            System.err.println("Motivo exacto: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
