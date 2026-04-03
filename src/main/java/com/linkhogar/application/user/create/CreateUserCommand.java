@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -19,5 +20,6 @@ public class CreateUserCommand {
     private String lastName;
     private String mail;
     private String password;
-    private LocalDateTime fecha_nac;
+    private LocalDate fecha_nac;
+    private Long phone;
 }

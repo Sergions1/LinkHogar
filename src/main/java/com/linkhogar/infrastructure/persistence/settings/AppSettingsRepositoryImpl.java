@@ -5,6 +5,7 @@ import com.linkhogar.domain.settings.AppSettingsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,5 +21,10 @@ public class AppSettingsRepositoryImpl implements AppSettingsRepository {
     @Override
     public AppSettings save(AppSettings setting) {
         return jpaAppSettingsRepository.save(setting);
+    }
+
+    @Override
+    public List<AppSettings> findAll() {
+       return  jpaAppSettingsRepository.findAll();
     }
 }

@@ -112,4 +112,13 @@ export class AuthService {
       error: () => this.currentUser.set(null)
     });
   }
+
+  verifyEmail(token: string) {
+    // Usamos responseType: 'text' porque el backend devuelve un String plano, no un JSON
+    return this.http.get(`${this.apiUrl}/verify/${token}`, { responseType: 'text' });
+  }
+
+  register(userData: any){
+    return this.http.post(`${this.apiUrl}/register`, userData , { responseType: 'text' });
+  }
 }

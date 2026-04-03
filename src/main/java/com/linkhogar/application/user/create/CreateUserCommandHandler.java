@@ -1,10 +1,9 @@
 package com.linkhogar.application.user.create;
 
 import com.linkhogar.domain.common.result.Result;
-import com.linkhogar.domain.user.User;
-import com.linkhogar.domain.user.UserErrors;
-import com.linkhogar.domain.user.UserRepository;
+import com.linkhogar.domain.user.*;
 import com.linkhogar.domain.user.enums.Role;
+import com.linkhogar.infrastructure.externalServices.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,10 +16,13 @@ import java.util.UUID;
 public class CreateUserCommandHandler {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final VerificationTokenRepository tokenRepository;
+    private final MailService mailService;
 
-    public Result<UUID> handle(CreateUserCommand command) {
+
+    public void handle(CreateUserCommand command) {
         if(userRepository.existByMail(command.getMail())){
-            return Result.failure(UserErrors.EMAIL_NOT_UNIQUE);
+            throw new IllegalArgumentException("Ya existe un usuario con ese email");
         }
 
         User newUser = User.builder()
@@ -32,11 +34,18 @@ public class CreateUserCommandHandler {
                 .role(Role.User)
                 .fecha_nac(command.getFecha_nac())
                 .registerDate(LocalDateTime.now())
+                .phone(command.getPhone())
+                .enabled(false)
                 .build();
 
         userRepository.saveUser(newUser);
 
-        return Result.success(newUser.getId());
+        VerificationToken token = VerificationToken.builder()
+                .user(newUser)
+                .build();
+        tokenRepository.save(token);
+
+        mailService.sendVerificationEmail(newUser.getMail(),  token.getToken());
 
     }
 }

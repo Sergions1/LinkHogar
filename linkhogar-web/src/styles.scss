@@ -74,3 +74,23 @@
 .text-acento{
   color: var(--color-acento) !important;
 }
+
+/* Botón Outline Acento */
+.btn-outline-acento {
+  background-color: transparent !important;
+  border: 1px solid var(--color-acento) !important;
+  color: var(--color-acento) !important;
+}
+
+.btn-outline-acento i {
+  color: var(--color-acento) !important;
+}
+
+.btn-outline-acento:hover {
+  background-color: var(--color-acento) !important;
+  color: var(--color-texto-claro) !important;
+}
+
+.btn-outline-acento:hover i {
+  color: var(--color-texto-claro) !important;
+}

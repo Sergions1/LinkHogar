@@ -1,16 +1,18 @@
-package com.linkhogar.application.settings.getByKey;
+package com.linkhogar.application.settings.getByName;
 
 import com.linkhogar.domain.settings.AppSettings;
 import com.linkhogar.domain.settings.AppSettingsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GetAppSettingsByKeyQueryHandler {
+public class GetAppSettingsByNameQueryHandler {
     private final AppSettingsRepository settingRepository;
 
-    public String handle(GetAppSettingsByKeyQuery query) {
+    @Cacheable(value = "appSettings", key = "#query.name()")
+    public String handle(GetAppSettingsByNameQuery query) {
         return settingRepository.findById(query.name())
                 .map(AppSettings::getValue)
                 .orElse(query.defaultValue());

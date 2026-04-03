@@ -1,12 +1,15 @@
 package com.linkhogar.infrastructure.config;
 
-import com.linkhogar.application.settings.getByKey.GetAppSettingsByKeyQuery;
-import com.linkhogar.application.settings.getByKey.GetAppSettingsByKeyQueryHandler;
+import com.linkhogar.application.settings.getByName.GetAppSettingsByNameQuery;
+import com.linkhogar.application.settings.getByName.GetAppSettingsByNameQueryHandler;
 import com.linkhogar.application.settings.updateAppSetting.UpdateAppSettingCommand;
 import com.linkhogar.application.settings.updateAppSetting.UpdateAppSettingCommandHandler;
+import com.linkhogar.domain.settings.AppSettingsRepository;
 import com.linkhogar.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -24,11 +27,14 @@ import java.util.UUID;
 
 
 @Configuration
+@EnableCaching
 @RequiredArgsConstructor
 public class ApplicationConfig {
     private final UserRepository userRepository;
-    private final GetAppSettingsByKeyQueryHandler getQueryHandler;
+    private final GetAppSettingsByNameQueryHandler getQueryHandler;
     private final UpdateAppSettingCommandHandler updateCommandHandler;
+    private final AppSettingsRepository appSettingsRepository;
+    private final CacheManager cacheManager;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -77,7 +83,7 @@ public class ApplicationConfig {
             // Sustituye por la URL real de Cloudinary que quieras mostrar por defecto
             String defaultHeroImageUrl = "https://res.cloudinary.com/dnhoytwpu/image/upload/v1774483515/fotoIndex_udtvaf.png";
 
-            GetAppSettingsByKeyQuery query = new GetAppSettingsByKeyQuery(heroImageName, null);
+            GetAppSettingsByNameQuery query = new GetAppSettingsByNameQuery(heroImageName, null);
             String currentSetting = getQueryHandler.handle(query);
 
             if (currentSetting == null) {
@@ -87,6 +93,13 @@ public class ApplicationConfig {
                         "Imagen inicial del buscador en la página principal (Explore)"
                 );
                 updateCommandHandler.handle(command);
+            }
+
+            var cache = cacheManager.getCache("appSettings");
+            if(cache != null){
+                appSettingsRepository.findAll().forEach(setting -> {
+                    cache.put(setting.getName(), setting.getValue());
+                });
             }
         };
     }

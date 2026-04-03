@@ -3,6 +3,7 @@ package com.linkhogar.application.settings.updateAppSetting;
 import com.linkhogar.domain.settings.AppSettings;
 import com.linkhogar.domain.settings.AppSettingsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +12,7 @@ public class UpdateAppSettingCommandHandler {
 
     private final AppSettingsRepository settingRepository;
 
+    @CacheEvict(value = "appSetings", key = "#command.name()")
     public void handle(UpdateAppSettingCommand command) {
         AppSettings setting = settingRepository.findById(command.name()).orElse(new AppSettings());
         setting.setName(command.name());

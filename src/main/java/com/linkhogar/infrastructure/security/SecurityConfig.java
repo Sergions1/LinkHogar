@@ -32,6 +32,7 @@ public class SecurityConfig {
                 // 2. Gestionar permisos de rutas
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers( HttpMethod.GET,"/verify/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/currentUser").authenticated()
                         .requestMatchers(HttpMethod.GET, "/admin/stats").authenticated()
                         .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("Admin", "LinkHogar")
@@ -42,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/houses/*/status").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.DELETE, "/houses/*").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.GET, "/AppSettings/*").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         .requestMatchers(
                                 "/v3/api-docs/**",

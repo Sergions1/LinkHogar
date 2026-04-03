@@ -1,0 +1,122 @@
+<!-- register.component.html -->
+<div class="container d-flex justify-content-center align-items-center vh-100 bg">
+  <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+
+    <div class="card shadow-sm border-0 rounded-4 bg-primario">
+
+      <!-- Cabecera -->
+      <div class="text-center text-white mt-5">
+        <h1 class="h2 fw-bold">Crea tu cuenta</h1>
+        <p>Únete a LinkHogar y encuentra tu hogar ideal.</p>
+      </div>
+
+      <div class="card-body pe-5 ps-5 pb-4">
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold text-white">Nombre <span class="text-white opacity-75">*</span></label>
+              <input type="text"
+                     class="form-control"
+                     formControlName="firstName"
+                     [class.is-invalid]="isInvalidField('firstName')"
+                     placeholder="Tu nombre">
+              @if (isInvalidField('firstName')) {
+                <div class="invalid-feedback">El nombre es obligatorio.</div>
+              }
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold text-white">Apellidos <span class="text-white opacity-75">*</span></label>
+              <input type="text"
+                     class="form-control"
+                     formControlName="lastName"
+                     [class.is-invalid]="isInvalidField('lastName')"
+                     placeholder="Tus apellidos">
+              @if (isInvalidField('lastName')) {
+                <div class="invalid-feedback">Los apellidos son obligatorios.</div>
+              }
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-white">Correo electrónico <span class="text-white opacity-75">*</span></label>
+            <input type="email"
+                   class="form-control"
+                   formControlName="mail"
+                   [class.is-invalid]="isInvalidField('mail')"
+                   placeholder="ejemplo@correo.com">
+            @if (isInvalidField('mail')) {
+              <div class="invalid-feedback">
+                @if (registerForm.get('mail')?.hasError('required')) { Ingresa un correo electrónico. }
+                @if (registerForm.get('mail')?.hasError('email')) { El formato del correo no es válido. }
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-white">Contraseña <span class="text-white opacity-75">*</span></label>
+            <div class="input-group">
+              <input [type]="showPassword() ? 'text' : 'password'"
+                     class="form-control"
+                     formControlName="password"
+                     [class.is-invalid]="isInvalidField('password')"
+                     placeholder="Mínimo 6 caracteres">
+              <button type="button"
+                      class="btn btn-outline-acento"
+                      (click)="togglePassword()"
+                      tabindex="-1">
+                <i class="bi" [class.bi-eye]="!showPassword()" [class.bi-eye-slash]="showPassword()"></i>
+              </button>
+              @if (isInvalidField('password')) {
+                <div class="invalid-feedback">
+                  @if (registerForm.get('password')?.hasError('required')) { La contraseña es obligatoria. }
+                  @if (registerForm.get('password')?.hasError('minlength')) { Debe tener al menos 6 caracteres. }
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label class="form-label fw-semibold text-white">
+                Número de teléfono <span class="text-white opacity-50 fw-normal">(Opcional)</span>
+              </label>
+              <input type="number"
+                     class="form-control"
+                     formControlName="phone"
+                     placeholder="Tu número">
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <label class="form-label fw-semibold text-white">
+                Fecha de nacimiento <span class="text-white opacity-50 fw-normal">(Opcional)</span>
+              </label>
+              <input type="date"
+                     class="form-control"
+                     formControlName="fecha_nac">
+            </div>
+          </div>
+
+          <button type="submit"
+                  class="btn primary-btn w-100 py-2 fw-semibold"
+                  [disabled]="registerForm.invalid">
+            <i class="bi bi-person-plus me-2"></i>Registrarse
+          </button>
+
+        </form>
+
+        <!-- Enlace login -->
+        <hr class="my-4 opacity-25">
+        <p class="text-center small mb-0">
+          ¿Ya tienes cuenta?
+          <a routerLink="/login" class="text-white fw-semibold">
+            Inicia sesión aquí
+          </a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
