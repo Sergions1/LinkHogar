@@ -19,7 +19,7 @@
                 </div>
               }
             </div>
-            <button class="btn btn-outline-primary btn-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#avatarModal">
+            <button class="btn btn-outline-acento btn-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#avatarModal">
               Cambiar foto
             </button>
             <h4 class="mt-3 mb-0">{{ currentUser()?.firstName }} {{ currentUser()?.lastName }}</h4>
@@ -48,7 +48,7 @@
 
             <div class="d-flex justify-content-end mt-4 pt-3 border-top">
               @if (!isEditing) {
-                <button type="button" class="btn btn-primary px-4" (click)="toggleEdit()">Editar Perfil</button>
+                <button type="button" class="btn primary-btn px-4" (click)="toggleEdit()">Editar Perfil</button>
               }
               @else {
                 <button type="button" class="btn btn-secondary px-4 me-2" (click)="toggleEdit()">Cancelar</button>
@@ -57,7 +57,67 @@
             </div>
           </form>
 
+          <!-- SECCIÓN DE SEGURIDAD -->
+          <hr class="my-5">
+          <div class="d-flex justify-content-between align-items-center bg-light p-4 rounded">
+            <div>
+              <h5 class="mb-1">Seguridad</h5>
+              <p class="text-muted small mb-0">Protege tu cuenta actualizando tu contraseña periódicamente.</p>
+            </div>
+            <button type="button" class="btn btn-outline-danger px-4" data-bs-toggle="modal" data-bs-target="#passwordModal" (click)="iniciarCambioPassword()">
+              Cambiar Contraseña
+            </button>
+          </div>
+
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIO DE CONTRASEÑA -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cambiar Contraseña</h5>
+        <button type="button" id="closePasswordModal" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="passwordForm">
+
+          @if (passwordStep === 1) {
+            <div class="mb-4 text-center">
+              <p class="text-muted small mb-3">Hemos enviado un código de seguridad a <strong>{{ currentUser()?.mail }}</strong>. Introdúcelo a continuación.</p>
+              <input type="text" class="form-control text-center fw-bold fs-4 mx-auto" style="width: 200px; letter-spacing: 5px;" formControlName="code" placeholder="------" maxlength="6">
+              @if (passwordForm.get('code')?.errors?.['invalidCode']) {
+                <div class="text-danger small mt-2 fw-medium">El código es incorrecto o ha expirado.</div>
+              }
+            </div>
+          }
+          @else {
+            <div class="mb-3">
+              <label class="form-label text-muted small text-uppercase">Nueva Contraseña</label>
+              <input type="password" class="form-control" formControlName="newPassword" placeholder="Mínimo 6 caracteres">
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small text-uppercase">Repetir Contraseña</label>
+              <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Vuelve a escribir la contraseña">
+              @if (passwordForm.errors?.['notSame'] && passwordForm.get('confirmPassword')?.touched) {
+                <div class="text-danger small mt-2 fw-medium">Las contraseñas no coinciden.</div>
+              }
+            </div>
+          }
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        @if (passwordStep === 1) {
+          <button type="button" class="btn primary-btn w-100" [disabled]="passwordForm.get('code')?.invalid" (click)="verificarCodigo()">Verificar Código</button>
+        }
+        @else {
+          <button type="button" class="btn btn-success w-100" [disabled]="passwordForm.invalid" (click)="cambiarPassword()">Actualizar Contraseña</button>
+        }
       </div>
     </div>
   </div>

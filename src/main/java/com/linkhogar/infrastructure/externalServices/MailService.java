@@ -52,4 +52,37 @@ public class MailService {
             e.printStackTrace();
         }
     }
+
+    public void sendPasswordResetEmail(String to, String code) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            // true indica que va a ser multipart, "UTF-8" para la codificación
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            // Ojo: Debe ser exactamente el correo que verificaste en SendPulse
+            helper.setFrom("info@linkhogar.com");
+            helper.setTo(to);
+            helper.setSubject("Código de restablecimiento de contraseña - LinkHogar");
+
+            String htmlMsg = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>"
+                    + "<h2 style='color: #333; text-align: center;'>Cambio de contraseña</h2>"
+                    + "<p style='color: #555; font-size: 16px;'>Hola,</p>"
+                    + "<p style='color: #555; font-size: 16px;'>Hemos recibido una solicitud para cambiar la contraseña de tu cuenta en LinkHogar. Tu código de seguridad es:</p>"
+                    + "<div style='text-align: center; margin: 30px 0;'>"
+                    + "<span style='font-size: 24px; font-weight: bold; background-color: #f4f4f4; padding: 10px 20px; border-radius: 5px; letter-spacing: 5px; color: #333; border: 1px dashed #ccc;'>" + code + "</span>"
+                    + "</div>"
+                    + "<p style='color: #555; font-size: 16px;'>Introdúcelo en la aplicación para establecer tu nueva contraseña.</p>"
+                    + "<hr style='border: 0; border-top: 1px solid #eee; margin: 30px 0;' />"
+                    + "<p style='color: #999; font-size: 12px; text-align: center;'>Si no has solicitado este cambio, por favor ignora este correo.</p>"
+                    + "</div>";
+
+            // El segundo parámetro en 'true' indica que el contenido es HTML
+            helper.setText(htmlMsg, true);
+
+            mailSender.send(message);
+
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error al enviar el correo de recuperación", e);
+        }
+    }
 }

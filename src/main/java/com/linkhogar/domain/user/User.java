@@ -42,6 +42,8 @@ public class User implements UserDetails {
     private boolean enabled = true;
 
     private String avatarUrl;
+    private String verificationCode;
+    private LocalDateTime verificationCodeExpiration;
 
     //Relaciones
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true) //En caso de ser eliminada una casa del listado, esta se elimina

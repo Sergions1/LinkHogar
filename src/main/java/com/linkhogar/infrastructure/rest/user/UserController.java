@@ -1,5 +1,8 @@
 package com.linkhogar.infrastructure.rest.user;
 
+import com.linkhogar.application.user.changePassword.ChangePasswordCommand;
+import com.linkhogar.application.user.changePassword.ChangePasswordCommandHandler;
+import com.linkhogar.application.user.changePassword.ChangePasswordRequest;
 import com.linkhogar.application.user.create.CreateUserCommand;
 import com.linkhogar.application.user.create.CreateUserCommandHandler;
 import com.linkhogar.application.user.delete.DeleteUserCommand;
@@ -32,6 +35,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.UUID;
 
 
@@ -47,6 +51,7 @@ public class UserController {
     private final GetCurrentUserQueryHandler getCurrentUserQueryHandler;
     private final GetAllQueryHandler getAllQueryHandler;
     private final ToggleUserEnabledHandler toggleUserEnabledHandler;
+    private final ChangePasswordCommandHandler changePasswordCommandHandler;
 
     @Operation(
             summary = "Obtener usuario por Id",
@@ -165,6 +170,21 @@ public class UserController {
         ToggleUserEnabledCommand command = new ToggleUserEnabledCommand(id);
         toggleUserEnabledHandler.handle(command);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @PutMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request, Principal principal) {
+        // Sacamos el email directamente del token por seguridad
+        ChangePasswordCommand command = new ChangePasswordCommand(
+                request.mail(),
+                request.code(),
+                request.newPassword()
+        );
+
+        changePasswordCommandHandler.handle(command);
+
+        return ResponseEntity.ok().build();
     }
 
     private ResponseEntity<?> mapErrorToResponse(Error error) {

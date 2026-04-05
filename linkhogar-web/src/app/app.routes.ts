@@ -15,6 +15,7 @@ import {AdminRequests} from './pages/Admin/HouseGrid/admin-requests/admin-reques
 import {Register} from './pages/auth/register/register';
 import {Verify} from './pages/auth/verify/verify';
 import {Profile} from './pages/user/profile/profile';
+import {authGuard} from './guards/authGuard';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -25,7 +26,7 @@ export const routes: Routes = [
   {path: 'explore/:provincia/:municipio', component: Explore },
   {path: 'inmueble/:titulo/:id', component: Detail},
   {path:"publicar-anuncio", component: Infoannouncement},
-  {path:"perfil", component: Profile},
+  {path:"perfil", component: Profile, canActivate: [authGuard]},
   {path:"new-announcement", component: Create},
   {
     path: 'admin',

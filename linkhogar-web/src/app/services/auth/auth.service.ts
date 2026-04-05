@@ -121,4 +121,18 @@ export class AuthService {
   register(userData: any){
     return this.http.post(`${this.apiUrl}/register`, userData , { responseType: 'text' });
   }
+
+  requestPasswordCode(mail: string){
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.post(`${this.apiUrl}/request-password-code`, {mail}, { headers });
+  }
+
+  verifyPasswordCode(payload: { mail: string, code: string }) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.post(`${this.apiUrl}/verify-password-code`, payload, { headers , responseType: 'text' });
+  }
 }
