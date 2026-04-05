@@ -1,96 +1,96 @@
-/* You can add global styles to this file, and also import other style files */
+  /* You can add global styles to this file, and also import other style files */
 
-:root {
-  --color-primario: #4A90E2;          /* Azul Confianza */
-  --color-acento: #F08A5D;            /* Coral Acogedor */
-  --color-fondo-principal: #F8F9FA;   /* Blanco Nube */
-  --color-fondo-secundario: #F1F3F5;  /* Gris Suave */
-  --color-texto: #2D3748;             /* Grafito */
-  --color-exito: #28A745;             /* Verde */
-  --color-error: #E53E3E;             /* Rojo */
+  :root {
+    --color-primario: #4A90E2;          /* Azul Confianza */
+    --color-acento: #F08A5D;            /* Coral Acogedor */
+    --color-fondo-principal: #F8F9FA;   /* Blanco Nube */
+    --color-fondo-secundario: #F1F3F5;  /* Gris Suave */
+    --color-texto: #2D3748;             /* Grafito */
+    --color-exito: #28A745;             /* Verde */
+    --color-error: #E53E3E;             /* Rojo */
 
-  /* Colores de texto para contraste */
-  --color-texto-claro: #FFFFFF;       /* Texto para fondos oscuros */
-  --color-texto-oscuro: #2D3748;      /* Texto para fondos claros (color Grafito) */
-  /* Definir un tono más oscuro para el estado HOVER */
-  --color-acento-oscuro: #DB7C55;
-  /*Definir un tono aún más oscuro para el estado ACTIVE/FOCUS */
-  --color-acento-presionado: #C9724C;
-}
-
-
-
-/* Clases para Fondos*/
-
-.bg-primario {
-  background-color: var(--color-primario);
-}
-.bg-acento {
-  background-color: var(--color-acento);
-}
-.bg-fondo-principal {
-  background-color: var(--color-fondo-principal);
-}
-.bg-fondo-secundario {
-  background-color: var(--color-fondo-secundario);
-}
-.bg-texto {
-  background-color: var(--color-texto);
-}
-.bg-exito {
-  background-color: var(--color-exito);
-}
-.bg-error {
-  background-color: var(--color-error);
-}
+    /* Colores de texto para contraste */
+    --color-texto-claro: #FFFFFF;       /* Texto para fondos oscuros */
+    --color-texto-oscuro: #2D3748;      /* Texto para fondos claros (color Grafito) */
+    /* Definir un tono más oscuro para el estado HOVER */
+    --color-acento-oscuro: #DB7C55;
+    /*Definir un tono aún más oscuro para el estado ACTIVE/FOCUS */
+    --color-acento-presionado: #C9724C;
+  }
 
 
-/* 🎨 Estilos Base del Botón */
-.primary-btn{
-  /* Fondo */
-  background-color: var(--color-acento) !important;
 
-  /* Borde*/
-  border-color: var(--color-acento) !important;
+  /* Clases para Fondos*/
 
-  /* Color de Texto */
-  color: var(--color-texto-claro);
-}
+  .bg-primario {
+    background-color: var(--color-primario);
+  }
+  .bg-acento {
+    background-color: var(--color-acento);
+  }
+  .bg-fondo-principal {
+    background-color: var(--color-fondo-principal);
+  }
+  .bg-fondo-secundario {
+    background-color: var(--color-fondo-secundario);
+  }
+  .bg-texto {
+    background-color: var(--color-texto);
+  }
+  .bg-exito {
+    background-color: var(--color-exito);
+  }
+  .bg-error {
+    background-color: var(--color-error);
+  }
 
-.light-btn-outline{
-  background-color: transparent !important;
-  border: 2px solid white !important;
-  color: white !important;
-}
 
-.light-btn-outline:hover {
-  background-color: rgba(255, 255, 255, 0.25) !important; /* 25% translúcido */
-}
+  /* 🎨 Estilos Base del Botón */
+  .primary-btn{
+    /* Fondo */
+    background-color: var(--color-acento) !important;
 
-.primary-btn:hover{
-  background-color: var(--color-acento-presionado) !important;
-}
+    /* Borde*/
+    border-color: var(--color-acento) !important;
 
-.text-acento{
-  color: var(--color-acento) !important;
-}
+    /* Color de Texto */
+    color: var(--color-texto-claro);
+  }
 
-/* Botón Outline Acento */
-.btn-outline-acento {
-  background-color: transparent !important;
-  border: 1px solid var(--color-acento) !important;
-  color: var(--color-acento) !important;
-}
+  .light-btn-outline{
+    background-color: transparent !important;
+    border: 2px solid white !important;
+    color: white !important;
+  }
 
-.btn-outline-acento i {
-  color: var(--color-acento) !important;
-}
+  .light-btn-outline:hover {
+    background-color: rgba(255, 255, 255, 0.25) !important; /* 25% translúcido */
+  }
 
-.btn-outline-acento:hover {
-  background-color: var(--color-acento) !important;
-  color: var(--color-texto-claro) !important;
-}
+  .primary-btn:hover{
+    background-color: var(--color-acento-presionado) !important;
+  }
 
-.btn-outline-acento:hover i {
-  color: var(--color-texto-claro) !important;
-}
+  .text-acento{
+    color: var(--color-acento) !important;
+  }
+
+  /* Botón Outline Acento */
+  .btn-outline-acento {
+    background-color: transparent !important;
+    border: 1px solid var(--color-acento) !important;
+    color: var(--color-acento) !important;
+  }
+
+  .btn-outline-acento i {
+    color: var(--color-acento) !important;
+  }
+
+  .btn-outline-acento:hover {
+    background-color: var(--color-acento) !important;
+    color: var(--color-texto-claro) !important;
+  }
+
+  .btn-outline-acento:hover i {
+    color: var(--color-texto-claro) !important;
+  }

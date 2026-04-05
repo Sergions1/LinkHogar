@@ -94,4 +94,18 @@ export class UserService {
     return this.http.delete<void>(`${this.apiUrl}/${userId}`, { headers });
   }
 
+  uploadAvatar(formData: FormData) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.post(`${this.apiUrl}/upload-avatar`, formData, { headers });
+  }
+
+  updateProfile(data: any) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.put(`${this.apiUrl}/users/profile`, data, { headers });
+  }
+
 }

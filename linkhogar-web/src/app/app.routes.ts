@@ -14,6 +14,7 @@ import {AdminUsersComponent} from './pages/Admin/usersgrid/admin-users/admin-use
 import {AdminRequests} from './pages/Admin/HouseGrid/admin-requests/admin-requests';
 import {Register} from './pages/auth/register/register';
 import {Verify} from './pages/auth/verify/verify';
+import {Profile} from './pages/user/profile/profile';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -24,6 +25,7 @@ export const routes: Routes = [
   {path: 'explore/:provincia/:municipio', component: Explore },
   {path: 'inmueble/:titulo/:id', component: Detail},
   {path:"publicar-anuncio", component: Infoannouncement},
+  {path:"perfil", component: Profile},
   {path:"new-announcement", component: Create},
   {
     path: 'admin',

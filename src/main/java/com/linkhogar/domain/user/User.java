@@ -41,6 +41,8 @@ public class User implements UserDetails {
     private Role role;
     private boolean enabled = true;
 
+    private String avatarUrl;
+
     //Relaciones
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true) //En caso de ser eliminada una casa del listado, esta se elimina
     @ToString.Exclude // ¡VITAL! Evita bucle infinito

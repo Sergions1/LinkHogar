@@ -8,4 +8,5 @@ export interface UserResponse {
   phone : string;
   role : string;
   enabled : boolean;
+  avatarUrl: string;
 }
