@@ -105,7 +105,7 @@ export class UserService {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
-    return this.http.put(`${this.apiUrl}/update/${userId}`, data, { headers });
+    return this.http.put(`${this.apiUrl}/update/${userId}`, data, { headers, responseType: 'text' });
   }
 
   changePassword(data: any) {

@@ -53,17 +53,6 @@ public class User implements UserDetails {
 
 
 
-
-
-    public void updateUser(String firstName, String lastName, LocalDate fechaNac, String phone) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.fecha_nac = fechaNac;
-        if (phone != null && !phone.isBlank()) {
-            this.phone = Long.parseLong(phone);
-        }
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

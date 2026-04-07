@@ -28,7 +28,7 @@ export class Profile implements OnInit {
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     phone: [''],
-    fechaNac: ['']
+    fecha_Nac: ['']
   });
 
   passwordForm: FormGroup = this.fb.group({
@@ -43,12 +43,13 @@ export class Profile implements OnInit {
 
   loadData() {
     const user = this.currentUser();
+
     if (user) {
       this.profileForm.patchValue({
         firstName: user.firstName,
         lastName: user.lastName,
         phone: user.phone,
-        fechaNac: user.fechaNac
+        fecha_Nac: user.fechaNac,
       });
     }
   }
@@ -63,10 +64,37 @@ export class Profile implements OnInit {
   saveChanges() {
     const userId = this.currentUser()?.id;
 
+    const formValues = this.profileForm.value;
+
+    const payload = {
+      firstName: formValues.firstName,
+      lastName: formValues.lastName,
+      phone: formValues.phone,
+      fecha_Nac: formValues.fecha_Nac // <-- Mapeamos de 'fechaNac' a 'fecha_Nac'
+    };
+
     if (this.profileForm.valid && userId) {
-      this.userService.updateProfile(userId, this.profileForm.value).subscribe({
-        next: (updatedUser) => {
+      this.userService.updateProfile(userId, payload).subscribe({
+        next: () => {
           this.isEditing = false;
+          this.authService.fetchCurrentUser();
+          this.cdr.detectChanges();
+          Swal.fire({
+            title: '¡Datos actualizados!',
+            text: 'Sus datos han sido actualizados con éxito',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: 'var(--color-acento)'
+          });
+        },
+        error: () => {
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo actualizar los datos.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: 'var(--color-acento)'
+          });
         }
       });
     }
@@ -108,7 +136,7 @@ export class Profile implements OnInit {
           this.passwordStep = 2;
           this.cdr.detectChanges();
         },
-        error: err => {
+        error: () => {
           this.passwordForm.get('code')?.setErrors({ invalidCode: true });
           this.cdr.detectChanges();
         }
@@ -141,7 +169,7 @@ export class Profile implements OnInit {
             confirmButtonColor: 'var(--color-acento)'
           });
         },
-        error: (err: any) => {
+        error: () => {
           Swal.fire({
             title: 'Error',
             text: 'No se pudo actualizar la contraseña. Verifique los datos.',
