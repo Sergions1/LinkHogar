@@ -102,7 +102,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Usuario actualizado correctamente"),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<?> updateUser(
             @PathVariable UUID id,
             @RequestBody UserUpdateDTO updateDTO,
@@ -115,17 +115,11 @@ public class UserController {
                 .map(GrantedAuthority::getAuthority)
                 .orElse("");
 
-        // Solo LinkHogar puede cambiar el rol
-        String roleToSet = requestingUserRole.equals("LinkHogar")
-                ? updateDTO.role()
-                : null;
-
         UpdateUserCommand command = new UpdateUserCommand(
                 id,
                 updateDTO.firstName(),
                 updateDTO.lastName(),
                 updateDTO.fecha_Nac(),
-                roleToSet,
                 updateDTO.phone()
         );
 

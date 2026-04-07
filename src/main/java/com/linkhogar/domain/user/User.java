@@ -60,7 +60,7 @@ public class User implements UserDetails {
         this.lastName = lastName;
         this.fecha_nac = fechaNac;
         if (phone != null && !phone.isBlank()) {
-            this.phone = Long.parseLong(phone); // O simplemente this.phone = phone; si es un String en tu base de datos
+            this.phone = Long.parseLong(phone);
         }
     }
 

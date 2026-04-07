@@ -38,10 +38,10 @@ export class Profile implements OnInit {
   }, { validators: this.checkPasswords });
 
   ngOnInit() {
-    this.cargarDatos();
+    this.loadData();
   }
 
-  cargarDatos() {
+  loadData() {
     const user = this.currentUser();
     if (user) {
       this.profileForm.patchValue({
@@ -56,13 +56,15 @@ export class Profile implements OnInit {
   toggleEdit() {
     this.isEditing = !this.isEditing;
     if (!this.isEditing) {
-      this.cargarDatos();
+      this.loadData();
     }
   }
 
-  guardarCambios() {
-    if (this.profileForm.valid) {
-      this.userService.updateProfile(this.profileForm.value).subscribe({
+  saveChanges() {
+    const userId = this.currentUser()?.id;
+
+    if (this.profileForm.valid && userId) {
+      this.userService.updateProfile(userId, this.profileForm.value).subscribe({
         next: (updatedUser) => {
           this.isEditing = false;
         }
@@ -87,7 +89,7 @@ export class Profile implements OnInit {
     }
   }
 
-  verificarCodigo() {
+  verifyCode() {
     if (this.passwordForm.get('code')?.valid) {
       const userMail = this.currentUser()?.mail;
 
@@ -115,7 +117,7 @@ export class Profile implements OnInit {
   }
 
 
-  cambiarPassword() {
+  changePassword() {
     const userEmail = this.currentUser()?.mail;
 
     if (this.passwordForm.valid && userEmail) {

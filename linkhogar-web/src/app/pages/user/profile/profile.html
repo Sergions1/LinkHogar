@@ -26,7 +26,7 @@
             <p class="text-muted">{{ currentUser()?.mail }}</p>
           </div>
 
-          <form [formGroup]="profileForm" (ngSubmit)="guardarCambios()">
+          <form [formGroup]="profileForm" (ngSubmit)="saveChanges()">
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label text-muted small text-uppercase">Nombre</label>
@@ -113,10 +113,10 @@
       </div>
       <div class="modal-footer">
         @if (passwordStep === 1) {
-          <button type="button" class="btn primary-btn w-100" [disabled]="passwordForm.get('code')?.invalid" (click)="verificarCodigo()">Verificar Código</button>
+          <button type="button" class="btn primary-btn w-100" [disabled]="passwordForm.get('code')?.invalid" (click)="verifyCode()">Verificar Código</button>
         }
         @else {
-          <button type="button" class="btn btn-success w-100" [disabled]="passwordForm.invalid" (click)="cambiarPassword()">Actualizar Contraseña</button>
+          <button type="button" class="btn btn-success w-100" [disabled]="passwordForm.invalid" (click)="changePassword()">Actualizar Contraseña</button>
         }
       </div>
     </div>

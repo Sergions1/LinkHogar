@@ -7,6 +7,5 @@ public record UserUpdateDTO(
         String firstName,
         String lastName,
         LocalDate fecha_Nac,
-        String role,
         String phone
 ) {}

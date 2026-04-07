@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/admin/stats").authenticated()
                         .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.PUT, "/users/*").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.PUT, "/users/update/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/change-password").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/users/*/toggle-enabled").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.POST, "/admin/create-user").hasAnyAuthority("Admin", "LinkHogar")
@@ -76,7 +77,6 @@ public class SecurityConfig {
                 "http://localhost:4200",         // Para tus pruebas en local
                 "https://linkhogar.com",         // Tu dominio principal
                 "https://www.linkhogar.com",     // Variante con www
-                "https://tu-app.netlify.app",     // (Opcional) La URL temporal de Netlify si aún no tienes el dominio ahí
                 "https://api.linkhogar.com"     // Servidor
         ));
 

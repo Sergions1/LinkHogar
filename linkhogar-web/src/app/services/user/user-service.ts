@@ -101,11 +101,11 @@ export class UserService {
     return this.http.post(`${this.apiUrl}/upload-avatar`, formData, { headers });
   }
 
-  updateProfile(data: any) {
+  updateProfile(userId: string, data: any) {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
-    return this.http.put(`${this.apiUrl}/users/profile`, data, { headers });
+    return this.http.put(`${this.apiUrl}/update/${userId}`, data, { headers });
   }
 
   changePassword(data: any) {
