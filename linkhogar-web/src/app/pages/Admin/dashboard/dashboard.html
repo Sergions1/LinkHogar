@@ -1,13 +1,16 @@
 <div class="container-fluid py-3">
+
   <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
     <div>
       <h2 class="fw-bold mb-0">Dashboard</h2>
       <p class="text-muted mb-0">Bienvenido/a de nuevo, <strong>{{ user()?.firstName }}</strong>
-        <span class="badge ms-2"
-              [class.bg-danger]="user()?.role === 'LinkHogar'"
-              [class.bg-primary]="user()?.role !== 'LinkHogar'">
-          Rol: {{ user()?.role }}
-        </span>
+        @if (user()?.role) {
+          <span class="badge ms-2"
+                [class.bg-danger]="user()?.role === 'LinkHogar'"
+                [class.bg-primary]="user()?.role !== 'LinkHogar'">
+            Rol: {{ user()?.role }}
+          </span>
+        }
       </p>
     </div>
   </div>
@@ -22,7 +25,13 @@
           </div>
           <div>
             <h6 class="text-muted mb-1">Usuarios Totales</h6>
-            <h3 class="fw-bold mb-0">{{ stats().totalUsers }}</h3>
+            @if (stats()) {
+              <h3 class="fw-bold mb-0">{{ stats().totalUsers }}</h3>
+            } @else {
+              <div class="spinner-border spinner-border-sm text-primary mt-1" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -36,7 +45,13 @@
           </div>
           <div>
             <h6 class="text-muted mb-1">Pendientes de Revisión</h6>
-            <h3 class="fw-bold mb-0">{{ stats().pendingHouses }}</h3>
+            @if (stats()) {
+              <h3 class="fw-bold mb-0">{{ stats().pendingHouses }}</h3>
+            } @else {
+              <div class="spinner-border spinner-border-sm text-warning mt-1" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -50,7 +65,13 @@
           </div>
           <div>
             <h6 class="text-muted mb-1">Casas Publicadas</h6>
-            <h3 class="fw-bold mb-0">{{ stats().publishedHouses }}</h3>
+            @if (stats()) {
+              <h3 class="fw-bold mb-0">{{ stats().publishedHouses }}</h3>
+            } @else {
+              <div class="spinner-border spinner-border-sm text-success mt-1" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+            }
           </div>
         </div>
       </div>
