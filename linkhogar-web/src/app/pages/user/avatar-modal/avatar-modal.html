@@ -1,0 +1,32 @@
+<div class="modal fade" id="avatarModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Actualizar Avatar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" (click)="CleanModal()"></button>
+      </div>
+      <div class="modal-body text-center">
+
+        <input type="file" class="form-control mb-3" (change)="fileChangeEvent($event)" accept="image/*" />
+
+        @if (imageChangedEvent) {
+          <div class="d-flex justify-content-center">
+            <image-cropper
+              [imageChangedEvent]="imageChangedEvent"
+              [maintainAspectRatio]="true"
+              [aspectRatio]="1 / 1"
+              [resizeToWidth]="200"
+              format="jpeg"
+              (imageCropped)="imageCropped($event)">
+            </image-cropper>
+          </div>
+        }
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="CleanModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" [disabled]="!croppedImage" (click)="saveAvatar()" data-bs-dismiss="modal">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>

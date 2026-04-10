@@ -2,23 +2,22 @@ package com.linkhogar.infrastructure.rest.auth;
 
 import com.linkhogar.application.user.create.CreateUserCommand;
 import com.linkhogar.application.user.create.CreateUserCommandHandler;
-import com.linkhogar.application.user.getById.UserResponse;
-import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQuery;
-import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQueryHandler;
+import com.linkhogar.application.user.getPasswordCode.GetPasswordCodeQuery;
+import com.linkhogar.application.user.getPasswordCode.GetPasswordCodeQueryHandler;
 import com.linkhogar.application.user.login.UserLoginCommand;
 import com.linkhogar.application.user.login.UserLoginCommandHandler;
 import com.linkhogar.application.user.verify.VerifyUserCommand;
 import com.linkhogar.application.user.verify.VerifyUserCommandHandler;
+import com.linkhogar.application.user.verifyPasswordCode.VerifyPasswordCodeQuery;
+import com.linkhogar.application.user.verifyPasswordCode.VerifyPasswordCodeQueryHandler;
 import com.linkhogar.domain.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,6 +27,8 @@ public class AuthController {
     private final UserLoginCommandHandler userLoginCommandHandler;
     private final CreateUserCommandHandler createUserCommandHandler;
     private final VerifyUserCommandHandler verifyUserCommandHandler;
+    private final GetPasswordCodeQueryHandler getPasswordCodeQueryHandler;
+    private final VerifyPasswordCodeQueryHandler verifyPasswordCodeQueryHandler;
 
 
     @Operation(
@@ -65,6 +66,27 @@ public class AuthController {
             verifyUserCommandHandler.handle(new VerifyUserCommand(token));
             return ResponseEntity.ok("Cuenta verificada con éxito. Ya puedes iniciar sesión.");
         } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/request-password-code")
+    public ResponseEntity<String> requestPasswordCode(@RequestBody GetPasswordCodeQuery query){
+        try{
+            getPasswordCodeQueryHandler.handle(query);
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/verify-password-code")
+    public ResponseEntity<String> verifyPasswordCode(@RequestBody VerifyPasswordCodeQuery query) {
+
+        try{
+            verifyPasswordCodeQueryHandler.handle(query);
+            return ResponseEntity.ok().build();
+        }catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

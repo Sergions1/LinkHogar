@@ -9,7 +9,6 @@ public record UpdateUserCommand(
         String firstName,
         String lastName,
         LocalDate fecha_Nac,
-        String role,
         String phone
 ) {}
 

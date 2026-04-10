@@ -21,10 +21,16 @@ public class UpdateUserCommandHandler {
 
         User user = optionalUser.get();
 
-        user.updateUser(command.firstName(), command.lastName(), command.fecha_Nac(), command.phone());
-        if (command.role() != null && !command.role().isBlank()) {
-            user.setRole(Role.valueOf(command.role()));
+        user.setFirstName(command.firstName());
+        user.setLastName(command.lastName());
+
+        if (command.phone() != null && !command.phone().isBlank()) {
+            user.setPhone(Long.parseLong(command.phone()));
+        } else {
+            user.setPhone(null);
         }
+
+        user.setFecha_nac(command.fecha_Nac());
 
         userRepository.saveUser(user);
 

@@ -41,6 +41,10 @@ public class User implements UserDetails {
     private Role role;
     private boolean enabled = true;
 
+    private String avatarUrl;
+    private String verificationCode;
+    private LocalDateTime verificationCodeExpiration;
+
     //Relaciones
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true) //En caso de ser eliminada una casa del listado, esta se elimina
     @ToString.Exclude // ¡VITAL! Evita bucle infinito
@@ -48,17 +52,6 @@ public class User implements UserDetails {
     private List<House> houses = new ArrayList<>();
 
 
-
-
-
-    public void updateUser(String firstName, String lastName, LocalDate fechaNac, String phone) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.fecha_nac = fechaNac;
-        if (phone != null && !phone.isBlank()) {
-            this.phone = Long.parseLong(phone); // O simplemente this.phone = phone; si es un String en tu base de datos
-        }
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
