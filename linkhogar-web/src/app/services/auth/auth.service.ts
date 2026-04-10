@@ -135,4 +135,5 @@ export class AuthService {
 
     return this.http.post(`${this.apiUrl}/verify-password-code`, payload, { headers , responseType: 'text' });
   }
+
 }

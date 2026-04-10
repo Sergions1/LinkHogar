@@ -1,14 +1,16 @@
-import {Component, OnInit, inject, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, inject, ChangeDetectorRef, effect} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../../services/auth/auth.service';
 import {UserService} from '../../../services/user/user-service';
 import Swal from 'sweetalert2';
+import {AvatarModal} from '../avatar-modal/avatar-modal';
 
 
 @Component({
   selector: 'app-profile',
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AvatarModal
   ],
   templateUrl: './profile.html'
 })
@@ -37,8 +39,25 @@ export class Profile implements OnInit {
     confirmPassword: ['', Validators.required]
   }, { validators: this.checkPasswords });
 
+  constructor() {
+    // Escuchamos los cambios en el Signal para sobrevivir al F5
+    effect(() => {
+      const user = this.currentUser();
+      if (user) {
+        this.profileForm.patchValue({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone,
+          fecha_Nac: user.fechaNac
+        });
+      }
+    });
+  }
+
   ngOnInit() {
-    this.loadData();
+    if (!this.currentUser()) {
+      this.authService.fetchCurrentUser();
+    }
   }
 
   loadData() {

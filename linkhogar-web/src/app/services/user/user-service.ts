@@ -94,11 +94,11 @@ export class UserService {
     return this.http.delete<void>(`${this.apiUrl}/${userId}`, { headers });
   }
 
-  uploadAvatar(formData: FormData) {
+  uploadAvatar(userId: string, formData: FormData) {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
-    return this.http.post(`${this.apiUrl}/upload-avatar`, formData, { headers });
+    return this.http.post(`${this.apiUrl}/uploadAvatar/${userId}`, formData, { headers });
   }
 
   updateProfile(userId: string, data: any) {

@@ -3,7 +3,6 @@ package com.linkhogar.infrastructure.rest.user;
 import com.linkhogar.application.user.changePassword.ChangePasswordCommand;
 import com.linkhogar.application.user.changePassword.ChangePasswordCommandHandler;
 import com.linkhogar.application.user.changePassword.ChangePasswordRequest;
-import com.linkhogar.application.user.create.CreateUserCommand;
 import com.linkhogar.application.user.create.CreateUserCommandHandler;
 import com.linkhogar.application.user.delete.DeleteUserCommand;
 import com.linkhogar.application.user.delete.DeleteUserCommandHandler;
@@ -19,6 +18,8 @@ import com.linkhogar.application.user.toggleUserEnabled.ToggleUserEnabledHandler
 import com.linkhogar.application.user.update.UpdateUserCommand;
 import com.linkhogar.application.user.update.UpdateUserCommandHandler;
 import com.linkhogar.application.user.update.UserUpdateDTO;
+import com.linkhogar.application.user.updateAvatar.UpdateAvatarCommand;
+import com.linkhogar.application.user.updateAvatar.UpdateAvatarCommandHandler;
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.common.result.Error;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,15 +27,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URI;
 import java.security.Principal;
 import java.util.UUID;
 
@@ -52,6 +52,7 @@ public class UserController {
     private final GetAllQueryHandler getAllQueryHandler;
     private final ToggleUserEnabledHandler toggleUserEnabledHandler;
     private final ChangePasswordCommandHandler changePasswordCommandHandler;
+    private final UpdateAvatarCommandHandler updateAvatarCommandHandler;
 
     @Operation(
             summary = "Obtener usuario por Id",
@@ -179,6 +180,22 @@ public class UserController {
         changePasswordCommandHandler.handle(command);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/uploadAvatar/{id}")
+    public ResponseEntity<Void> uploadAvatar(@PathVariable UUID id, @RequestParam("file") MultipartFile file, Authentication authentication) {
+       if(authentication == null)
+       {
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+       }
+
+       Result<Void> result = updateAvatarCommandHandler.handle(new UpdateAvatarCommand(id, file));
+
+       if (result.isSuccess()) {
+           return ResponseEntity.ok().build();
+       }else{
+           return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+       }
     }
 
     private ResponseEntity<?> mapErrorToResponse(Error error) {

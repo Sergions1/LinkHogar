@@ -15,7 +15,8 @@ public record UserResponse (
     LocalDateTime creationDate,
     String phone,
     String role,
-    Boolean enabled
+    Boolean enabled,
+    String avatarUrl
 ){
 
     public static  UserResponse mapToResponse(User user) {
@@ -28,7 +29,8 @@ public record UserResponse (
                 user.getRegisterDate(),
                 user.getPhone() != null ? user.getPhone().toString() : null,
                 user.getRole() != null ? user.getRole().toString() : null,
-                user.isEnabled()
+                user.isEnabled(),
+                user.getAvatarUrl()
         );
     }
 }
