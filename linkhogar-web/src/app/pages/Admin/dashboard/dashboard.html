@@ -10,6 +10,10 @@
                 [class.bg-primary]="user()?.role !== 'LinkHogar'">
             Rol: {{ user()?.role }}
           </span>
+        }@else{
+          <div class="spinner-border spinner-border-sm text-acento mt-1" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
         }
       </p>
     </div>
@@ -26,10 +30,11 @@
           <div>
             <h6 class="text-muted mb-1">Usuarios Totales</h6>
             @if (stats()) {
-              <h3 class="fw-bold mb-0">{{ stats().totalUsers }}</h3>
-
+              <h3 class="fw-bold mb-0">{{ stats()?.totalUsers }}</h3>
             } @else {
-                <div class="spinner-border text-primary" role="status"></div>
+              <div class="spinner-border spinner-border-sm text-primary mt-1" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
             }
           </div>
         </div>
@@ -45,7 +50,7 @@
           <div>
             <h6 class="text-muted mb-1">Pendientes de Revisión</h6>
             @if (stats()) {
-              <h3 class="fw-bold mb-0">{{ stats().pendingHouses }}</h3>
+              <h3 class="fw-bold mb-0">{{ stats()?.pendingHouses }}</h3>
             } @else {
               <div class="spinner-border spinner-border-sm text-warning mt-1" role="status">
                 <span class="visually-hidden">Cargando...</span>
@@ -65,7 +70,7 @@
           <div>
             <h6 class="text-muted mb-1">Casas Publicadas</h6>
             @if (stats()) {
-              <h3 class="fw-bold mb-0">{{ stats().publishedHouses }}</h3>
+              <h3 class="fw-bold mb-0">{{ stats()?.publishedHouses }}</h3>
             } @else {
               <div class="spinner-border spinner-border-sm text-success mt-1" role="status">
                 <span class="visually-hidden">Cargando...</span>

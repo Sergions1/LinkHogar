@@ -24,11 +24,7 @@ export class DashboardComponent implements OnInit {
   userEmail: string | null = '';
   userRole: string | null = '';
 
-  stats = signal<DashboardStatsResponse>({  // 👈 WritableSignal con valores por defecto
-    totalUsers: 0,
-    pendingHouses: 0,
-    publishedHouses: 0
-  });
+  stats = signal<DashboardStatsResponse | null>(null);
 
   ngOnInit() {
     this.adminService.getDashboardStats().subscribe({
