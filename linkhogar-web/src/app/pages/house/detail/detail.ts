@@ -4,11 +4,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {HouseService} from '../../../services/house/house-service';
 import {CommonModule, DecimalPipe} from '@angular/common';
 import {HouseForm} from '../create/create';
+import {MapView} from '../../shared/map-view/map-view';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
-  imports: [DecimalPipe, CommonModule],
+  imports: [DecimalPipe, CommonModule, MapView],
   templateUrl: './detail.html',
   styleUrl: './detail.scss',
 })

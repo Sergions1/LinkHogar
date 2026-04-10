@@ -164,7 +164,24 @@
       </div>
 
       <h4 class="mb-3" id="labelUbicacion">Ubicación</h4>
-      <div id="map" class="mb-5" data-direccion="${piso.direccion}, ${piso.codigoPostal}, ${piso.ciudad}, ${piso.provincia}, España"></div>
+      <div id="map" class="mb-2" data-direccion="${piso.direccion}, ${piso.codigoPostal}, ${piso.ciudad}, ${piso.provincia}, España"></div>
+      <div class="row mb-5">
+        <div class="col-12">
+          @defer (on viewport) {
+            <app-map-view
+              [lat]="house.address.latitude"
+              [lng]="house.address.longitude">
+            </app-map-view>
+          } @placeholder {
+            <div class="d-flex flex-column align-items-center justify-content-center py-5">
+              <div class="spinner-border text-white mb-3" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+              <h5 class="text-white">Cargando mapa...</h5>
+            </div>
+          }
+        </div>
+      </div>
 
 
     </div>
