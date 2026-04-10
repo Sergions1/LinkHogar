@@ -25,6 +25,10 @@
   .bg-primario {
     background-color: var(--color-primario);
   }
+  .bg-primario-light {
+    background-color: rgb(from var(--color-primario) r g b / 75%);
+
+  }
   .bg-acento {
     background-color: var(--color-acento);
   }
