@@ -114,4 +114,12 @@ export class UserService {
 
     return this.http.put(`${this.apiUrl}/change-password`, data, { headers, responseType: 'text' });
   }
+
+  addFavouriteHouse(userId: string, houseId: string) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.post(`${this.apiUrl}/addFavourite/${userId}/${houseId}`, {}, { headers, responseType: 'text'});
+  }
+
 }

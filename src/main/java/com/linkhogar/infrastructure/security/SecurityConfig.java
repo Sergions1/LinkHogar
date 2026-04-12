@@ -37,6 +37,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/admin/stats").authenticated()
                         .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.PUT, "/users/update/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/users/addFavourite/*/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/users/favourites/ids/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/updateAvatar/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/change-password").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/*").hasAnyAuthority("Admin", "LinkHogar")

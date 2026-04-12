@@ -19,8 +19,13 @@
           <p class="text-muted">{{house.address.street}} {{house.address.city}}, {{house.address.province}}</p>
         </div>
         <div>
-          <button class="btn btn-heart rounded-circle m-3 shadow-sm p-2 lh-1" id="botonFav" data-id="${piso.id}">
-            <!-- Todo boton de favoritos cuando este disponible la tabla de favoritos -->
+          <button class="btn btn-heart rounded-circle m-3 shadow-sm p-2 lh-1 boton-Favorito" id="botonFav" data-id="${piso.id}" (click)="addFavourite()" )>
+            @if (isFavourite()) {
+              <i class="bi bi-heart-fill text-danger"></i>
+            } @else {
+              <i class="bi bi-heart"></i>
+            }
+
           </button>
         </div>
       </div>
