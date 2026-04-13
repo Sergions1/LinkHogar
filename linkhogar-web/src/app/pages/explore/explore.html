@@ -27,7 +27,9 @@
             [pageData]="houses()"
             [isLoading]="isLoading()"
             [cardTemplate]="houseCard"
-            (pageChange)="onPageChange($event)">
+            (pageChange)="onPageChange($event)"
+            headerMessage="Hogar encontrado para ti"
+            headerMessagePlural="Hogares encontrados para ti">
           </app-entity-card-view>
         </div>
       </div>

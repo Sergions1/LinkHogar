@@ -44,13 +44,13 @@ public class GetByCityQueryHandler {
                     .toList();
 
             return new org.springframework.data.domain.PageImpl<>(
-                    sorted.stream().map(this::toHouseCardResponse).toList(),
+                    sorted.stream().map(HouseCardResponse::toHouseCardResponse).toList(),
                     pageable,
                     housePage.getTotalElements()
             );
         }
 
-        return housePage.map(this::toHouseCardResponse);
+        return housePage.map(HouseCardResponse::toHouseCardResponse);
     }
 
     /**
@@ -72,26 +72,5 @@ public class GetByCityQueryHandler {
         return R * c;
     }
 
-    /**
-     * @summary Convierte una entidad {@link House} a su DTO de respuesta {@link HouseCardResponse}.
-     * @param house La entidad del inmueble a convertir.
-     * @return El objeto DTO con los datos para la tarjeta de inmueble.
-     */
-    private HouseCardResponse toHouseCardResponse(House house) {
-        return new HouseCardResponse(
-                house.getId().toString(),
-                house.getTitle(),
-                house.getDescription(),
-                house.getPublicationDate(),
-                house.getUpdateDate(),
-                house.getHouseType(),
-                house.getStatus(),
-                house.getSize(),
-                house.getRooms(),
-                house.getBaths(),
-                house.getPrice(),
-                house.getAddress(),
-                house.getImages()
-        );
-    }
+
 }

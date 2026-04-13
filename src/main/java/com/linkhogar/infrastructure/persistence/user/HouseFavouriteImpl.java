@@ -4,6 +4,8 @@ import com.linkhogar.domain.user.HouseFavourite;
 import com.linkhogar.domain.user.HouseFavouriteRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -39,5 +41,10 @@ public class HouseFavouriteImpl implements HouseFavouriteRepository {
     @Transactional
     public void deleteFavourite(UUID userId, UUID houseId) {
         jpaHouseFavouriteRepository.deleteByUserIdAndHouseId(userId, houseId);
+    }
+
+    @Override
+    public Page<HouseFavourite> findByUserId(UUID userId, Pageable pageable){
+        return jpaHouseFavouriteRepository.findByUserId(userId, pageable);
     }
 }

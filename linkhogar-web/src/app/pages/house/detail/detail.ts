@@ -28,7 +28,7 @@ export class Detail implements OnInit {
   houseId: string | null = null;
   currentImageIndex = 0; // 👈
   isFavourite = signal(false);
-  currenUser = this.authService.currentUser;
+  currentUser = this.authService.currentUser;
 
   @Input() previewData: HouseForm | null = null;
 
@@ -81,14 +81,13 @@ export class Detail implements OnInit {
       return;
     }
 
-    const userId = this.authService.currentUser()?.id || null;
+    const userId = this.currentUser()?.id || null;
 
     if (this.houseId != null && userId != null) {
       this.userService.addFavouriteHouse(userId, this.houseId).subscribe({
         next: params => {
           this.authService.toggleFavoriteLocal(this.houseId?.toString() || "");
           this.isFavourite.set(true);
-          this.isLoading.set(false);
         },
         error: err => {
           Swal.fire({
@@ -102,6 +101,28 @@ export class Detail implements OnInit {
       });
     }else{
       this.router.navigate(["/login"]);
+    }
+  }
+
+  deleteFavourite(){
+    const userId = this.currentUser()?.id || null;
+
+    if (this.houseId != null && userId != null) {
+      this.userService.deleteFavouriteHosue(userId, this.houseId).subscribe({
+        next: params => {
+          this.authService.toggleFavoriteLocal(this.houseId?.toString() || "");
+          this.isFavourite.set(false);
+        },
+        error: err => {
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo eliminar de favoritos.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: 'var(--color-acento)'
+          });
+        }
+      });
     }
   }
 }

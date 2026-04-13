@@ -16,6 +16,7 @@ import {Register} from './pages/auth/register/register';
 import {Verify} from './pages/auth/verify/verify';
 import {Profile} from './pages/user/profile/profile';
 import {authGuard} from './guards/authGuard';
+import {Favourites} from './pages/user/favourites/favourites';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -27,6 +28,7 @@ export const routes: Routes = [
   {path: 'inmueble/:titulo/:id', component: Detail},
   {path:"publicar-anuncio", component: Infoannouncement},
   {path:"perfil", component: Profile, canActivate: [authGuard]},
+  {path: "favoritos", component: Favourites, canActivate: [authGuard]},
   {path:"new-announcement", component: Create},
   {
     path: 'admin',

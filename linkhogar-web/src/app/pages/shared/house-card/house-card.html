@@ -57,9 +57,11 @@
       </div>
 
       <div>
-        <button class="btn btn-trash rounded-circle me-2" [attr.data-id]="house.id">
-          <i class="bi bi-trash fs-4 text-danger"></i>
-        </button>
+        @if(isMyPublications){
+          <button class="btn btn-trash rounded-circle me-2" [attr.data-id]="house.id">
+            <i class="bi bi-trash fs-4 text-danger"></i>
+          </button>
+        }
 
         <button (click)="open()"
            class="btn btn-primary fw-medium border-0 px-3 py-2 stretched-link">

@@ -1,6 +1,7 @@
 package com.linkhogar.application.house.getByCity;
 
 import com.linkhogar.domain.address.Address;
+import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.house.enums.HouseType;
 import lombok.AllArgsConstructor;
@@ -30,4 +31,29 @@ public class HouseCardResponse
     private Address address;
 
     private List<String> images;
+
+
+
+    /**
+     * @summary Convierte una entidad {@link House} a su DTO de respuesta {@link HouseCardResponse}.
+     * @param house La entidad del inmueble a convertir.
+     * @return El objeto DTO con los datos para la tarjeta de inmueble.
+     */
+    public static HouseCardResponse toHouseCardResponse(House house) {
+        return new HouseCardResponse(
+                house.getId().toString(),
+                house.getTitle(),
+                house.getDescription(),
+                house.getPublicationDate(),
+                house.getUpdateDate(),
+                house.getHouseType(),
+                house.getStatus(),
+                house.getSize(),
+                house.getRooms(),
+                house.getBaths(),
+                house.getPrice(),
+                house.getAddress(),
+                house.getImages()
+        );
+    }
 }
