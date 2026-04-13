@@ -15,9 +15,9 @@
   } @else {
     <div class="mb-2">
       @if (pageData?.totalElements == 1) {
-        <h5>Se encontró {{ pageData?.totalElements }} hogar ideal para ti</h5>
+        <h5>{{ pageData?.totalElements }} {{ headerMessage }}</h5>
       } @else {
-        <h5>Se encontraron {{ pageData?.totalElements }} hogares ideales para ti</h5>
+        <h5>{{ pageData?.totalElements }} {{ headerMessagePlural }}</h5>
       }
     </div>
     <hr>
@@ -45,6 +45,7 @@
     <span class="text-muted small" style="min-width: 150px; text-align: center">
       Página {{ currentPage + 1 }} de {{ totalPages }}
     </span>
+
 
     <button
       class="btn btn-outline-primary btn-sm"

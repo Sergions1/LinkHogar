@@ -1,11 +1,16 @@
 package com.linkhogar.infrastructure.rest.user;
 
+import com.linkhogar.application.house.getByCity.HouseCardResponse;
+import com.linkhogar.application.user.addHouseFavourite.AddHouseFavouriteCommand;
+import com.linkhogar.application.user.addHouseFavourite.AddHouseFavouriteCommandHandler;
 import com.linkhogar.application.user.changePassword.ChangePasswordCommand;
 import com.linkhogar.application.user.changePassword.ChangePasswordCommandHandler;
 import com.linkhogar.application.user.changePassword.ChangePasswordRequest;
 import com.linkhogar.application.user.create.CreateUserCommandHandler;
 import com.linkhogar.application.user.delete.DeleteUserCommand;
 import com.linkhogar.application.user.delete.DeleteUserCommandHandler;
+import com.linkhogar.application.user.deleteHouseFavourite.DeleteHouseFAvouriteCommandHandler;
+import com.linkhogar.application.user.deleteHouseFavourite.DeleteHouseFavouriteCommand;
 import com.linkhogar.application.user.getAll.GetAllQuery;
 import com.linkhogar.application.user.getAll.GetAllQueryHandler;
 import com.linkhogar.application.user.getById.GetUserByIdQueryHandler;
@@ -13,6 +18,10 @@ import com.linkhogar.application.user.getById.GetUserByIdQuery;
 import com.linkhogar.application.user.getById.UserResponse;
 import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQuery;
 import com.linkhogar.application.user.getCurrentUser.GetCurrentUserQueryHandler;
+import com.linkhogar.application.user.getFavouriteHouses.GetFavouriteHousesQuery;
+import com.linkhogar.application.user.getFavouriteHouses.GetFavouriteHousesQueryHandler;
+import com.linkhogar.application.user.getUserFavourites.GetUserFavouriteQuery;
+import com.linkhogar.application.user.getUserFavourites.GetUserFavouritesQueryHandler;
 import com.linkhogar.application.user.toggleUserEnabled.ToggleUserEnabledCommand;
 import com.linkhogar.application.user.toggleUserEnabled.ToggleUserEnabledHandler;
 import com.linkhogar.application.user.update.UpdateUserCommand;
@@ -36,6 +45,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -53,6 +63,10 @@ public class UserController {
     private final ToggleUserEnabledHandler toggleUserEnabledHandler;
     private final ChangePasswordCommandHandler changePasswordCommandHandler;
     private final UpdateAvatarCommandHandler updateAvatarCommandHandler;
+    private final AddHouseFavouriteCommandHandler addHouseFavouriteCommandHandler;
+    private final GetUserFavouritesQueryHandler getUserFavouriteQueryHandler;
+    private final DeleteHouseFAvouriteCommandHandler deleteHouseFavouriteCommandHandler;
+    private final GetFavouriteHousesQueryHandler getFavouriteHousesQueryHandlerHandler;
 
     @Operation(
             summary = "Obtener usuario por Id",
@@ -198,6 +212,79 @@ public class UserController {
        }
     }
 
+    @PostMapping("/addFavourite/{userId}/{houseId}")
+    public ResponseEntity<Void> addFavourite(@PathVariable UUID userId,@PathVariable UUID houseId ,Authentication authentication) {
+        if(authentication == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        AddHouseFavouriteCommand command = new AddHouseFavouriteCommand(
+                userId,
+                houseId
+        );
+
+        Result<Void> result = addHouseFavouriteCommandHandler.handle(command);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok().build();
+        }else{
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @GetMapping("/favourites/ids/{userId}")
+    public ResponseEntity<List<UUID>> getFavouriteIds(@PathVariable UUID userId, Authentication authentication) {
+        if(authentication == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        GetUserFavouriteQuery query = new GetUserFavouriteQuery(userId);
+
+        List<UUID> ids = getUserFavouriteQueryHandler.handle(query);
+
+        return ResponseEntity.ok(ids);
+    }
+
+    @DeleteMapping("/deleteFavourite/{userId}/{houseId}")
+    public ResponseEntity<Void> deleteFavourite(@PathVariable UUID userId,@PathVariable UUID houseId ,Authentication authentication) {
+        if(authentication == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        DeleteHouseFavouriteCommand command = new DeleteHouseFavouriteCommand(
+                userId,
+                houseId
+        );
+
+        Result<Void> result = deleteHouseFavouriteCommandHandler.handler(command);
+
+        if (result.isSuccess()) {
+            return ResponseEntity.ok().build();
+        }else {
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @GetMapping("/getPaginatedFavourites/{userId}")
+    public ResponseEntity<Page<HouseCardResponse>> getPaginatedHouseCards(
+            @PathVariable UUID userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Authentication authentication) {
+
+        if(authentication == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        GetFavouriteHousesQuery query = new GetFavouriteHousesQuery(userId, page, size);
+
+        Result<Page<HouseCardResponse>> result = getFavouriteHousesQueryHandlerHandler.handle(query);
+
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(result.getValue());
+        }else  {
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
     private ResponseEntity<?> mapErrorToResponse(Error error) {
         HttpStatus status = switch (error.type()) {
             case VALIDATION -> HttpStatus.BAD_REQUEST;       // 400
@@ -212,4 +299,6 @@ public class UserController {
                 .status(status)
                 .body(error); // Jackson convertirá el record Error a JSON automáticamente
     }
+
+
 }

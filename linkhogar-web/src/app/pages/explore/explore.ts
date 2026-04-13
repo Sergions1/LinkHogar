@@ -51,12 +51,8 @@ export class Explore implements OnInit {
       : null;
 
     if(city != null){
-      console.log('city enviada al backend:', city);
       this.houseService.getByCityPaginatedHouses(city, page).subscribe({
         next: (data) => {
-          console.log('data completa:', data);
-          console.log('content:', data.content);
-          console.log('totalElements:', data.totalElements);
           this.houses.set(data);
           this.isLoading.set(false);
         },

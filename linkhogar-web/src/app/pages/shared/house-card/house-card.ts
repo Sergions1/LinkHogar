@@ -15,6 +15,8 @@ export class HouseCard {
 
   @Input({ required: true }) house!: HouseCardResponse;
 
+  @Input() isMyPublications: boolean = false;
+
   open() {
     this.router.navigate(['/inmueble', this.house.title, this.house.id]);
   }

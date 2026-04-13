@@ -16,6 +16,10 @@ export class EntityCardView implements OnInit{
   //Plantilla de como se ve cada tarjeta
   @Input({required: true}) cardTemplate!: TemplateRef<any>;
 
+  //Mensaje de encontrado
+  @Input({required: true}) headerMessage!: string;
+  @Input({required: true}) headerMessagePlural!: string;
+
   //Cuando el usuario cambia de pagina
   @Output() pageChange = new EventEmitter<number>();
 

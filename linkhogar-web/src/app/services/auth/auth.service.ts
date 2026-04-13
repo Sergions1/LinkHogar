@@ -19,6 +19,7 @@ export class AuthService {
 
   isLoggedIn = signal<boolean>(this.hasValidToken());
   currentUser = signal<UserResponse | null>(null);
+  favouriteIds = signal<Set<string>>(new Set());
 
   constructor() {
     if (this.hasValidToken()) {
@@ -108,7 +109,10 @@ export class AuthService {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
     this.http.get<UserResponse>(`${environment.apiUrl}/users/currentUser`, { headers }).subscribe({
-      next: (user) => this.currentUser.set(user),
+      next: (user) => {
+        this.currentUser.set(user)
+        this.fetchFavouriteIds(user.id.toString());
+      },
       error: () => this.currentUser.set(null)
     });
   }
@@ -136,4 +140,43 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/verify-password-code`, payload, { headers , responseType: 'text' });
   }
 
+  /**
+   * Carga la lista de IDs de viviendas favoritas del usuario.
+   */
+  fetchFavouriteIds(userId: string) {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    // Ajusta esta URL a tu endpoint real de Java
+    this.http.get<string[]>(`${environment.apiUrl}/users/favourites/ids/${userId}`, { headers })
+      .subscribe({
+        next: (ids) => this.favouriteIds.set(new Set(ids)),
+        error: (err) => console.error("Error al cargar favoritos:", err)
+      });
+  }
+
+  /**
+   * Verifica si una vivienda específica es favorita consultando el Signal local.
+   * Eficiencia O(1) - Sin llamadas al servidor.
+   */
+  isFavorite(houseId: string): boolean {
+    return this.favouriteIds().has(houseId);
+  }
+
+
+  /**
+   * Actualiza el estado local de favoritos (Optimistic Update).
+   * Se llama desde los componentes tras pulsar el botón de corazón.
+   */
+  toggleFavoriteLocal(houseId: string) {
+    const currentSet = new Set(this.favouriteIds());
+    if (currentSet.has(houseId)) {
+      currentSet.delete(houseId);
+    } else {
+      currentSet.add(houseId);
+    }
+    this.favouriteIds.set(currentSet);
+  }
 }
