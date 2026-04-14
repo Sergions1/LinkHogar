@@ -14,4 +14,11 @@ public class HouseErrors {
         );
     }
 
+    public static com.linkhogar.domain.common.result.Error NotFound() {
+        return com.linkhogar.domain.common.result.Error.notFound(
+                "House.NotFound",
+                "Error al encontrar los hogares"
+        );
+    }
+
 }

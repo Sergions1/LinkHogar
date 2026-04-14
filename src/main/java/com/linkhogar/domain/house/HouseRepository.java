@@ -16,4 +16,5 @@ public interface HouseRepository {
     long countByPublicationStatus(PublicationStatus status);
     Boolean delete(UUID houseID);
     Page<House> findByPublicationStatus(PublicationStatus status, Pageable pageable);
+    Page<House> findByOwnerId(UUID ownerId, Pageable pageable);
 }

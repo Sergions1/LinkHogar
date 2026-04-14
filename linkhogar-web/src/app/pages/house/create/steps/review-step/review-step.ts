@@ -12,6 +12,7 @@ import { HouseForm } from '../../create';
 export class ReviewStep implements OnInit {
   @Input() data!: HouseForm;
   @Output() validChange = new EventEmitter<boolean>();
+  @Input() existingPhotos: string[] = [];
 
   ngOnInit() {
     this.validChange.emit(true);

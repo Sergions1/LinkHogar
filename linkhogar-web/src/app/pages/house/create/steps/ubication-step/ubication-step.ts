@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, signal, SimpleChanges} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, from, Subject, switchMap } from 'rxjs';
@@ -29,7 +29,7 @@ interface NominatimResult {
   imports: [CommonModule, FormsModule],
   templateUrl: './ubication-step.html',
 })
-export class UbicationStep implements OnInit {
+export class UbicationStep implements OnInit, OnChanges {
   @Input() data!: UbicationData;
   @Output() validChange = new EventEmitter<boolean>();
   @Output() dataChange = new EventEmitter<UbicationData>();
@@ -48,6 +48,19 @@ export class UbicationStep implements OnInit {
   foundAddress = signal<string | null>(null);
 
   private searchSubject = new Subject<UbicationData>();
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Si la propiedad 'data' cambia y tiene valor (cuando llega la respuesta del backend)
+    if (changes['data'] && changes['data'].currentValue) {
+      this.form.set({ ...this.data });
+
+      // Si ya tenemos latitud y longitud guardadas en la BBDD, la dirección ya es válida
+      if (this.data.latitude && this.data.longitude) {
+        this.isValid.set(true);
+        this.validChange.emit(true);
+      }
+    }
+  }
 
   ngOnInit() {
     if (this.data) this.form.set({ ...this.data });

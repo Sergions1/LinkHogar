@@ -76,6 +76,8 @@
           @case (4) {
             <app-photos-step
               [data]="formData().photos"
+              [existingPhotos]="existingPhotosUrls()"
+              (removeExisting)="deleteOldPhoto($event)"
               (validChange)="onStepValidChange($event)"
               (dataChange)="onPhotosChange($event)"/>
           }
@@ -88,6 +90,7 @@
           @case (6) { <!-- todo cambiar contenido del paso review por la vista details  /-->
             <app-review-step
               [data]="formData()"
+              [existingPhotos]="existingPhotosUrls()"
               (validChange)="onStepValidChange($event)"/>
           }
         }

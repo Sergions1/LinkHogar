@@ -124,4 +124,39 @@ export class HouseService {
       responseType: 'text'
     });
   }
+
+  getHousesByOwner(ownerId: string, page: number = 0, size: number = 10): Observable<PageResponse<HouseCardResponse>> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<PageResponse<HouseCardResponse>>(`${this.apiUrl}/owner/${ownerId}`, {headers, params });
+  }
+
+  deleteHouse(houseId: string){
+    const token= localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.delete(`${this.apiUrl}/${houseId}`, {headers});
+  }
+
+  updateHouse(houseId: string, houseData: any): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    // Ajusta la URL a como la tengas en tu backend de Spring Boot
+    return this.http.put(`${this.apiUrl}/${houseId}`, houseData, { headers });
+  }
+
+  deleteHouseImage(houseId: string, imageUrl: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    // Usamos encodeURIComponent porque vamos a mandar la URL de Cloudinary por parámetro
+    const safeUrl = encodeURIComponent(imageUrl);
+    return this.http.delete(`${this.apiUrl}/${houseId}/image?url=${safeUrl}`, { headers });
+  }
 }

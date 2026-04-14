@@ -15,4 +15,5 @@ public interface JpaHouseRepository extends JpaRepository<House, UUID> {
     Page<House> findByAddress_City(String City, Pageable pageable);
     long countByPublicationStatus(PublicationStatus status);
     Page<House> findByPublicationStatus(PublicationStatus status, Pageable pageable);
+    Page<House> findByOwnerId(UUID ownerId, Pageable pageable);
 }

@@ -1,5 +1,5 @@
 // steps/photos-step/photos-step.ts
-import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, signal, SimpleChanges} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface PhotoFile {
@@ -13,7 +13,7 @@ export interface PhotoFile {
   imports: [CommonModule],
   templateUrl: './photos-step.html',
 })
-export class PhotosStep implements OnInit {
+export class PhotosStep implements OnInit, OnChanges {
   @Input() data!: File[];
   @Output() validChange = new EventEmitter<boolean>();
   @Output() dataChange = new EventEmitter<File[]>();
@@ -23,6 +23,16 @@ export class PhotosStep implements OnInit {
 
   readonly MAX_PHOTOS = 10;
   readonly MIN_PHOTOS = 1;
+
+  // Inputs/Outputs para Edición ---
+  @Input() existingPhotos: string[] = [];
+  @Output() removeExisting = new EventEmitter<string>();
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['existingPhotos']) {
+      this.emitValidity();
+    }
+  }
 
   ngOnInit() {
     if (this.data?.length) {
@@ -59,7 +69,8 @@ export class PhotosStep implements OnInit {
 
   private addFiles(files: File[]) {
     const imageFiles = files.filter(f => f.type.startsWith('image/'));
-    const remaining = this.MAX_PHOTOS - this.photos().length;
+    const totalCurrentPhotos = this.photos().length + (this.existingPhotos?.length || 0);
+    const remaining = this.MAX_PHOTOS - totalCurrentPhotos;
     const toAdd = imageFiles.slice(0, remaining).map(file => ({
       file,
       preview: URL.createObjectURL(file)
@@ -98,6 +109,16 @@ export class PhotosStep implements OnInit {
   }
 
   private emitValidity() {
-    this.validChange.emit(this.photos().length >= this.MIN_PHOTOS);
+    // --- MODIFICADO: Se suma 'existingPhotos.length'.
+    // Si estás creando, es + 0, por lo que sigue igual.
+    const totalPhotos = this.photos().length + (this.existingPhotos?.length || 0);
+    this.validChange.emit(totalPhotos >= this.MIN_PHOTOS);
   }
+
+  //Edicion
+  onRemoveExistingClick(url: string) {
+    this.removeExisting.emit(url);
+  }
+
+
 }
