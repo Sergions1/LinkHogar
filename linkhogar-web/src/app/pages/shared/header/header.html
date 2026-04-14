@@ -10,8 +10,8 @@
       <!-- Nav links -->
       <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
         <li><a routerLink="/" class="nav-link px-2 text-white">Home</a></li>
-        <li><a routerLink="/explore" class="nav-link px-2 text-white">Explorar</a></li>
-        <li><a class="nav-link px-2 text-white" style="cursor:pointer" (click)="publicate()">Publicar</a></li>
+       <!-- <li><a routerLink="/explore" class="nav-link px-2 text-white">Explorar</a></li>
+        <li><a class="nav-link px-2 text-white" style="cursor:pointer" (click)="publicate()">Publicar</a></li>-->
         @if (authService.isLoggedIn() && userService.isAdmin()) {
           <li>
             <button class="btn nav-link px-2 text-danger fw-semibold" (click)="admin()">
