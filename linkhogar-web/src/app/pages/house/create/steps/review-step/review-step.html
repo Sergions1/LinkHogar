@@ -80,18 +80,30 @@
       <i class="bi bi-images text-primario fs-5"></i>
       <h6 class="fw-bold mb-0">Fotos</h6>
     </div>
+
     <div class="row g-2">
+      @for (url of existingPhotos; track url) {
+        <div class="col-4 col-md-2">
+          <img [src]="url"
+               class="w-100 rounded-3 object-fit-cover shadow-sm"
+               style="height: 70px;"
+               alt="Foto publicada">
+        </div>
+      }
+
       @for (photo of data.photos; track photo.name; let i = $index) {
         <div class="col-4 col-md-2">
           <img [src]="getPreview(photo)"
-               class="w-100 rounded-3 object-fit-cover"
+               class="w-100 rounded-3 object-fit-cover shadow-sm"
                style="height: 70px;"
                [alt]="'Foto ' + (i + 1)">
         </div>
       }
     </div>
+
     <p class="text-muted small mt-2 mb-0">
-      {{ data.photos.length }} {{ data.photos.length === 1 ? 'foto añadida' : 'fotos añadidas' }}
+      {{ data.photos.length + (existingPhotos?.length || 0) }}
+      {{ (data.photos.length + (existingPhotos?.length || 0)) === 1 ? 'foto en total' : 'fotos en total' }}
     </p>
   </div>
 

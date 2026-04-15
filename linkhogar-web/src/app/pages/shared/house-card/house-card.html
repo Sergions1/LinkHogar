@@ -58,8 +58,12 @@
 
       <div>
         @if(isMyPublications){
-          <button class="btn btn-trash rounded-circle me-2" [attr.data-id]="house.id">
+          <button class="btn btn-trash rounded-circle me-2 position-relative z-3"(click)="onDelete($event)">
             <i class="bi bi-trash fs-4 text-danger"></i>
+          </button>
+
+          <button class="btn btn-trash rounded-circle me-2 position-relative z-3"(click)="onEdit($event)">
+            <i class="bi bi-pencil-square fs-4 text-acento"></i>
           </button>
         }
 

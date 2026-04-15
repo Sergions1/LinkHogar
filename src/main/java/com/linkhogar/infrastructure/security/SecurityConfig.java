@@ -32,7 +32,7 @@ public class SecurityConfig {
                 // 2. Gestionar permisos de rutas
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/error").permitAll()
-                        .requestMatchers( HttpMethod.GET,"/verify/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/verify/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/currentUser").authenticated()
                         .requestMatchers(HttpMethod.GET, "/admin/stats").authenticated()
                         .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority("Admin", "LinkHogar")
@@ -41,14 +41,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/favourites/ids/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/updateAvatar/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/change-password").authenticated()
-                        .requestMatchers(HttpMethod.GET,"/users/getPaginatedFavourites/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/users/getPaginatedFavourites/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/*").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.PATCH, "/users/*/toggle-enabled").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.POST, "/admin/create-user").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.GET, "/admin/pendind").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.GET, "/houses/owner/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/houses/*/status").hasAnyAuthority("Admin", "LinkHogar")
-                        .requestMatchers(HttpMethod.DELETE, "/houses/*").hasAnyAuthority("Admin", "LinkHogar")
+                        .requestMatchers(HttpMethod.DELETE, "/houses/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/AppSettings/*").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
@@ -69,7 +70,7 @@ public class SecurityConfig {
 
         return http.build();
 
-        
+
     }
 
     @Bean

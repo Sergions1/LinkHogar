@@ -2,11 +2,13 @@ package com.linkhogar.application.house.delete;
 
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.house.*;
+import com.linkhogar.domain.user.UserErrors;
 import com.linkhogar.infrastructure.externalServices.CloudinaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,15 @@ public class DeleteHouseCommandHandler {
         if (house == null) {
             return Result.failure(HouseErrors.NotFound(command.houseId()));
         }
+
+        boolean isAdminOrStaff = command.authorities().stream()
+                .anyMatch(auth -> Objects.equals(auth.getAuthority(), "Admin") || Objects.equals(auth.getAuthority(), "LinkHogar"));
+        boolean isOwner = house.getOwner().getId().equals(command.userId());
+
+        if (!isAdminOrStaff && !isOwner) {
+            return Result.failure(UserErrors.UNAUTHORIZED);
+        }
+
         Boolean deletedImages = true;
         List<String> images = house.getImages();
         if (images != null && !images.isEmpty()) {

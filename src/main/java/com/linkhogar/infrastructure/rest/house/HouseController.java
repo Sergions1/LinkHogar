@@ -2,6 +2,8 @@ package com.linkhogar.infrastructure.rest.house;
 
 import com.linkhogar.application.house.Image.addImage.AddHouseImagesCommand;
 import com.linkhogar.application.house.Image.addImage.AddHouseImagesCommandHandler;
+import com.linkhogar.application.house.Image.deleteImage.DeleteHouseImageCommand;
+import com.linkhogar.application.house.Image.deleteImage.DeleteHouseImageCommandHandler;
 import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommand;
 import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommandHandler;
 import com.linkhogar.application.house.create.CreateHouseCommand;
@@ -16,8 +18,11 @@ import com.linkhogar.application.house.getByCity.GetByCityQueryHandler;
 import com.linkhogar.application.house.getByCity.HouseCardResponse;
 import com.linkhogar.application.house.getById.GetByIdQuery;
 import com.linkhogar.application.house.getById.GetByIdQueryHandler;
+import com.linkhogar.application.house.getByOwnerId.GetByOwnerIdQuery;
+import com.linkhogar.application.house.getByOwnerId.GetByOwnerIdQueryHandler;
+import com.linkhogar.application.house.update.UpdateCommand;
+import com.linkhogar.application.house.update.UpdateCommandHandler;
 import com.linkhogar.domain.common.result.Result;
-import com.linkhogar.infrastructure.externalServices.CloudinaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +30,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +52,9 @@ public class HouseController {
     private final AddHouseImagesCommandHandler addHouseImagesCommandHandler;
     private final SetHouseStatusCommandHandler setHouseStatusCommandHandler;
     private final DeleteHouseCommandHandler deleteHouseCommandHandler;
-
-    private final CloudinaryService cloudinaryService;
+    private final GetByOwnerIdQueryHandler getHousesByOwnerQueryHandler;
+    private final UpdateCommandHandler updateCommandHandler;
+    private final DeleteHouseImageCommandHandler deleteHouseImageCommandHandler;
 
 
     @Operation(
@@ -64,8 +71,7 @@ public class HouseController {
     }
 
     @Operation(
-            summary = "Creación de una casa",
-            description = "Recupera la información pública de un usuario dado su UUID. No devuelve la contraseña."
+            summary = "Creación de una casa"
     )
     @PostMapping
     public ResponseEntity<?> createHouse(@RequestBody CreateHouseCommand request, Authentication authentication){
@@ -118,7 +124,11 @@ public class HouseController {
     @PostMapping(value = "/{houseId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadHouseImages(
             @PathVariable UUID houseId,
-            @RequestParam("files") List<MultipartFile> files) {
+            @RequestParam("files") List<MultipartFile> files,
+            Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         try {
             AddHouseImagesCommand command = new AddHouseImagesCommand(houseId, files);
@@ -153,16 +163,94 @@ public class HouseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteHouse(@PathVariable UUID id) {
-        DeleteHouseCommand command = new DeleteHouseCommand(id);
+    public ResponseEntity<?> deleteHouse(@PathVariable UUID id, Authentication authentication) {
+        if (authentication == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        try{
-        Result<Void> result = deleteHouseCommandHandler.handle(command); // Inyecta el DeleteHouseCommandHandler
+        String user = authentication.getName();
 
+        if(user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        DeleteHouseCommand command = new DeleteHouseCommand(
+                id,
+                UUID.fromString(user),
+                authentication.getAuthorities()
+        );
+
+        Result<Void> result = deleteHouseCommandHandler.handle(command);
+        if(result.isSuccess()){
+              return ResponseEntity.ok().build();
+        }else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result.getError());
+        }
+    }
+
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<Page<HouseCardResponse>> getHousesByOwner(
+            @PathVariable UUID ownerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Authentication authentication) {
+
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        GetByOwnerIdQuery query = new GetByOwnerIdQuery(ownerId, page, size);
+        Result<Page<HouseCardResponse>> result = getHousesByOwnerQueryHandler.handle(query);
+
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(result.getValue());
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/{houseId}")
+    public ResponseEntity<?> updateHouse(
+            @PathVariable UUID houseId,
+            @RequestBody CreateHouseCommand request,
+            Authentication authentication) {
+
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Extraemos el Principal (asegúrate de que coincida con tu implementación de seguridad)
+        String user = authentication.getName();
+
+        UpdateCommand command = new UpdateCommand(
+                houseId,
+                request,
+                UUID.fromString(user),
+                authentication.getAuthorities()
+        );
+
+        Result<Void> result = updateCommandHandler.handle(command);
+
+        if (result.isSuccess()) {
             return ResponseEntity.ok().build();
-        }catch(RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } else {
+            // Si el error es de permisos, podrías devolver un 403 (FORBIDDEN)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
+        }
+    }
+
+    @DeleteMapping("/{houseId}/image")
+    public ResponseEntity<?> deleteSingleImage(
+            @PathVariable UUID houseId,
+            @RequestParam("url") String imageUrl,
+            Authentication authentication) {
+
+        if (authentication == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        String user = authentication.getName();
+
+        DeleteHouseImageCommand command = new DeleteHouseImageCommand(houseId, imageUrl, UUID.fromString(user), authentication.getAuthorities());
+        Result<Void> result = deleteHouseImageCommandHandler.handle(command);
+
+        if (result.isSuccess()) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
         }
     }
 

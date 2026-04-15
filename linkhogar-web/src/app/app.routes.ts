@@ -17,6 +17,8 @@ import {Verify} from './pages/auth/verify/verify';
 import {Profile} from './pages/user/profile/profile';
 import {authGuard} from './guards/authGuard';
 import {Favourites} from './pages/user/favourites/favourites';
+import {MyPublications} from './pages/user/my-publications/my-publications';
+import {Edit} from './pages/house/edit/edit';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -29,7 +31,9 @@ export const routes: Routes = [
   {path:"publicar-anuncio", component: Infoannouncement},
   {path:"perfil", component: Profile, canActivate: [authGuard]},
   {path: "favoritos", component: Favourites, canActivate: [authGuard]},
+  {path: "mis-publicaciones", component: MyPublications, canActivate: [authGuard]},
   {path:"new-announcement", component: Create},
+  {path:"editar/:id", component: Create},
   {
     path: 'admin',
     component: AdminLayoutComponent, // El Layout padre

@@ -57,4 +57,9 @@ public class HouseRepositoryImpl implements HouseRepository {
     public Page<House> findByPublicationStatus(PublicationStatus status, Pageable pageable) {
         return jpaHouseRepository.findByPublicationStatus(status, pageable);
     }
+
+    @Override
+    public Page<House> findByOwnerId(UUID ownerId, Pageable pageable) {
+        return jpaHouseRepository.findByOwnerId(ownerId, pageable);
+    }
 }
