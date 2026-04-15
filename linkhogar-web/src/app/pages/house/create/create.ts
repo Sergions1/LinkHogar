@@ -237,7 +237,9 @@ export class Create implements OnInit{
             province: house.address.province,
             cp: house.address.cp?.toString() || "",
             floor: house.address.floor || '',
-            door: house.address.door || ''
+            door: house.address.door || '',
+            latitude: house.address.latitude,
+            longitude: house.address.longitude
           },
           type: house.houseType, // Ajusta según tu DTO
           features: {
