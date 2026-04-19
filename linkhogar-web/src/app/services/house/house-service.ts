@@ -143,12 +143,42 @@ export class HouseService {
     return this.http.delete(`${this.apiUrl}/${houseId}`, {headers});
   }
 
-  updateHouse(houseId: string, houseData: any): Observable<any> {
+  updateHouse(houseId: string, data: HouseForm): Observable<any> {
+
+    const payload = {
+      title: data.details.title,
+      description: data.details.description,
+      houseType: data.type,
+      size: data.features.size,
+      rooms: data.features.rooms,
+      baths: data.features.baths,
+      price: data.price,
+      street: data.location.street,
+      number: Number(data.location.number),
+      floor: data.location.floor,
+      door: data.location.door,
+      city: data.location.city,
+      cp: Number(data.location.cp),
+      province: data.location.province,
+      country: "España",
+      lift: data.features.lift,
+      furnished: data.features.furnished,
+      airConditioned: data.features.airConditioned,
+      terrace: data.features.terrace,
+      balcony: data.features.balcony,
+      garage: data.features.garage,
+      storage: data.features.storage,
+      pool: data.features.pool,
+      commonAreas: data.features.commonAreas,
+      petsAllowed: data.features.petsAllowed,
+      latitude: data.location.latitude,
+      longitude: data.location.longitude,
+    };
+
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
-    // Ajusta la URL a como la tengas en tu backend de Spring Boot
-    return this.http.put(`${this.apiUrl}/${houseId}`, houseData, { headers });
+    return this.http.put(`${this.apiUrl}/${houseId}`, payload, {headers});
   }
 
   deleteHouseImage(houseId: string, imageUrl: string): Observable<any> {
