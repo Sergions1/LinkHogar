@@ -1,5 +1,6 @@
 package com.linkhogar.application.house.delete;
 
+import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.house.*;
 import com.linkhogar.domain.user.UserErrors;
@@ -31,37 +32,12 @@ public class DeleteHouseCommandHandler {
             return Result.failure(UserErrors.UNAUTHORIZED);
         }
 
-        Boolean deletedImages = true;
-        List<String> images = house.getImages();
-        if (images != null && !images.isEmpty()) {
-            for (String imageUrl : images) {
-                try {
-                    String publicId = extractPublicIdFromUrl(imageUrl);
-                    Boolean deleted = cloudinaryService.deleteImage(publicId);
-                    if(!deleted){
-                        deletedImages = false;
-                    }
-                } catch (Exception e) {
-                    System.err.println("No se pudo eliminar la imagen de Cloudinary: " + imageUrl);
-                }
-            }
-        }
+        house.setPublicationStatus(PublicationStatus.ARCHIVED);
 
-        if (!deletedImages) {
-            System.out.println("Error al eliminar las imágenes de Cloudinary.");
-        }
-        houseRepository.delete(house.getId());
+        // 4. Guardamos los cambios
+        houseRepository.save(house);
 
         return Result.success(null);
-    }
 
-    private String extractPublicIdFromUrl(String imageUrl) {
-        int lastSlashIndex = imageUrl.lastIndexOf("/");
-        int lastDotIndex = imageUrl.lastIndexOf(".");
-
-        if (lastSlashIndex != -1 && lastDotIndex != -1 && lastDotIndex > lastSlashIndex) {
-            return imageUrl.substring(lastSlashIndex + 1, lastDotIndex);
-        }
-        return imageUrl;
     }
 }
