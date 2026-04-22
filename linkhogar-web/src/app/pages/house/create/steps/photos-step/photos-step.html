@@ -30,7 +30,7 @@
       <h6 class="fw-bold mb-3">Añadir nuevas fotos</h6>
     </div>
   }
-  @if ((photos().length + (existingPhotos?.length || 0)) < MAX_PHOTOS) {
+  @if ((photos().length + (existingPhotos.length)) < MAX_PHOTOS) {
     <div class="border-2 border-dashed rounded-4 text-center py-5 px-3 mb-4"
          style="cursor: pointer; transition: all 0.15s ease;"
          [class.bg-primario]="isDragging()"
@@ -95,7 +95,7 @@
 
   <p class="text-muted small mt-3">
     <i class="bi bi-info-circle me-1"></i>
-    {{ photos().length + (existingPhotos?.length || 0) }} / {{ MAX_PHOTOS }} photos added. Use arrows to reorder.
+    {{ photos().length + (existingPhotos.length) }} / {{ MAX_PHOTOS }} photos added. Use arrows to reorder.
   </p>
 
 </div>

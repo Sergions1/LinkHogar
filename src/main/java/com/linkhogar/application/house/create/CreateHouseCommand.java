@@ -24,10 +24,10 @@ public class CreateHouseCommand {
     private PublicationStatus publicationStatus;
     private HouseStatus status;
 
-    private int size;
-    private int rooms;
-    private int baths;
-    private long price;
+    private Integer size;
+    private Integer rooms;
+    private Integer baths;
+    private Long price;
 
     private String street;
     private int number;
