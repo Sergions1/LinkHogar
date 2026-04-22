@@ -8,11 +8,12 @@ import {MapView} from '../../shared/map-view/map-view';
 import {UserService} from '../../../services/user/user-service';
 import {AuthService} from '../../../services/auth/auth.service';
 import Swal from 'sweetalert2';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
-  imports: [DecimalPipe, CommonModule, MapView],
+  imports: [DecimalPipe, CommonModule, MapView, FormsModule],
   templateUrl: './detail.html',
   styleUrl: './detail.scss',
 })
@@ -31,6 +32,11 @@ export class Detail implements OnInit {
   currentUser = this.authService.currentUser;
 
   @Input() previewData: HouseForm | null = null;
+
+  reportData = {
+    reason: '',
+    description: ''
+  };
 
   ngOnInit() {
     if (this.previewData) return;
@@ -124,5 +130,45 @@ export class Detail implements OnInit {
         }
       });
     }
+  }
+
+  report(){
+    if (!this.currentUser()) {
+      document.getElementById('closeReportModal')?.click(); // Cierra el modal
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (!this.houseId || !this.reportData.reason) return;
+
+    this.isLoading.set(true);
+
+    this.houseService.reportHouse(this.houseId, this.reportData.reason, this.reportData.description).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        document.getElementById('closeReportModal')?.click(); // Cierra el modal
+        this.reportData = { reason: '', description: '' }; // Resetea el formulario
+
+        Swal.fire({
+          title: 'Denuncia enviada',
+          text: 'Nuestro equipo revisará el anuncio lo antes posible.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: 'var(--color-acento)'
+        });
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        document.getElementById('closeReportModal')?.click();
+
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo enviar la denuncia. Inténtalo de nuevo más tarde.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: 'var(--color-acento)'
+        });
+      }
+    });
   }
 }

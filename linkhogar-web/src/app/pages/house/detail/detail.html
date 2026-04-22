@@ -196,10 +196,14 @@
       <div class="card shadow-sm border-0 sticky-top">
         <div class="card-body p-4">
 
-          <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center">
             <h3 class="card-title mb-0 fw-bold text-primario">
               {{ house.price | number:'1.0-0':'es' }} € <span class="fs-6 text-muted fw-normal">/mes</span>
             </h3>
+
+            <button class="btn shadow-sm p-2 lh-1" title="Denunciar" data-bs-toggle="modal" data-bs-target="#reportModal">
+              <i class="bi bi-exclamation-triangle-fill text-danger"></i>
+            </button>
           </div>
 
           <hr class="my-4 text-muted opacity-25">
@@ -225,28 +229,70 @@
             </div>
           </div>
 
-          <div class="bg-light p-3 rounded-3">
-            @if(house.owner.phone){
-              <div class="mb-3">
-                <small class="text-muted text-uppercase fw-bold" >Teléfono</small>
-                <p class="mb-0 text-dark text-break">
-                  {{ house.owner.phone }}
-                </p>
-              </div>
-            }
-
-
-              <div class="${piso.dueño.telefono != 0 ? 'mt-3' : ''}"> <small class="text-muted text-uppercase fw-bold">Correo Electrónico</small>
-                <p class="mb-0 text-dark text-break">
-                  {{ house.owner.mail }}
-                </p>
-              </div>
-          </div>
+          @if (currentUser()){
+            <div class="bg-light p-3 rounded-3">
+              @if(house.owner.phone){
+                <div class="mb-3">
+                  <small class="text-muted text-uppercase fw-bold" >Teléfono</small>
+                  <p class="mb-0 text-dark text-break">
+                    {{ house.owner.phone }}
+                  </p>
+                </div>
+              }
+                <div class="${piso.dueño.telefono != 0 ? 'mt-3' : ''}"> <small class="text-muted text-uppercase fw-bold">Correo Electrónico</small>
+                  <p class="mb-0 text-dark text-break">
+                    {{ house.owner.mail }}
+                  </p>
+                </div>
+            </div>
+          }
 
         </div>
       </div>
     </div>
 
   </div>
+
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="reportModalLabel">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Denunciar Anuncio
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" id="closeReportModal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="reportReason" class="form-label fw-bold">Motivo de la denuncia</label>
+              <select class="form-select" id="reportReason" [(ngModel)]="reportData.reason">
+                <option value="" disabled selected>Selecciona un motivo...</option>
+                <option value="FRAUDE">Es una estafa o fraude</option>
+                <option value="FALSO">Información falsa o incorrecta</option>
+                <option value="NO_DISPONIBLE">El inmueble ya no está disponible</option>
+                <option value="OFENSIVO">Contenido ofensivo o inapropiado</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="reportDescription" class="form-label fw-bold">Detalles adicionales (Opcional)</label>
+              <textarea class="form-control" id="reportDescription" rows="3"
+                        placeholder="Cuéntanos más sobre el problema..."
+                        [(ngModel)]="reportData.description"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" [disabled]="isLoading()">Cancelar</button>
+
+            <button type="button" class="btn btn-danger" [disabled]="!reportData.reason || isLoading()" (click)="report()">
+              @if(isLoading()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...
+              } @else {
+                Enviar Denuncia
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   }
 </div>

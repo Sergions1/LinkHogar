@@ -189,4 +189,52 @@ export class HouseService {
     const safeUrl = encodeURIComponent(imageUrl);
     return this.http.delete(`${this.apiUrl}/${houseId}/image?url=${safeUrl}`, { headers });
   }
+
+  /**
+   * Envía una denuncia de un anuncio al servidor.
+   * @param houseId El ID de la casa que se va a denunciar
+   * @param reason El motivo principal de la denuncia
+   * @param description Detalles adicionales (opcional)
+   */
+  reportHouse(houseId: string, reason: string, description: string): Observable<any> {
+    const payload = {
+      reason: reason,
+      description: description
+    };
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.post(`${this.apiUrl}/${houseId}/reports`, payload, {headers});
+  }
+
+  /**
+   * Obtiene todas las denuncias paginadas (Solo para Administradores o equipo LinkHogar).
+   * @param page Número de página (empieza en 0)
+   * @param size Cantidad de elementos por página
+   * @returns Un Observable con la respuesta paginada del backend
+   */
+  getAllReports(page: number = 0, size: number = 10): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    const token = localStorage.getItem('token');
+
+    const requestOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      }),
+      params: params
+    };
+
+    return this.http.get(`${this.apiUrl}/houseReports/getAll`, requestOptions);
+  }
+
+  deleteReport(reportId: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.delete(`${this.apiUrl}/houseReport/delete/${reportId}`, {headers});
+  }
 }

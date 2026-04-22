@@ -8,11 +8,18 @@ import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommand;
 import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommandHandler;
 import com.linkhogar.application.house.create.CreateHouseCommand;
 import com.linkhogar.application.house.create.CreateHouseCommandHandler;
+import com.linkhogar.application.house.createReport.CreateReportCommand;
+import com.linkhogar.application.house.createReport.CreateReportCommandHandler;
+import com.linkhogar.application.house.createReport.ReportHouseRequest;
 import com.linkhogar.application.house.delete.DeleteHouseCommand;
 import com.linkhogar.application.house.delete.DeleteHouseCommandHandler;
+import com.linkhogar.application.house.deleteReport.DeleteReportCommand;
+import com.linkhogar.application.house.deleteReport.DeleteReportCommandHandler;
 import com.linkhogar.application.house.get.GetQuery;
 import com.linkhogar.application.house.get.GetQueryHandle;
 import com.linkhogar.application.house.get.HouseResponse;
+import com.linkhogar.application.house.getAllReports.GetAllReportsQuery;
+import com.linkhogar.application.house.getAllReports.GetAllReportsQueryHandler;
 import com.linkhogar.application.house.getByCity.GetByCityQuery;
 import com.linkhogar.application.house.getByCity.GetByCityQueryHandler;
 import com.linkhogar.application.house.getByCity.HouseCardResponse;
@@ -23,11 +30,13 @@ import com.linkhogar.application.house.getByOwnerId.GetByOwnerIdQueryHandler;
 import com.linkhogar.application.house.update.UpdateCommand;
 import com.linkhogar.application.house.update.UpdateCommandHandler;
 import com.linkhogar.domain.common.result.Result;
+import com.linkhogar.domain.house.HouseReport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -55,7 +64,9 @@ public class HouseController {
     private final GetByOwnerIdQueryHandler getHousesByOwnerQueryHandler;
     private final UpdateCommandHandler updateCommandHandler;
     private final DeleteHouseImageCommandHandler deleteHouseImageCommandHandler;
-
+    private final CreateReportCommandHandler createReportCommandHandler;
+    private final GetAllReportsQueryHandler getAllReportsQueryHandler;
+    private final DeleteReportCommandHandler deleteReportCommandHandler;
 
     @Operation(
             summary = "Obtención de todas las casas",
@@ -251,6 +262,61 @@ public class HouseController {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
+        }
+    }
+
+    @PostMapping("/{houseId}/reports")
+    public ResponseEntity<?> createHouseReport(
+            @PathVariable String houseId,
+            @RequestBody ReportHouseRequest request,
+            Authentication authentication)
+    {
+        if(authentication == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        UUID userId = UUID.fromString(authentication.getName());
+
+        CreateReportCommand command = new CreateReportCommand(UUID.fromString(houseId), userId, request.reason(),  request.description());
+
+        Result<Void> result = createReportCommandHandler.handle(command);
+
+        if(result.isSuccess()){
+            return ResponseEntity.ok().build();
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
+        }
+
+    }
+
+    @GetMapping("/houseReports/getAll")
+    public ResponseEntity<Page<HouseReport>> getAllHouseReports(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Authentication authentication){
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        UUID userId = UUID.fromString(authentication.getName());
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Result<Page<HouseReport>> result = getAllReportsQueryHandler.handle(new GetAllReportsQuery(userId), pageable);
+
+        if(result.isSuccess()){
+            return ResponseEntity.ok(result.getValue());
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @DeleteMapping("/houseReport/delete/{reportId}")
+    public ResponseEntity<?> deleteHouseReport(@PathVariable String reportId, Authentication authentication){
+        if(authentication == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        Result<Void> result = deleteReportCommandHandler.handle(new DeleteReportCommand(UUID.fromString(reportId)));
+
+        if(result.isSuccess()){
+            return ResponseEntity.ok().build();
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
