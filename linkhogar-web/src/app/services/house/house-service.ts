@@ -143,12 +143,42 @@ export class HouseService {
     return this.http.delete(`${this.apiUrl}/${houseId}`, {headers});
   }
 
-  updateHouse(houseId: string, houseData: any): Observable<any> {
+  updateHouse(houseId: string, data: HouseForm): Observable<any> {
+
+    const payload = {
+      title: data.details.title,
+      description: data.details.description,
+      houseType: data.type,
+      size: data.features.size,
+      rooms: data.features.rooms,
+      baths: data.features.baths,
+      price: data.price,
+      street: data.location.street,
+      number: Number(data.location.number),
+      floor: data.location.floor,
+      door: data.location.door,
+      city: data.location.city,
+      cp: Number(data.location.cp),
+      province: data.location.province,
+      country: "España",
+      lift: data.features.lift,
+      furnished: data.features.furnished,
+      airConditioned: data.features.airConditioned,
+      terrace: data.features.terrace,
+      balcony: data.features.balcony,
+      garage: data.features.garage,
+      storage: data.features.storage,
+      pool: data.features.pool,
+      commonAreas: data.features.commonAreas,
+      petsAllowed: data.features.petsAllowed,
+      latitude: data.location.latitude,
+      longitude: data.location.longitude,
+    };
+
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
-    // Ajusta la URL a como la tengas en tu backend de Spring Boot
-    return this.http.put(`${this.apiUrl}/${houseId}`, houseData, { headers });
+    return this.http.put(`${this.apiUrl}/${houseId}`, payload, {headers});
   }
 
   deleteHouseImage(houseId: string, imageUrl: string): Observable<any> {
@@ -158,5 +188,53 @@ export class HouseService {
     // Usamos encodeURIComponent porque vamos a mandar la URL de Cloudinary por parámetro
     const safeUrl = encodeURIComponent(imageUrl);
     return this.http.delete(`${this.apiUrl}/${houseId}/image?url=${safeUrl}`, { headers });
+  }
+
+  /**
+   * Envía una denuncia de un anuncio al servidor.
+   * @param houseId El ID de la casa que se va a denunciar
+   * @param reason El motivo principal de la denuncia
+   * @param description Detalles adicionales (opcional)
+   */
+  reportHouse(houseId: string, reason: string, description: string): Observable<any> {
+    const payload = {
+      reason: reason,
+      description: description
+    };
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.post(`${this.apiUrl}/${houseId}/reports`, payload, {headers});
+  }
+
+  /**
+   * Obtiene todas las denuncias paginadas (Solo para Administradores o equipo LinkHogar).
+   * @param page Número de página (empieza en 0)
+   * @param size Cantidad de elementos por página
+   * @returns Un Observable con la respuesta paginada del backend
+   */
+  getAllReports(page: number = 0, size: number = 10): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    const token = localStorage.getItem('token');
+
+    const requestOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      }),
+      params: params
+    };
+
+    return this.http.get(`${this.apiUrl}/houseReports/getAll`, requestOptions);
+  }
+
+  deleteReport(reportId: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    return this.http.delete(`${this.apiUrl}/houseReport/delete/${reportId}`, {headers});
   }
 }

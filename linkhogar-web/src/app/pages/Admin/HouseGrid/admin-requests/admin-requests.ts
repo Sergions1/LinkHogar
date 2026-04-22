@@ -105,7 +105,7 @@ export class AdminRequests implements OnInit {
   deleteHouse(report: HouseReport) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: 'Al eliminar este anuncio no podrás volver atrás',
+      text: 'Al eliminar este anuncio quedará archivado y no tendrá visibilidad',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Eliminar Anuncio',

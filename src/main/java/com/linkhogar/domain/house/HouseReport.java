@@ -1,5 +1,7 @@
 package com.linkhogar.domain.house;
 
+import com.linkhogar.domain.common.enums.PublicationStatus;
+import com.linkhogar.domain.house.enums.ReportStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -33,4 +35,6 @@ public class HouseReport {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    private ReportStatus status;
 }

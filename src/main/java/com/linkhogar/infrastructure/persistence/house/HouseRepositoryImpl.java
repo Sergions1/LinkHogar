@@ -24,7 +24,7 @@ public class HouseRepositoryImpl implements HouseRepository {
 
     @Override
     public Page<House> findByCity(String city, Pageable pageable) {
-        return jpaHouseRepository.findByAddress_City(city, pageable);
+        return jpaHouseRepository.findByAddress_CityAndPublicationStatus(city, PublicationStatus.PUBLISHED ,pageable);
     }
 
     @Override
