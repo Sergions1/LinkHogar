@@ -11,6 +11,7 @@ export interface HouseCardResponse {
 
   houseType: string;
   status:string;
+  publicationStatus: string;
 
   size: number;
   rooms: number;

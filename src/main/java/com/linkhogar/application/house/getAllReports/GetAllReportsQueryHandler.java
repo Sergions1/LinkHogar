@@ -29,7 +29,7 @@ public class GetAllReportsQueryHandler {
         user = userOptional.get();
 
         if(user.getRole() == Role.Admin || user.getRole() == Role.LinkHogar) {
-           Page<HouseReport> reports = houseReportRepository.getAll(pageable);
+           Page<HouseReport> reports = houseReportRepository.getPendant(pageable);
             return Result.success(reports);
         }else {
             return Result.failure(UserErrors.UNAUTHORIZED);

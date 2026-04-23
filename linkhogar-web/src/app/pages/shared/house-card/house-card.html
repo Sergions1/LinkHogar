@@ -58,17 +58,20 @@
 
       <div>
         @if(isMyPublications){
-          <button class="btn btn-trash rounded-circle me-2 position-relative z-3"(click)="onDelete($event)">
-            <i class="bi bi-trash fs-4 text-danger"></i>
-          </button>
+          <span class="badge me-2" [ngClass]="getBadgeColor(house.publicationStatus)">{{ house.publicationStatus | publicationStatus }}</span>
+          @if (house.publicationStatus !== 'ARCHIVED' ) {
+            <button class="btn btn-trash rounded-circle me-2 position-relative z-3"(click)="onDelete($event)">
+              <i class="bi bi-trash fs-4 text-danger"></i>
+            </button>
 
-          <button class="btn btn-trash rounded-circle me-2 position-relative z-3"(click)="onEdit($event)">
-            <i class="bi bi-pencil-square fs-4 text-acento"></i>
-          </button>
+            <button class="btn btn-trash rounded-circle me-2 position-relative z-3"(click)="onEdit($event)">
+              <i class="bi bi-pencil-square fs-4 text-acento"></i>
+            </button>
+          }
         }
 
         <button (click)="open()"
-           class="btn btn-primary fw-medium border-0 px-3 py-2 stretched-link">
+           class="btn btn-primary fw-medium border-0 px-3 py-2 stretched-link ms-2">
           Ver detalles
         </button>
       </div>

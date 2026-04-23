@@ -77,8 +77,7 @@ export class AdminRequests implements OnInit {
       if (result.isConfirmed) {
         this.deleteHouse(report);
       } else if (result.isDenied) {
-        this.removeReportFromList(report.id);
-        Swal.fire('Ignorado', 'La denuncia ha sido descartada.', 'info');
+        this.ignoreReport(report);
       }
     });
   }
@@ -114,7 +113,7 @@ export class AdminRequests implements OnInit {
       denyButtonColor: '#6c757d', // Gris para ignorar
     }).then((result)=> {
       if (result.isConfirmed) {
-        this.adminService.deleteHouse(report.houseId).subscribe({
+        this.adminService.deleteReport(report.id, true).subscribe({
           next: () => {
             this.removeReportFromList(report.id);
             this.houseService.deleteReport(report.id);
@@ -122,6 +121,31 @@ export class AdminRequests implements OnInit {
           },
           error: () =>{
             Swal.fire('Error', 'No se pudo retirar la publicación.', 'error')
+          }
+        })
+      }
+    })
+  }
+
+  ignoreReport(report: HouseReport) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Al ignorar esta denuncia quedará cerrada y no podrá volver a editarse',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ignorar Anuncio',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#dc3545', // Rojo para eliminar
+      denyButtonColor: '#6c757d', // Gris para ignorar
+    }).then((result)=> {
+      if (result.isConfirmed) {
+        this.adminService.deleteReport(report.id, false).subscribe({
+          next: () => {
+            this.removeReportFromList(report.id);
+            Swal.fire('Ignorado', 'La denuncia ha sido ignorada.', 'success');
+          },
+          error: () =>{
+            Swal.fire('Error', 'No se pudo ignorar la denuncia.', 'error')
           }
         })
       }

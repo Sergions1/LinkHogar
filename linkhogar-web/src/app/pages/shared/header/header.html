@@ -2,16 +2,12 @@
   <div class="container">
     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 
-      <!-- Logo -->
       <a routerLink="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none rounded">
         <img src="/images/linkhogar.png" alt="Logo LinkHogar" width="100" height="32" class="me-2">
       </a>
 
-      <!-- Nav links -->
       <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
         <li><a routerLink="/" class="nav-link px-2 text-white">Home</a></li>
-       <!-- <li><a routerLink="/explore" class="nav-link px-2 text-white">Explorar</a></li>
-        <li><a class="nav-link px-2 text-white" style="cursor:pointer" (click)="publicate()">Publicar</a></li>-->
         @if (authService.isLoggedIn() && userService.isAdmin()) {
           <li>
             <button class="btn nav-link px-2 text-danger fw-semibold" (click)="admin()">
@@ -21,14 +17,64 @@
         }
       </ul>
 
-      <!-- Sección usuario -->
       <div class="text-end d-flex align-items-center gap-2">
 
-        <button class="btn light-btn-outline" (click)="publicate()">Publicar</button>
+        <button class="btn light-btn-outline me-1" (click)="publicate()">Publicar</button>
 
         @if (authService.isLoggedIn()) {
 
-          <!-- Dropdown usuario -->
+          <div class="dropdown me-1">
+            <button class="btn position-relative border-0 text-white p-2 d-flex align-items-center justify-content-center"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style="width: 38px; height: 38px;">
+              <i class="bi bi-bell-fill fs-5"></i>
+
+              @if (unreadNotifications().length > 0) {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm" style="font-size: 0.6rem; margin-top: 5px; margin-left: -5px;">
+                  {{ unreadNotifications().length }}
+                  <span class="visually-hidden">notificaciones no leídas</span>
+                </span>
+              }
+            </button>
+
+            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2 p-0" style="width: 320px; max-height: 400px; overflow-y: auto;">
+
+              <div class="dropdown-header d-flex justify-content-between align-items-center bg-light border-bottom py-2 sticky-top rounded-top-3">
+                <h6 class="mb-0 fw-bold text-dark">Notificaciones</h6>
+                @if (unreadNotifications().length > 0) {
+                  <span class="badge bg-danger rounded-pill">{{ unreadNotifications().length }} nuevas</span>
+                }
+              </div>
+
+              <div class="list-group list-group-flush">
+                @if (unreadNotifications().length === 0) {
+                  <div class="text-center py-4 text-muted">
+                    <i class="bi bi-bell-slash fs-3 d-block mb-2 opacity-50"></i>
+                    <p class="mb-0 small">No tienes notificaciones nuevas</p>
+                  </div>
+                } @else {
+                  @for (notif of unreadNotifications(); track notif.id) {
+                    <div class="list-group-item list-group-item-action border-bottom position-relative p-3 text-wrap">
+                      <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                        <h6 class="mb-0 fw-bold text-dark fs-6 text-truncate pe-2">{{ notif.title }}</h6>
+                        <small class="text-muted text-nowrap" style="font-size: 0.70rem;">
+                          {{ notif.createdAt | date:'shortTime' }}
+                        </small>
+                      </div>
+                      <p class="mb-2 small text-secondary lh-sm">{{ notif.message }}</p>
+                      <div class="text-end mt-1">
+                        <button class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2" style="font-size: 0.75rem;" (click)="markAsRead(notif, $event)">
+                          <i class="bi bi-check2"></i> Marcar leída
+                        </button>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          </div>
           <div class="dropdown">
             <button class="btn d-flex align-items-center gap-2 p-1 border-0"
                     type="button"
@@ -37,23 +83,21 @@
 
               <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-primario"
                    style="width: 38px; height: 38px; background: white; font-size: 0.85rem;">
-              @if(authService.currentUser()?.avatarUrl){
-                <img [src]="authService.currentUser()?.avatarUrl"
-                     class="rounded-circle shadow-lg"
-                     style="width: 38px; height: 38px; object-fit: cover;"
-                     alt="Avatar">
-              }@else{
-                <!-- Avatar con iniciales -->
-                {{ authService.currentUser()?.firstName?.charAt(0)?.toUpperCase() }}{{ authService.currentUser()?.lastName?.charAt(0)?.toUpperCase() }}
-              }
+                @if(authService.currentUser()?.avatarUrl){
+                  <img [src]="authService.currentUser()?.avatarUrl"
+                       class="rounded-circle shadow-sm"
+                       style="width: 38px; height: 38px; object-fit: cover;"
+                       alt="Avatar">
+                }@else{
+                  {{ authService.currentUser()?.firstName?.charAt(0)?.toUpperCase() }}{{ authService.currentUser()?.lastName?.charAt(0)?.toUpperCase() }}
+                }
 
               </div>
               <i class="bi bi-chevron-down text-white small"></i>
             </button>
 
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-1 p-0" style="min-width: 200px;">
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2 p-0" style="min-width: 200px;">
 
-              <!-- Info usuario -->
               <li class="px-3 py-2 border-bottom bg-acento text-white rounded-top-3">
                 <p class="fw-semibold mb-0 small">{{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</p>
                 <p class="mb-0" style="font-size: 0.75rem;">{{ authService.currentUser()?.mail }}</p>

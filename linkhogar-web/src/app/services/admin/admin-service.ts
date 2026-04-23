@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {DashboardStatsResponse} from '../../Models/Admin/DashboardStatsResponse';
@@ -58,5 +58,12 @@ export class AdminService {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
     return this.http.get<PageResponse<HouseResponse>>(`${this.apiUrl}/houses/pending?page=${page}&size=${size}`, { headers });
+  }
+
+  deleteReport(reportId: string, archiveHouse: boolean): Observable<void>{
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    const params = new HttpParams().set('archiveHouse', archiveHouse);
+    return this.http.post<void>(`${environment.apiUrl}/houses/houseReport/delete/${reportId}`, null ,{ headers, params });
   }
 }
