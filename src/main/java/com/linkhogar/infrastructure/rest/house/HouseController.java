@@ -307,16 +307,18 @@ public class HouseController {
         }
     }
 
-    @DeleteMapping("/houseReport/delete/{reportId}")
-    public ResponseEntity<?> deleteHouseReport(@PathVariable String reportId, Authentication authentication){
+    @PostMapping("/houseReport/delete/{reportId}")
+    public ResponseEntity<?> deleteHouseReport(@PathVariable String reportId,
+                                               @RequestParam boolean archiveHouse,
+                                               Authentication authentication){
         if(authentication == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Result<Void> result = deleteReportCommandHandler.handle(new DeleteReportCommand(UUID.fromString(reportId)));
+        Result<Void> result = deleteReportCommandHandler.handle(new DeleteReportCommand(UUID.fromString(reportId), archiveHouse));
 
         if(result.isSuccess()){
             return ResponseEntity.ok().build();
         }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
         }
     }
 

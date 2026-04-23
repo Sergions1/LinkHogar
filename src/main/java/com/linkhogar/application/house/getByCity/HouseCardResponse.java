@@ -1,6 +1,7 @@
 package com.linkhogar.application.house.getByCity;
 
 import com.linkhogar.domain.address.Address;
+import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.house.enums.HouseType;
@@ -23,6 +24,7 @@ public class HouseCardResponse
     private LocalDateTime updateDate;
     private HouseType houseType;
     private HouseStatus status;
+    private PublicationStatus publicationStatus;
 
     private int size;
     private int rooms;
@@ -48,6 +50,7 @@ public class HouseCardResponse
                 house.getUpdateDate(),
                 house.getHouseType(),
                 house.getStatus(),
+                house.getPublicationStatus(),
                 house.getSize(),
                 house.getRooms(),
                 house.getBaths(),

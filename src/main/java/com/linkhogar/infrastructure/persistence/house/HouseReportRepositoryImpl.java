@@ -2,6 +2,7 @@ package com.linkhogar.infrastructure.persistence.house;
 
 import com.linkhogar.domain.house.HouseReport;
 import com.linkhogar.domain.house.HouseReportRepository;
+import com.linkhogar.domain.house.enums.ReportStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,5 +36,10 @@ public class HouseReportRepositoryImpl implements HouseReportRepository {
     @Override
     public void deleteById(UUID id) {
         jpaHouseReportRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<HouseReport> getPendant(Pageable pageable){
+        return jpaHouseReportRepository.findAllByStatus(ReportStatus.PENDIENTE, pageable);
     }
 }

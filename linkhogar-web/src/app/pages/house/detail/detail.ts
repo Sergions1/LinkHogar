@@ -155,6 +155,11 @@ export class Detail implements OnInit {
           icon: 'success',
           confirmButtonText: 'Aceptar',
           confirmButtonColor: 'var(--color-acento)'
+        }).then((result) => {
+          // Comprobamos si el usuario hizo clic en "Aceptar"
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
         });
       },
       error: (err) => {
