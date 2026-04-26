@@ -5,6 +5,7 @@ import com.linkhogar.domain.chat.ChatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,4 +24,16 @@ public class ChatRepositoryImpl implements ChatRepository {
     public Optional<Chat> findInquiryChatByHouseAndClient(UUID houseId, UUID clientId) {
         return jpaChatRepository.findInquiryChatByHouseAndClient(houseId, clientId);
     }
+
+    @Override
+    public List<Chat> findAllChatsByUserId(UUID userId) {
+        return jpaChatRepository.findAllChatsByUserId(userId);
+    }
+
+    @Override
+    public List<Chat> findByReferenceId(UUID referenceId) {
+        return jpaChatRepository.findByReferenceId(referenceId);
+    }
+
+
 }

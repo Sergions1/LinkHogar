@@ -52,6 +52,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/houses/*/status").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.DELETE, "/houses/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/chat/initiate").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/chat/my-chats").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/chat/ticket").authenticated()
                         .requestMatchers(HttpMethod.GET, "/AppSettings/*").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 

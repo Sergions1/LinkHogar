@@ -1,5 +1,6 @@
 package com.linkhogar.domain.chat;
 
+import com.linkhogar.domain.chat.enums.ChatStatus;
 import com.linkhogar.domain.chat.enums.ChatType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -26,4 +27,6 @@ public class Chat {
     private UUID referenceId;
 
     private LocalDateTime createdAt;
+
+    private ChatStatus status;
 }

@@ -4,6 +4,7 @@ package com.linkhogar.application.chat.initiateChat;
 import com.linkhogar.application.notifications.createNotification.CreateNotificationCommand;
 import com.linkhogar.application.notifications.createNotification.CreateNotificationCommandHandler;
 import com.linkhogar.domain.chat.*;
+import com.linkhogar.domain.chat.enums.ChatStatus;
 import com.linkhogar.domain.chat.enums.ChatType;
 import com.linkhogar.domain.common.result.Result; // Ajusta a tu ruta real de Result
 import com.linkhogar.domain.common.result.Error; // Ajusta a tu ruta real de Error si lo usas
@@ -37,6 +38,7 @@ public class InitiateChatCommandHandler {
                         .type(ChatType.Alquiler)
                         .referenceId(command.houseId())
                         .createdAt(LocalDateTime.now())
+                        .status(ChatStatus.Activo)
                         .build();
                 chatRepository.save(chat);
 
