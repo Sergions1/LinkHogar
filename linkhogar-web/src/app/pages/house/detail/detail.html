@@ -230,7 +230,7 @@
           </div>
 
           @if (currentUser()){
-            <div class="bg-light p-3 rounded-3">
+            <div class="bg-light p-3 rounded-3 mb-3">
               @if(house.owner.phone){
                 <div class="mb-3">
                   <small class="text-muted text-uppercase fw-bold" >Teléfono</small>
@@ -245,6 +245,12 @@
                   </p>
                 </div>
             </div>
+
+            @if(currentUser()?.id != house.owner.id){
+              <button (click)="onInterested()" class="btn primary-btn w-100 py-3 fw-bold rounded-4 shadow-sm">
+                <i class="bi bi-chat-dots-fill me-2"></i> ¡Estoy interesado!
+              </button>
+            }
           }
 
         </div>

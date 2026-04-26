@@ -9,6 +9,7 @@ import {UserService} from '../../../services/user/user-service';
 import {AuthService} from '../../../services/auth/auth.service';
 import Swal from 'sweetalert2';
 import {FormsModule} from '@angular/forms';
+import {ChatService} from '../../../services/chat/chat-service';
 
 @Component({
   selector: 'app-detail',
@@ -23,6 +24,7 @@ export class Detail implements OnInit {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private router = inject(Router);
+  private chatService = inject(ChatService)
 
   house = signal<HouseResponse | null>(null);
   isLoading = signal(false);
@@ -175,5 +177,83 @@ export class Detail implements OnInit {
         });
       }
     });
+  }
+
+
+  async onInterested() {
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Inicia sesión',
+        text: 'Debes estar registrado para contactar con el propietario.',
+        confirmButtonColor: 'var(--color-acento)'
+      });
+      return;
+    }
+
+    // 2. Comprobamos que no sea el dueño de su propia casa
+    const myId = this.authService.currentUser()?.id;
+    if (myId === this.house()?.owner.id) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Este es tu anuncio',
+        text: 'No puedes iniciar un chat contigo mismo.',
+        confirmButtonColor: 'var(--color-primario)'
+      });
+      return;
+    }
+
+    // 3. Abrimos el modal de SweetAlert para pedir el mensaje inicial
+    const { value: initialMessage } = await Swal.fire({
+      title: 'Contactar al propietario',
+      input: 'textarea',
+      inputLabel: 'Escribe tu primer mensaje:',
+      inputPlaceholder: 'Hola, estoy muy interesado en este alquiler...',
+      inputAttributes: {
+        'aria-label': 'Escribe tu primer mensaje'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Enviar mensaje',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: 'var(--color-acento)',
+      inputValidator: (value) => {
+        if (!value || value.trim().length === 0) {
+          return '¡Debes escribir un mensaje para empezar!';
+        }
+        return null;
+      }
+    });
+
+    // 4. Si el usuario escribió algo y le dio a Enviar
+    if (initialMessage) {
+      // Mostramos un loading de SweetAlert mientras llama al backend
+      Swal.fire({
+        title: 'Enviando...',
+        text: 'Iniciando conversación',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      // 5. Llamamos a tu Backend (al POST /api/chats/initiate)
+      this.chatService.initiateChat(this.house()?.id || "", this.house()?.owner.id || "", initialMessage).subscribe({
+        next: (response) => {
+          Swal.close();
+          // REDIRECCIÓN MÁGICA: Lo mandamos al buzón, directamente a este chat
+          this.router.navigate(['/messages', response.chatId]);
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Hubo un problema al enviar el mensaje. Inténtalo de nuevo.',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: 'var(--color-acento)'
+          });
+        }
+      });
+    }
   }
 }

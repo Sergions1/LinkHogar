@@ -1,5 +1,7 @@
 package com.linkhogar.application.house.delete;
 
+import com.linkhogar.application.chat.deleteChat.ArchiveHouseChatsCommand;
+import com.linkhogar.application.chat.deleteChat.ArchiveHouseChatsCommandHandler;
 import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.house.*;
@@ -16,6 +18,7 @@ import java.util.Objects;
 public class DeleteHouseCommandHandler {
     private final HouseRepository houseRepository;
     private final CloudinaryService cloudinaryService;
+    private final ArchiveHouseChatsCommandHandler archiveChatsHandler;
 
     public Result<Void> handle(DeleteHouseCommand command) {
         House house = houseRepository.getById(command.houseId());
@@ -33,6 +36,8 @@ public class DeleteHouseCommandHandler {
         }
 
         house.setPublicationStatus(PublicationStatus.ARCHIVED);
+
+        archiveChatsHandler.handle(new ArchiveHouseChatsCommand(command.houseId()));
 
         // 4. Guardamos los cambios
         houseRepository.save(house);

@@ -1,0 +1,158 @@
+<div class="container-fluid py-4" style="height: calc(100vh - 80px);">
+  <div class="row h-100 g-0 shadow-sm border rounded-4 overflow-hidden bg-white">
+
+    <div class="col-md-4 col-lg-3 border-end d-flex flex-column bg-light h-100">
+
+      <div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0 text-primario">Mis Mensajes</h5>
+      </div>
+
+      <div class="overflow-auto flex-grow-1 position-relative">
+
+        @if (isLoadingChats()) {
+          <div class="d-flex justify-content-center align-items-center h-100 mt-5">
+            <div class="spinner-border text-primario" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+        } @else if (chats().length === 0) {
+          <div class="text-center p-4 text-muted mt-4">
+            <i class="bi bi-chat-square-text fs-1 mb-2 d-block opacity-50"></i>
+            <small>No tienes conversaciones activas</small>
+          </div>
+        } @else {
+          @for (chat of chats(); track chat.id) {
+            <div class="p-3 border-bottom position-relative hover-chat"
+                 (click)="selectChat(chat.id)"
+                 [class.bg-white]="selectedChatId() === chat.id"
+                 [class.bg-light]="selectedChatId() !== chat.id">
+
+              <div class="d-flex align-items-center gap-3">
+                <div class="position-relative">
+                  <img [src]="chat.houseImage || '/images/default-house.jpg'" class="rounded-circle shadow-sm" width="50" height="50" style="object-fit: cover;">
+
+                  @if (chat.hasUnread) {
+                    <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle shadow-sm">
+                      <span class="visually-hidden">Nuevo mensaje</span>
+                    </span>
+                  }
+                </div>
+
+                <div class="flex-grow-1 overflow-hidden">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h6 class="mb-0 fw-bold" [class.text-primario]="chat.hasUnread" [class.text-dark]="!chat.hasUnread">
+                      {{ chat.otherParticipantName }}
+                    </h6>
+                  </div>
+                  <p class="mb-0 small text-truncate" [class.fw-bold]="chat.hasUnread" [class.text-dark]="chat.hasUnread" [class.text-secondary]="!chat.hasUnread">
+                    {{chat.houseTitle }}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="col-md-8 col-lg-9 d-flex flex-column h-100 bg-white position-relative">
+
+      @if (selectedChatId()) {
+
+        <div class="p-3 border-bottom bg-white d-flex align-items-center shadow-sm z-1">
+          <div class="d-flex align-items-center gap-3">
+            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+              <i class="bi bi-person-fill fs-4 text-secondary"></i>
+            </div>
+            <div>
+              <h6 class="mb-0 fw-bold">{{selectedChat()?.otherParticipantName || 'Cargando...' }}</h6>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-grow-1 overflow-auto p-4" #scrollMe style="background-color: #f8f9fa;">
+
+          @if (isLoadingMore()) {
+            <div class="text-center my-3">
+              <div class="spinner-border spinner-border-sm text-primario" role="status">
+                <span class="visually-hidden">Cargando anteriores...</span>
+              </div>
+            </div>
+          }
+
+          @if (hasMoreMessages() && currentMessages().length > 0 && !isLoadingMore()) {
+            <div class="text-center my-3">
+              <button class="btn btn-sm btn-outline-primary rounded-pill px-4 shadow-sm" (click)="loadMessages()" style="font-size: 0.85rem;">
+                Cargar mensajes anteriores
+              </button>
+            </div>
+          }
+
+          @if (currentMessages().length === 0) {
+            <div class="text-center text-muted mt-5">
+              <span class="badge bg-secondary rounded-pill px-3 py-2 fw-normal">Inicia la conversación escribiendo abajo</span>
+            </div>
+          }
+
+          @for (msg of currentMessages(); track msg.id) {
+            <div class="d-flex mb-3" [class.justify-content-end]="msg.senderId === myUserId">
+
+              <div class="p-3 rounded-4 shadow-sm"
+                   style="max-width: 75%;"
+                   [class.bg-primario]="msg.senderId === myUserId"
+                   [class.text-white]="msg.senderId === myUserId"
+                   [class.bg-white]="msg.senderId !== myUserId"
+                   [class.border]="msg.senderId !== myUserId">
+
+                <p class="mb-1" style="font-size: 0.95rem;">{{ msg.content }}</p>
+
+                <div class="text-end" [class.text-white-50]="msg.senderId === myUserId" [class.text-muted]="msg.senderId !== myUserId" style="font-size: 0.65rem;">
+                  {{ msg.createdAt | date:'shortTime' }}
+                  @if (msg.senderId === myUserId) {
+                    <i class="bi bi-check2-all ms-1"></i>
+                  }
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+
+        <div class="p-3 border-top bg-white">
+          <div class="input-group">
+
+            <input
+              type="text"
+              class="form-control rounded-pill border-primary px-4"
+              placeholder="Escribe un mensaje..."
+              [ngModel]="newMessage()"
+              (ngModelChange)="newMessage.set($event)"
+              (keyup.enter)="sendMessage()"
+              style="background-color: #f8f9fa;"
+            />
+
+            <button
+              class="btn btn-primary rounded-circle ms-2 shadow-sm"
+              (click)="sendMessage()"
+              [disabled]="!newMessage().trim()"
+              style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16" style="margin-left: -2px;">
+                <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+              </svg>
+            </button>
+
+          </div>
+        </div>
+
+      } @else {
+        <div class="m-auto text-center opacity-50">
+          <i class="bi bi-chat-left-dots fs-1 d-block mb-3"></i>
+          <h5 class="fw-bold">Buzón de Mensajes</h5>
+          <p>Selecciona una conversación a la izquierda<br>para ver el historial y responder.</p>
+        </div>
+      }
+    </div>
+
+  </div>
+</div>

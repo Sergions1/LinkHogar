@@ -8,6 +8,7 @@ import {UserService} from '../../../services/user/user-service';
 import {NotificationService} from '../../../services/notification/notification-service';
 import {UserNotification} from '../../../Models/Notification/UserNotification';
 import {DatePipe} from '@angular/common';
+import {WebSocketService} from '../../../services/chat/web-socket-service';
 
 @Component({
   selector: 'app-header',
@@ -26,6 +27,9 @@ export class Header implements OnInit, OnDestroy {
   private routerSub!: Subscription; // Para guardar la suscripción y limpiarla luego
   unreadNotifications = signal<UserNotification[]>([]); //Signal para notificaciones no leidas
 
+  private wsService = inject(WebSocketService);
+  private wsNotificationSub!: Subscription;
+
   ngOnInit() {
     this.checkAdminRoute(this.router.url);
 
@@ -39,11 +43,23 @@ export class Header implements OnInit, OnDestroy {
     if (this.authService.isLoggedIn()) {
       this.loadNotifications();
     }
+
+    if (this.authService.isLoggedIn()) {
+      this.loadNotifications();
+
+      this.wsNotificationSub = this.wsService.notificationSubject.subscribe((nuevaNotif) => {
+        // La añadimos a la lista (al principio para que salga la primera)
+        this.unreadNotifications.update(lista => [nuevaNotif, ...lista]);
+      });
+    }
   }
 
   ngOnDestroy() {
     if(this.routerSub) {
       this.routerSub.unsubscribe(); //Destruimos para evitar fugas de memoria
+    }
+    if(this.wsNotificationSub) {
+      this.wsNotificationSub.unsubscribe();
     }
   }
 

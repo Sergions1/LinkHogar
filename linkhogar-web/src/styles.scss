@@ -11,6 +11,7 @@
 
     /* Colores de texto para contraste */
     --color-texto-claro: #FFFFFF;       /* Texto para fondos oscuros */
+    --color-texto-claro-presionado: #EEEEEE;       /* Texto para fondos oscuros */
     --color-texto-oscuro: #2D3748;      /* Texto para fondos claros (color Grafito) */
     /* Definir un tono más oscuro para el estado HOVER */
     --color-acento-oscuro: #DB7C55;
@@ -73,6 +74,7 @@
 
   .primary-btn:hover{
     background-color: var(--color-acento-presionado) !important;
+    color: var(--color-texto-claro-presionado);
   }
 
   .text-acento{

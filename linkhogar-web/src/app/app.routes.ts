@@ -19,6 +19,7 @@ import {authGuard} from './guards/authGuard';
 import {Favourites} from './pages/user/favourites/favourites';
 import {MyPublications} from './pages/user/my-publications/my-publications';
 import {Edit} from './pages/house/edit/edit';
+import {Messages} from './pages/chat/messages/messages';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -46,5 +47,7 @@ export const routes: Routes = [
       { path: 'users', component: AdminUsersComponent }
     ]
   },
+  {path: "messages", component: Messages, canActivate: [authGuard]},
+  {path: "messages/:chatId", component: Messages, canActivate: [authGuard]},
   { path: '**', component: NotFound }
 ];
