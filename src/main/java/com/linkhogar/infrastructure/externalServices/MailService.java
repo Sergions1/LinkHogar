@@ -60,7 +60,7 @@ public class MailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             // Ojo: Debe ser exactamente el correo que verificaste en SendPulse
-            helper.setFrom("info@linkhogar.com");
+            helper.setFrom("fromEmail");
             helper.setTo(to);
             helper.setSubject("Código de restablecimiento de contraseña - LinkHogar");
 
