@@ -2,6 +2,7 @@ package com.linkhogar.domain.chat;
 
 import com.linkhogar.domain.chat.enums.ChatStatus;
 import com.linkhogar.domain.chat.enums.ChatType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -28,5 +29,7 @@ public class Chat {
 
     private LocalDateTime createdAt;
 
-    private ChatStatus status;
+    @Builder.Default
+    @Column(nullable = false)
+    private ChatStatus status = ChatStatus.Activo;
 }

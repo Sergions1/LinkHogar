@@ -47,11 +47,13 @@ public class User implements UserDetails {
 
     //Relaciones
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true) //En caso de ser eliminada una casa del listado, esta se elimina
-    @ToString.Exclude // ¡VITAL! Evita bucle infinito
+    @ToString.Exclude //Evita bucle infinito
     @Builder.Default  // Para que el Builder no la ponga a null
     private List<House> houses = new ArrayList<>();
 
-
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude // Importante para evitar bucles infinitos
+    private VerificationToken verificationToken;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

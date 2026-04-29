@@ -23,4 +23,14 @@ public class ChatParticipantRepositoryImpl implements ChatParticipantRepository 
     public List<ChatParticipant> findByChatId(UUID chatId) {
         return jpaChatParticipantRepository.findByChatId(chatId);
     }
+
+    @Override
+    public List<ChatParticipant> findByUserId(UUID userId) {
+        return jpaChatParticipantRepository.findByUserId(userId);
+    }
+
+    @Override
+    public long countByChatId(UUID chatId) {
+        return jpaChatParticipantRepository.countByChatId(chatId);
+    }
 }
