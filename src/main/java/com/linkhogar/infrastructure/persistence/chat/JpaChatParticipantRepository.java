@@ -10,4 +10,8 @@ import java.util.UUID;
 @Repository
 public interface JpaChatParticipantRepository extends JpaRepository<ChatParticipant, UUID> {
     List<ChatParticipant> findByChatId(UUID chatId);
+    List<ChatParticipant> findByUserId(UUID userId);
+    long countByChatId(UUID chatId);
+
+
 }

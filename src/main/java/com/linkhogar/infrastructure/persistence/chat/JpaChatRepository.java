@@ -16,7 +16,8 @@ public interface JpaChatRepository extends JpaRepository<Chat, UUID> {
     @Query("SELECT c FROM Chat c JOIN ChatParticipant cp ON c.id = cp.chatId " +
             "WHERE c.type = com.linkhogar.domain.chat.enums.ChatType.Alquiler " +
             "AND c.referenceId = :houseId " +
-            "AND cp.userId = :clientId")
+            "AND cp.userId = :clientId " +
+            "AND c.status = com.linkhogar.domain.chat.enums.ChatStatus.Activo")
     Optional<Chat> findInquiryChatByHouseAndClient(
             @Param("houseId") UUID houseId,
             @Param("clientId") UUID clientId
@@ -26,4 +27,6 @@ public interface JpaChatRepository extends JpaRepository<Chat, UUID> {
     List<Chat> findAllChatsByUserId(@Param("userId") UUID userId);
 
     List<Chat> findByReferenceId(UUID referenceId);
+    Optional<Chat> findById(UUID chatId);
+
 }

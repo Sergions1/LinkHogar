@@ -35,5 +35,10 @@ public class ChatRepositoryImpl implements ChatRepository {
         return jpaChatRepository.findByReferenceId(referenceId);
     }
 
+    @Override
+    public Optional<Chat> findById(UUID chatId) {
+        return jpaChatRepository.findById(chatId);
+    }
+
 
 }

@@ -9,4 +9,5 @@ public interface ChatRepository {
     Optional<Chat> findInquiryChatByHouseAndClient(UUID houseId, UUID clientId);
     List<Chat> findAllChatsByUserId(UUID userId);
     List<Chat> findByReferenceId(UUID houseId);
+    Optional<Chat> findById(UUID chatId);
 }
