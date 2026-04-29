@@ -51,10 +51,7 @@ public class GetByUserQueryHandle {
 
             // Nombre del otro usuario
             User user = userRepository.userById(otherUserId).orElse(null);
-            if (user == null) {
-                return Result.failure(UserErrors.NotFound(otherUserId));
-            }
-            String otherUserName = user.getFirstName() + " " + user.getLastName();
+            String otherUserName = (user != null) ? user.getFirstName() + " " + user.getLastName() : "Usuario Eliminado";
 
             // 3. Buscar datos de la casa
             House house = houseRepository.getById(chat.getReferenceId());

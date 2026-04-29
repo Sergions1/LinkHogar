@@ -75,6 +75,7 @@ public class ChatController {
         if(result.isSuccess()){
             return ResponseEntity.ok(result.getValue());
         }else{
+            System.out.println("⚠️ ERROR EN MY-CHATS: " + result.getError());
             return ResponseEntity.badRequest().body(result.getError());
         }
     }
