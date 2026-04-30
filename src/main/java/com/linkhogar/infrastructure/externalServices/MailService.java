@@ -18,8 +18,6 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class MailService {
 
-    private final JavaMailSender mailSender;
-
     @Value("${BREVO_API_KEY}") // Lee la clave de Railway
     private String brevoApiKey;
 
@@ -29,47 +27,7 @@ public class MailService {
     private String frontendUrl;
 
     @Async
-    public void sendVerificationEmail(String toEmail, String token) {
-        try {
-            System.out.println("Intentando enviar correo de verificación a: " + toEmail);
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setFrom(fromEmail);
-            helper.setTo(toEmail);
-            helper.setSubject("Verifica tu cuenta en LinkHogar");
-
-            String verificationLink = frontendUrl + "/verify?token=" + token;
-
-            String htmlMsg = "<div style='font-family: Arial, sans-serif; padding: 20px;'>"
-                    + "<h2>¡Bienvenido a LinkHogar!</h2>"
-                    + "<p>Gracias por registrarte. Para activar tu cuenta y empezar a buscar tu próximo hogar, haz clic en el siguiente enlace:</p>"
-                    + "<br>"
-                    + "<a href='" + verificationLink + "' style='background-color: #0d6efd; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Verificar mi cuenta</a>"
-                    + "<br><br>"
-                    + "<p style='color: #6c757d; font-size: 0.9em;'>Este enlace expirará en 24 horas. Si no has creado una cuenta en LinkHogar, puedes ignorar este correo.</p>"
-                    + "</div>";
-
-            helper.setText(htmlMsg, true);
-            mailSender.send(message);
-            System.out.println("¡Correo enviado con éxito a: " + toEmail + "!");
-        } catch (MessagingException e) {
-            System.err.println("EXPLOSIÓN AL ENVIAR CORREO a " + toEmail);
-            System.err.println("Motivo exacto: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    @Async
     public void sendPasswordResetEmail(String toEmail, String code) {
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "https://api.brevo.com/v3/smtp/email";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("api-key", brevoApiKey);
-
-        // Tu diseño HTML exacto
         String htmlMsg = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>"
                 + "<h2 style='color: #333; text-align: center;'>Cambio de contraseña</h2>"
                 + "<p style='color: #555; font-size: 16px;'>Hola,</p>"
@@ -82,28 +40,56 @@ public class MailService {
                 + "<p style='color: #999; font-size: 12px; text-align: center;'>Si no has solicitado este cambio, por favor ignora este correo.</p>"
                 + "</div>";
 
-        // Por seguridad, escapamos las comillas dobles si las hubiera en el HTML para no romper el JSON
-        String safeHtml = htmlMsg.replace("\"", "\\\"");
+        sendEmailViaBrevoAPI(toEmail, "Código de restablecimiento de contraseña - LinkHogar", htmlMsg);
+    }
 
-        // Construimos el JSON para Brevo
+    @Async
+    public void sendVerificationEmail(String toEmail, String token) {
+        System.out.println("Intentando enviar correo de verificación a: " + toEmail);
+        String verificationLink = frontendUrl + "/verify?token=" + token;
+
+        String htmlMsg = "<div style='font-family: Arial, sans-serif; padding: 20px;'>"
+                + "<h2>¡Bienvenido a LinkHogar!</h2>"
+                + "<p>Gracias por registrarte. Para activar tu cuenta y empezar a buscar tu próximo hogar, haz clic en el siguiente enlace:</p>"
+                + "<br>"
+                + "<a href='" + verificationLink + "' style='background-color: #0d6efd; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Verificar mi cuenta</a>"
+                + "<br><br>"
+                + "<p style='color: #6c757d; font-size: 0.9em;'>Este enlace expirará en 24 horas. Si no has creado una cuenta en LinkHogar, puedes ignorar este correo.</p>"
+                + "</div>";
+
+        sendEmailViaBrevoAPI(toEmail, "Verifica tu cuenta en LinkHogar", htmlMsg);
+    }
+
+    // --- EL MOTOR DE ENVÍO POR API (Sustituye al antiguo JavaMailSender) ---
+    private void sendEmailViaBrevoAPI(String toEmail, String subject, String htmlContent) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://api.brevo.com/v3/smtp/email";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("api-key", brevoApiKey);
+
+        // Escapar comillas dobles y simples para que el JSON no se rompa al inyectar el HTML
+        String safeHtml = htmlContent.replace("\"", "\\\"").replace("'", "\\'");
+
         String requestJson = """
             {
                "sender": {"name": "LinkHogar", "email": "%s"},
                "to": [{"email": "%s"}],
-               "subject": "Código de restablecimiento de contraseña - LinkHogar",
+               "subject": "%s",
                "htmlContent": "%s"
             }
-            """.formatted(fromEmail, toEmail, safeHtml);
+            """.formatted(fromEmail, toEmail, subject, safeHtml);
 
         HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
 
         try {
-            // Hacemos la petición HTTP POST a Brevo
             ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-            System.out.println("¡Correo enviado con estilo por API! Respuesta: " + response.getBody());
+            System.out.println("¡Correo enviado con éxito a: " + toEmail + "! Respuesta: " + response.getBody());
         } catch (Exception e) {
-            System.out.println("Fallo al enviar correo HTTP: " + e.getMessage());
-            throw new RuntimeException("Error al enviar el correo de recuperación", e);
+            System.err.println("EXPLOSIÓN AL ENVIAR CORREO a " + toEmail);
+            System.err.println("Motivo exacto: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
