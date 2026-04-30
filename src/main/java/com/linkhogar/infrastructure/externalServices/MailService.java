@@ -29,7 +29,7 @@ public class MailService {
 
     private final String fromEmail = "info@linkhogar.com";
 
-    @Value("${app.frontend.url:http://localhost:4200}")
+    @Value("${app.frontend.url}")
     private String frontendUrl;
 
     @Async
