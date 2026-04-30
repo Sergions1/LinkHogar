@@ -4,6 +4,7 @@ import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.user.*;
 import com.linkhogar.domain.user.enums.Role;
 import com.linkhogar.infrastructure.externalServices.MailService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CreateUserCommandHandler {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

@@ -39,7 +39,9 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING) //Guardamos el texto, no el numero
     private Role role;
-    private boolean enabled = true;
+
+    @Builder.Default
+    private boolean enabled = false;
 
     private String avatarUrl;
     private String verificationCode;
