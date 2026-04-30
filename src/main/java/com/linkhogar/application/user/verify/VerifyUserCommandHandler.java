@@ -19,8 +19,17 @@ public class VerifyUserCommandHandler {
 
     @Transactional
     public void handle(VerifyUserCommand command) {
+
+        System.out.println("🔍 Buscando token: " + command.token());
+        System.out.println("🔍 Tokens en BD: " + tokenRepository.findAll()
+                .stream().map(VerificationToken::getToken).toList());
+
         VerificationToken verificationToken = tokenRepository.findByToken(command.token())
                 .orElseThrow(() -> new IllegalArgumentException("Token no válido o no encontrado"));
+
+        // Añade esto temporalmente
+        System.out.println("Token encontrado. User asociado: " + verificationToken.getUser());
+        System.out.println("User ID: " + verificationToken.getUser().getId());
 
         if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             tokenRepository.delete(verificationToken);
