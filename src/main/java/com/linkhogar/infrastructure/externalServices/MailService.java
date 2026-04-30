@@ -1,5 +1,6 @@
 package com.linkhogar.infrastructure.externalServices;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -69,27 +75,27 @@ public class MailService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("api-key", brevoApiKey);
 
-        // Escapar comillas dobles y simples para que el JSON no se rompa al inyectar el HTML
-        String safeHtml = htmlContent.replace("\"", "\\\"").replace("'", "\\'");
-
-        String requestJson = """
-            {
-               "sender": {"name": "LinkHogar", "email": "%s"},
-               "to": [{"email": "%s"}],
-               "subject": "%s",
-               "htmlContent": "%s"
-            }
-            """.formatted(fromEmail, toEmail, subject, safeHtml);
-
-        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+        // ✅ ObjectMapper escapa correctamente todos los caracteres especiales
+        ObjectMapper mapper = new ObjectMapper();
 
         try {
+            Map<String, Object> body = new HashMap<>();
+            body.put("sender", Map.of("name", "LinkHogar", "email", fromEmail));
+            body.put("to", List.of(Map.of("email", toEmail)));
+            body.put("subject", subject);
+            body.put("htmlContent", htmlContent); // Sin escapado manual
+
+            String requestJson = mapper.writeValueAsString(body);
+
+            HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-            System.out.println("¡Correo enviado con éxito a: " + toEmail + "! Respuesta: " + response.getBody());
+            System.out.println("Correo enviado a: " + toEmail + " | Respuesta: " + response.getBody());
+
+        } catch (HttpClientErrorException e) {
+            System.err.println("Error HTTP: " + e.getStatusCode());
+            System.err.println("Body de Brevo: " + e.getResponseBodyAsString()); // ← aquí está el motivo real
         } catch (Exception e) {
-            System.err.println("EXPLOSIÓN AL ENVIAR CORREO a " + toEmail);
-            System.err.println("Motivo exacto: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error general: " + e.getMessage());
         }
     }
 }
