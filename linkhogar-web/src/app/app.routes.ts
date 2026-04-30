@@ -20,6 +20,7 @@ import {Favourites} from './pages/user/favourites/favourites';
 import {MyPublications} from './pages/user/my-publications/my-publications';
 import {Edit} from './pages/house/edit/edit';
 import {Messages} from './pages/chat/messages/messages';
+import {hasHomeGuard} from './guards/hasHomeGuard';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -45,6 +46,19 @@ export const routes: Routes = [
       { path: 'houses', component: AdminHousesComponent} ,
       { path: 'houses/requests', component: AdminRequests},
       { path: 'users', component: AdminUsersComponent }
+    ]
+  },
+  {
+    path: 'hogar',
+    component: AdminLayoutComponent, // El Layout padre
+    canActivate: [hasHomeGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Si entran a /admin, los manda al dashboard
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'tareas', component: AdminHousesComponent} ,
+      { path: 'chat', component: AdminRequests},
+      { path: 'gastos', component: AdminUsersComponent },
+      { path: 'calendario', component: AdminUsersComponent }
     ]
   },
   {path: "messages", component: Messages, canActivate: [authGuard]},

@@ -62,6 +62,9 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    @Column(name = "home_id")
+    private UUID homeId;
+
     @Override
     public String getUsername() {
         return getId().toString();
