@@ -53,6 +53,7 @@ public class MailService {
         }
     }
 
+    @Async
     public void sendPasswordResetEmail(String to, String code) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
