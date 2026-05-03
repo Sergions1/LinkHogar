@@ -1,0 +1,31 @@
+  <div class="post-it" [ngClass]="colorClass">
+    <div class="pin" [ngClass]="pinClass" cdkDragHandle></div>
+
+    <ng-content></ng-content>
+
+    <div class="post-it-content">
+
+      <h5 class="fw-bold text-dark" [class.text-decoration-line-through]="task.status === 'Finalizada'">
+        {{ task.title }}
+      </h5>
+
+      <p class="small text-dark mb-2">
+        {{ task.description }}
+      </p>
+
+      <div class="d-flex justify-content-between align-items-end mt-auto pt-2">
+        <small class="text-muted fw-semibold">
+          @if(task.status === 'Finalizada') {
+            <i class="bi bi-check-all"></i> Terminada
+          } @else {
+            <i class="bi bi-person-fill"></i> {{ task.assignedUserName || 'Sin asignar' }}
+          }
+        </small>
+
+        <button class="btn btn-trash p-0 border-0 leading-none" (click)=delete()>
+          <i class="bi bi-trash text-danger"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>

@@ -20,6 +20,7 @@ export class AuthService {
   isLoggedIn = signal<boolean>(this.hasValidToken());
   currentUser = signal<UserResponse | null>(null);
   favouriteIds = signal<Set<string>>(new Set());
+  haveHome = signal<boolean>(this.currentUser()?.homeId !== null);
 
   constructor() {
     if (this.hasValidToken()) {
@@ -179,4 +180,5 @@ export class AuthService {
     }
     this.favouriteIds.set(currentSet);
   }
+
 }

@@ -21,6 +21,10 @@ import {MyPublications} from './pages/user/my-publications/my-publications';
 import {Edit} from './pages/house/edit/edit';
 import {Messages} from './pages/chat/messages/messages';
 import {hasHomeGuard} from './guards/hasHomeGuard';
+import {HomeDashboard} from './pages/home/home-dashboard/home-dashboard';
+import {Tasks} from './pages/home/tasks/tasks';
+import {HomeLayout} from './pages/home/home-layout/home-layout';
+import {Chat} from './pages/home/chat/chat';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -50,13 +54,13 @@ export const routes: Routes = [
   },
   {
     path: 'hogar',
-    component: AdminLayoutComponent, // El Layout padre
-    canActivate: [hasHomeGuard],
+    component: HomeLayout, // El Layout padre
+    canActivate: [], //todo revisar guard
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Si entran a /admin, los manda al dashboard
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'tareas', component: AdminHousesComponent} ,
-      { path: 'chat', component: AdminRequests},
+      { path: 'dashboard', component: HomeDashboard },
+      { path: 'tareas', component: Tasks} ,
+      { path: 'chat', component: Chat},
       { path: 'gastos', component: AdminUsersComponent },
       { path: 'calendario', component: AdminUsersComponent }
     ]

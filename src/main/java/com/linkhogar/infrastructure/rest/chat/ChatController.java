@@ -5,6 +5,8 @@ import com.linkhogar.application.chat.getByUser.GetByUserQuery;
 import com.linkhogar.application.chat.getByUser.GetByUserQueryHandle;
 import com.linkhogar.application.chat.getMessagesByChat.GetMessagesByChatQueryHandler;
 import com.linkhogar.application.chat.getMessagesByChat.MessageResponse;
+import com.linkhogar.application.chat.getOrCreateHomeChat.GetOrCreateHomeChatCommand;
+import com.linkhogar.application.chat.getOrCreateHomeChat.GetOrCreateHomeChatCommandHandler;
 import com.linkhogar.application.chat.initiateChat.InitiateChatCommand;
 import com.linkhogar.application.chat.initiateChat.InitiateChatCommandHandler;
 import com.linkhogar.application.chat.initiateChat.InitiateChatRequest;
@@ -32,6 +34,8 @@ public class ChatController {
     private final InitiateChatCommandHandler initiateChatCommandHandler;
     private final GetByUserQueryHandle getByUserQueryHandle;
     private final GetMessagesByChatQueryHandler GetMessagesByChatQueryHandler;
+    private final GetOrCreateHomeChatCommandHandler getOrCreateHomeChatCommandHandler;
+
 
     @PostMapping("/initiate")
     public ResponseEntity<?> initiateChat(@RequestBody InitiateChatRequest request, Authentication authentication) {
@@ -95,6 +99,27 @@ public class ChatController {
             return ResponseEntity.ok(messages);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/home/{homeId}")
+    public ResponseEntity<?> getHomeChat(
+            @PathVariable UUID homeId,
+            Authentication authentication) {
+
+        if (authentication == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        UUID requesterId = UUID.fromString(authentication.getName());
+        GetOrCreateHomeChatCommand command = new GetOrCreateHomeChatCommand(homeId, requesterId);
+
+        Result<UUID> result = getOrCreateHomeChatCommandHandler.handle(command);
+
+        if (result.isSuccess()) {
+            return ResponseEntity.ok().body(new Object() {
+                public final UUID chatId = result.getValue();
+            });
+        } else {
+            return ResponseEntity.badRequest().body(result.getError());
         }
     }
 }

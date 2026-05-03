@@ -1,0 +1,110 @@
+<div class="container-fluid py-4 tablon-fondo">
+
+  <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+    <h2 class="fw-bold text-dark mb-0 bg-white bg-opacity-75 px-3 py-1 rounded shadow-sm">Tablón de Tareas</h2>
+    <button class="btn primary-btn fw-bold rounded-pill shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+      <i class="bi bi-plus-lg me-1"></i> Nueva Tarea
+    </button>
+  </div>
+
+  <div class="row g-4 px-2" cdkDropListGroup>
+
+    <div class="col-md-4">
+      <h4 class="text-center fw-bold mb-4 text-dark bg-white bg-opacity-75 py-2 rounded shadow-sm">Por Hacer</h4>
+      <div class="kanban-column"
+           cdkDropList
+           [cdkDropListData]="todoTasks"
+           (cdkDropListDropped)="drop($event, 'Por hacer')">
+
+        @for (task of todoTasks; track task.id) {
+          <app-post-it cdkDrag [task]="task" colorClass="color-amarillo" pinClass="blue-pin" (taskDeleted)="onTaskDeleted($event)"></app-post-it>
+        }
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <h4 class="text-center fw-bold mb-4 text-dark bg-white bg-opacity-75 py-2 rounded shadow-sm">En Curso</h4>
+      <div class="kanban-column"
+           cdkDropList
+           [cdkDropListData]="inProgressTasks"
+           (cdkDropListDropped)="drop($event, 'En curso')">
+
+        @for (task of inProgressTasks; track task.id) {
+          <app-post-it cdkDrag [task]="task" colorClass="color-azul" pinClass="red-pin" (taskDeleted)="onTaskDeleted($event)"></app-post-it>
+        }
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <h4 class="text-center fw-bold mb-4 text-dark bg-white bg-opacity-75 py-2 rounded shadow-sm">Finalizadas (7d)</h4>
+      <div class="kanban-column"
+           cdkDropList
+           [cdkDropListData]="doneTasks"
+           (cdkDropListDropped)="drop($event, 'Finalizada')">
+
+        @for (task of doneTasks; track task.id) {
+          <app-post-it cdkDrag [task]="task" colorClass="color-verde" pinClass="blue-pin" (taskDeleted)="onTaskDeleted($event)"></app-post-it>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Modal para crear tareas todo añadir asignado a-->
+<div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow rounded-4 bg-fondo-principal">
+
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-dark" id="createTaskModalLabel">Añadir nueva tarea</h5>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" id="closeModalBtn"></button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="taskForm" (ngSubmit)="onSubmitTask()">
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-dark small">¿Qué hay que hacer?</label>
+            <input type="text" class="form-control shadow-sm" formControlName="title">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-dark small">Detalles (Opcional)</label>
+            <textarea class="form-control shadow-sm" formControlName="description" rows="2" ></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-dark small">Asignar a:</label>
+            <select class="form-select shadow-sm text-muted" formControlName="assignedUserId">
+              <option [ngValue]="null">Sin asignar</option>
+              @for (member of homeMembers(); track member.id) {
+                <option [value]="member.id">{{ member.name }} </option>
+              }
+            </select>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-6">
+              <label class="form-label fw-semibold text-dark small">Fecha Inicio (Opcional)</label>
+              <input type="datetime-local" class="form-control shadow-sm text-muted" formControlName="startDate">
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-semibold text-dark small">Fecha Límite</label>
+              <input type="datetime-local" class="form-control shadow-sm text-muted" formControlName="dueDate">
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn primary-btn fw-bold shadow-sm py-2" [disabled]="taskForm.invalid">
+              <i class="bi bi-pin-angle-fill me-1"></i> Pinchar en el tablón
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

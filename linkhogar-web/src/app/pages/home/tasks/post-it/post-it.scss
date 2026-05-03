@@ -1,0 +1,120 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.post-it {
+  position: relative;
+  width: 100%; /* Ya no calculamos el 50%, ocupa el 100% de la celda que le da el padre */
+  min-width: 0;
+  aspect-ratio: 1 / 1; /* Mantiene la magia del cuadrado perfecto */
+
+  padding: 25px 15px 15px 15px;
+  margin-bottom: 0;
+  border-radius: 2px 2px 10px 2px;
+  box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+
+  /* Flex interno para que el contenido se reparta bien en el cuadrado */
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+/* Nuevo contenedor que maneja el scroll de todo el texto */
+.post-it-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Opcional: Ocultar la barra de scroll para que parezca papel de verdad */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE y Edge */
+}
+
+/* Ocultar barra de scroll en Chrome, Safari y Opera */
+.post-it-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* Efecto de pegatina levantada en la esquina inferior derecha */
+.post-it::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-width: 15px 15px 0 0;
+  border-style: solid;
+  border-color: rgba(0,0,0,0.1) #fff transparent transparent;
+  display: block;
+  width: 0;
+}
+
+.post-it:hover {
+  transform: scale(1.03) rotate(-1deg);
+  z-index: 5;
+}
+
+/* Colores de los post-its - Colores pastel para que se lea el texto oscuro */
+.color-amarillo { background: #fdf59b; } /* Amarillo suave */
+.color-azul { background: #b0e0e6; }     /* Azul polvo */
+.color-verde { background: #c1e1c1; }    /* Verde menta pastel */
+
+/* El "Pin" o chincheta */
+.pin {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  background-color: var(--color-primario, #4A90E2);
+  border-radius: 50%;
+  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.4), 2px 2px 3px rgba(0,0,0,0.2);
+  z-index: 10;
+  cursor:grab ;
+}
+
+.pin:active{
+  cursor: grabbing;
+}
+
+/* Brillo de la chincheta */
+.pin::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 5px;
+  height: 5px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+}
+
+.red-pin { background-color: var(--color-error, #E53E3E); }
+.green-pin { background-color: var(--color-exito, #28A745); }
+.blue-pin { background-color: blue; }
+
+.post-it h5, .post-it p {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Control del scroll interno de la descripción */
+.post-it p.overflow-auto {
+  overflow-y: auto;      /* Permite hacer scroll vertical si el texto es muy largo */
+  overflow-x: hidden;    /* Prohíbe totalmente el scroll horizontal */
+}
+
+
+@media (min-width: 1000px) {
+  :host {
+    /* Ocupamos el 50% menos la mitad del gap (15px / 2 = 7.5px) */
+    width: calc(50% - 7.5px);
+  }
+}

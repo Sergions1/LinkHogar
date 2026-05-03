@@ -9,5 +9,5 @@ export interface UserResponse {
   role : string;
   enabled : boolean;
   avatarUrl: string;
-  homeId: string;S
+  homeId?: string;
 }

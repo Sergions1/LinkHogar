@@ -24,6 +24,7 @@ export class Header implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
 
   isAdminRoute: boolean = false; //Flag para cambiar de color para el panel de administración
+  isHomeRoute: boolean = false; //Flag para cambiar de color para el panel de mi hogar
   private routerSub!: Subscription; // Para guardar la suscripción y limpiarla luego
   unreadNotifications = signal<UserNotification[]>([]); //Signal para notificaciones no leidas
 
@@ -31,13 +32,13 @@ export class Header implements OnInit, OnDestroy {
   private wsNotificationSub!: Subscription;
 
   ngOnInit() {
-    this.checkAdminRoute(this.router.url);
+    this.evaluateRute(this.router.url);
 
     //Suscripcion para escuchar cada vez que el usuario navega
     this.routerSub = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-      this.checkAdminRoute(event.urlAfterRedirects);
+      this.evaluateRute(event.urlAfterRedirects);
     })
 
     if (this.authService.isLoggedIn()) {
@@ -65,6 +66,10 @@ export class Header implements OnInit, OnDestroy {
 
   private checkAdminRoute(url: string) {
     this.isAdminRoute = url.startsWith('/admin');
+  }
+
+  private checkHomeRoute(url: string) {
+    this.isHomeRoute = url.startsWith('/hogar');
   }
 
  login(){
@@ -95,6 +100,12 @@ export class Header implements OnInit, OnDestroy {
     }
  }
 
+ home(){
+    if(this.authService.isLoggedIn() && this.authService.haveHome()){
+      this.router.navigate(['/hogar']);
+    }
+ }
+
   loadNotifications() {
     this.notificationService.getUnreadNotifications().subscribe({
       next: (data) => this.unreadNotifications.set(data),
@@ -113,5 +124,16 @@ export class Header implements OnInit, OnDestroy {
     });
   }
 
+
+  private evaluateRute(url: string){
+    if(url.includes('/admin')){
+      this.checkAdminRoute(url);
+    }else if(url.includes('/hogar')){
+      this.checkHomeRoute(url);
+    }else{
+      this.isAdminRoute = false;
+      this.isHomeRoute = false;
+    }
+  }
 
 }

@@ -8,10 +8,19 @@ export const hasHomeGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const currentUser = authService.currentUser();
+  if(!authService.isLoggedIn()){
+    router.navigate(['/login']);
+    return false;
+  }
+
+  const currentUserHomeId = authService.currentUser()?.homeId;
 
 
-  if (currentUser && currentUser.homeId) {
+//todo revisar porque no aparece el homeId en el currentUser
+  console.log("home id de Usuario actual: "+ currentUserHomeId);
+  debugger;
+
+  if (currentUserHomeId) {
     return true;
   } else {
     router.navigate(['/']);

@@ -56,6 +56,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/chat/my-chats").authenticated()
                         .requestMatchers(HttpMethod.POST, "/chat/ticket").authenticated()
                         .requestMatchers(HttpMethod.GET, "/AppSettings/*").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/homeTasks/create").authenticated()
+                        .requestMatchers(HttpMethod.GET,"/homeTasks/getByHome/*").authenticated()
+                        .requestMatchers(HttpMethod.PATCH,"/homeTasks/*/status").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/homeTasks/").authenticated()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         .requestMatchers(
