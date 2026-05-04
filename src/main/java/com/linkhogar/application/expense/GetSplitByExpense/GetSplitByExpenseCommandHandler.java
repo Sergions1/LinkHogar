@@ -23,7 +23,8 @@ public class GetSplitByExpenseCommandHandler {
                         split.getId(),
                         split.getDebtorId(),
                         split.getDebtorName(),
-                        split.getAmountOwed()
+                        split.getAmountOwed(),
+                        split.isPaid()
                 ))
                 .collect(Collectors.toList());
 

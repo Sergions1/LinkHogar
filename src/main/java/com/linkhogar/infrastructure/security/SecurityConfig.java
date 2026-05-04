@@ -59,7 +59,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/homeTasks/create").authenticated()
                         .requestMatchers(HttpMethod.GET,"/homeTasks/getByHome/*").authenticated()
                         .requestMatchers(HttpMethod.PATCH,"/homeTasks/*/status").authenticated()
-                        .requestMatchers(HttpMethod.DELETE,"/homeTasks/").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/homeTasks/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/expenses/create").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/expenses/getByHome/*").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/expenses/*/status").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/expenses/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/expenses/getById/*").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/expenses/*").authenticated()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         .requestMatchers(

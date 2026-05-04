@@ -7,5 +7,6 @@ public record ExpenseSplitResponse(
         UUID id,
         UUID debtorId,
         String debtorName,
-        BigDecimal amountOwed
+        BigDecimal amountOwed,
+        boolean paid
 ) {}

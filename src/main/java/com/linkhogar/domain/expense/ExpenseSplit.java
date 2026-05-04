@@ -28,4 +28,7 @@ public class ExpenseSplit {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amountOwed; // La cantidad exacta que le toca pagar
+
+    @Column(nullable = false)
+    private boolean isPaid;
 }

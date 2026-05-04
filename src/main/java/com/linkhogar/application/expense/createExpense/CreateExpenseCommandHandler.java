@@ -65,6 +65,7 @@ public class CreateExpenseCommandHandler {
                         .debtorId(dto.debtorId())
                         .debtorName(dto.debtorName())
                         .amountOwed(dto.amount())
+                        .isPaid(dto.debtorId().equals(command.payerId()))
                         .build())
                 .collect(Collectors.toList());
 

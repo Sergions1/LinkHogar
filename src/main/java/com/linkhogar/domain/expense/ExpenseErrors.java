@@ -7,6 +7,7 @@ import com.linkhogar.domain.common.result.Error;
 
 @NoArgsConstructor
 public class ExpenseErrors {
+
     public static Error NotFound(UUID expenseId) {
         return Error.notFound(
                 "Expenses.NotFound",
@@ -36,6 +37,11 @@ public class ExpenseErrors {
 
     public static final Error DELETION_FAILED = Error.failure(
             "Expenses.DeletionFailed",
+            "No se pudo eliminar el gasto"
+    );
+
+    public static final Error SPLIT_NOT_FOUND = Error.failure(
+            "Expenses.SplitNotFound",
             "No se pudo eliminar el gasto"
     );
 }

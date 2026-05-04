@@ -25,6 +25,7 @@ import {HomeDashboard} from './pages/home/home-dashboard/home-dashboard';
 import {Tasks} from './pages/home/tasks/tasks';
 import {HomeLayout} from './pages/home/home-layout/home-layout';
 import {Chat} from './pages/home/chat/chat';
+import {Expense} from './pages/home/expense/expense';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -61,7 +62,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: HomeDashboard },
       { path: 'tareas', component: Tasks} ,
       { path: 'chat', component: Chat},
-      { path: 'gastos', component: AdminUsersComponent },
+      { path: 'gastos', component: Expense },
       { path: 'calendario', component: AdminUsersComponent }
     ]
   },
