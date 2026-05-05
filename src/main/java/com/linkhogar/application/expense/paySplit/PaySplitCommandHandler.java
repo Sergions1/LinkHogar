@@ -2,10 +2,9 @@ package com.linkhogar.application.expense.paySplit;
 
 import com.linkhogar.domain.common.result.Error;
 import com.linkhogar.domain.common.result.Result;
-import com.linkhogar.domain.expense.ExpenseErrors;
-import com.linkhogar.domain.expense.ExpenseSplit;
-import com.linkhogar.domain.expense.ExpenseSplitRepository;
+import com.linkhogar.domain.expense.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +27,7 @@ public class PaySplitCommandHandler {
         split.setPaid(true); // Lo marcamos como pagado
 
         expenseSplitRepository.save(split);
+
 
         return Result.success(null);
     }

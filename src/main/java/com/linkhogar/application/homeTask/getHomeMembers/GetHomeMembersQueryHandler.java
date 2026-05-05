@@ -39,7 +39,10 @@ public class GetHomeMembersQueryHandler {
             List<HomeMemberResponse> response = members.stream()
                     .map(user -> new HomeMemberResponse(
                             user.getId(),
-                            user.getFirstName() + " " + user.getLastName()
+                            user.getFirstName(),
+                            user.getLastName(),
+                            user.getFirstName() + " " + user.getLastName(),
+                            user.getAvatarUrl()
                     ))
                     .collect(Collectors.toList());
 

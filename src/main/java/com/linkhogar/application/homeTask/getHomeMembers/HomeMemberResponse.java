@@ -4,6 +4,9 @@ import java.util.UUID;
 
 public record HomeMemberResponse (
         UUID id,
-        String name
+        String firstName,
+        String lastName,
+        String name,
+        String avatarUrl
 ){
 }

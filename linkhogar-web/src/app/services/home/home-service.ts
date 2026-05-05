@@ -4,7 +4,10 @@ import { environment } from '../../../environments/environment';
 
 export interface HomeMember {
   id: string;
+  firstName: string;
+  lastName: string;
   name: string;
+  avatarUrl?: string;
 }
 
 @Injectable({

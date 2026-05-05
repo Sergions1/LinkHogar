@@ -1,4 +1,4 @@
-import {Component, computed, effect, inject, signal} from '@angular/core';
+import {Component, computed, effect, inject, OnDestroy, signal} from '@angular/core';
 import {ExpenseCategory} from '../../../Models/expense/ExpenseCategory';
 import {ExpenseService} from '../../../services/expense/expense-service';
 import {AuthService} from '../../../services/auth/auth.service';
@@ -9,6 +9,8 @@ import {AddExpenseModal} from './add-expense-modal/add-expense-modal';
 import {HomeService} from '../../../services/home/home-service';
 import {HomeBalancesResponse} from '../../../Models/expense/HomeBalancesResponse';
 import {ExpenseSplitResponse} from '../../../Models/expense/ExpenseSplitResponse';
+import {WebSocketService} from '../../../services/chat/web-socket-service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-expense',
@@ -22,10 +24,11 @@ import {ExpenseSplitResponse} from '../../../Models/expense/ExpenseSplitResponse
   templateUrl: './expense.html',
   styleUrl: './expense.scss',
 })
-export class Expense {
+export class Expense{
   public expenseService = inject(ExpenseService);
   private authService = inject(AuthService);
   private homeService = inject(HomeService);
+  private route = inject(ActivatedRoute);
 
   isLoading = signal<boolean>(true);
   myUserId: string | undefined;
@@ -38,8 +41,6 @@ export class Expense {
 
   // Para el acordeón de splits
   expandedExpenseId = signal<string | null>(null);
-  isLoadingSplits = signal<boolean>(false);
-  currentSplits = signal<ExpenseSplitResponse[]>([]);
 
   myBalance = computed(() => {
     const data = this.balancesData();
@@ -55,6 +56,12 @@ export class Expense {
   });
 
   constructor() {
+    this.route.queryParams.subscribe(params => {
+      if (params['modal'] === 'create') {
+        this.showAddModal.set(true);
+      }
+    });
+
     effect(() => {
       const user = this.authService.currentUser();
       if (user?.id && user?.homeId) {
@@ -126,32 +133,27 @@ export class Expense {
   toggleExpenseSplits(expenseId: string) {
     if (this.expandedExpenseId() === expenseId) {
       this.expandedExpenseId.set(null);
-      return;
+    } else {
+      this.expandedExpenseId.set(expenseId);
     }
-
-    this.expandedExpenseId.set(expenseId);
-    this.isLoadingSplits.set(true);
-
-    this.expenseService.getExpenseSplits(expenseId).subscribe({
-      next: (splits) => {
-        this.currentSplits.set(splits);
-        this.isLoadingSplits.set(false);
-      },
-      error: (err) => {
-        console.error('Error cargando splits', err);
-        this.isLoadingSplits.set(false);
-      }
-    });
   }
 
   markAsPaid(splitId: string, expenseId: string, event: Event) {
     event.stopPropagation();
     this.expenseService.markSplitAsPaid(splitId).subscribe({
       next: () => {
-        this.currentSplits.update(splits =>
-          splits.map(s => s.id === splitId ? { ...s, paid: true } : s)
+        this.expenseService.homeExpenses.update(expenses =>
+          expenses.map(exp => {
+            if (exp.id === expenseId) {
+              return {
+                ...exp,
+                splits: exp.splits.map(s => s.id === splitId ? { ...s, paid: true } : s)
+              };
+            }
+            return exp;
+          })
         );
-        if (this.homeId) this.loadExpensesAndBalances(this.homeId);
+        if (this.homeId) this.loadBalances(this.homeId);
       },
       error: (err) => console.error('Error marcando como pagado', err)
     });

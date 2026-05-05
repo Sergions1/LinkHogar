@@ -1,7 +1,7 @@
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="fw-bold text-primary mb-0">Gestor de Gastos</h4>
-    <button class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="showAddModal.set(true)">
+    <button class="btn primary-btn rounded-pill px-4 shadow-sm" (click)="showAddModal.set(true)">
       <i class="bi bi-plus-lg me-2"></i> Añadir Gasto
     </button>
   </div>
@@ -96,8 +96,9 @@
             <div class="list-group-item p-4 border-bottom hover-bg-light" style="cursor: pointer;" (click)="toggleExpenseSplits(expense.id)">
               <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-3">
-                  <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                    <span class="badge bg-secondary bg-opacity-10 text-secondary border fw-normal" style="font-size: 0.7rem;">
+                  <div class=" text-primary d-flex align-items-center justify-content-center">
+                    <i [class]="getCategoryIcon(expense.category)" class="me-2 text-acento "></i>
+                    <span class="badge bg-acento text-white bg-opacity-10 border fw-normal" style="font-size: 0.7rem;">
                       {{ expense.category | expenseCategory }}
                     </span>
                   </div>
@@ -125,39 +126,36 @@
                 <div class="bg-light p-3 rounded-4 mt-3" (click)="$event.stopPropagation()">
                   <h6 class="fw-bold mb-3 small text-muted text-uppercase">Desglose del gasto</h6>
 
-                  @if (isLoadingSplits()) {
-                    <div class="text-center py-2"><div class="spinner-border spinner-border-sm text-primary"></div></div>
-                  } @else {
-                    <div class="list-group list-group-flush gap-2">
-                      @for (split of currentSplits(); track split.id) {
-                        <div class="list-group-item bg-white rounded-3 border-0 d-flex justify-content-between align-items-center shadow-sm py-2">
+                  <div class="list-group list-group-flush gap-2">
+                    @for (split of expense.splits; track split.id) {
+                      <div class="list-group-item bg-white rounded-3 border-0 d-flex justify-content-between align-items-center shadow-sm py-2">
 
-                          <span class="fw-medium">{{ split.debtorName }}</span>
+                        <span class="fw-medium">{{ split.debtorName }}</span>
 
-                          <div class="d-flex align-items-center gap-3">
-                            <span class="fw-bold">{{ split.amountOwed | currency:'EUR' }}</span>
+                        <div class="d-flex align-items-center gap-3">
+                          <span class="fw-bold">{{ split.amountOwed | currency:'EUR' }}</span>
 
-                            @if (split.paid) {
-                              <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
-                                <i class="bi bi-check-circle-fill me-1"></i> Pagado
-                              </span>
+                          @if (split.paid) {
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
+                              <i class="bi bi-check-circle-fill me-1"></i> Pagado
+                            </span>
+                          } @else {
+                            @if (expense.payerId === myUserId && split.debtorId !== myUserId) {
+                              <button class="btn btn-sm btn-success rounded-pill shadow-sm" (click)="markAsPaid(split.id, expense.id, $event)">
+                                <i class="bi bi-check2"></i> Marcar pagado
+                              </button>
                             } @else {
-                              @if (expense.payerId === myUserId && split.debtorId !== myUserId) {
-                                <button class="btn btn-sm btn-success rounded-pill shadow-sm" (click)="markAsPaid(split.id, expense.id, $event)">
-                                  <i class="bi bi-check2"></i> Marcar pagado
-                                </button>
-                              } @else {
-                                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">
-                                  <i class="bi bi-clock-fill me-1"></i> Pendiente
-                                </span>
-                              }
+                              <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">
+                                <i class="bi bi-clock-fill me-1"></i> Pendiente
+                              </span>
                             }
-                          </div>
-
+                          }
                         </div>
-                      }
-                    </div>
-                  }
+
+                      </div>
+                    }
+                  </div>
+
                 </div>
               }
 

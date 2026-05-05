@@ -1,0 +1,55 @@
+/* --- RADAR DE CONVIVENCIA: EFECTOS DE AVATAR --- */
+
+.avatar-wrapper {
+  position: relative;
+  cursor: pointer;
+  /* Transición suave para el efecto de resaltado */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  /* Efecto al pasar el ratón sobre el avatar */
+  &:hover {
+    transform: translateY(-3px) scale(1.1); /* Flota y crece un 10% */
+    z-index: 10;
+
+    /* Mostramos el tooltip mágico */
+    .custom-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+}
+
+.custom-tooltip {
+  position: absolute;
+  top: -35px; /* Se posiciona justo encima del avatar */
+  left: 50%;
+  transform: translateX(-50%) translateY(10px); /* Empieza un poco más abajo para el efecto de entrada */
+
+  background-color: var(--color-acento);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  /* Oculto por defecto */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  pointer-events: none; /* Evita que el ratón interfiera con el tooltip */
+
+  /* El triangulito de la parte inferior apuntando al avatar */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px 5px 0 5px;
+    border-style: solid;
+    border-color: var(--color-acento) transparent transparent transparent;
+  }
+}

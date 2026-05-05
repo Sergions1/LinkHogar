@@ -66,6 +66,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/expenses/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/expenses/getById/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/expenses/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/events/create").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/events/getByHome/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/events/getById/*").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/events/*").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/events/*").authenticated()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         .requestMatchers(

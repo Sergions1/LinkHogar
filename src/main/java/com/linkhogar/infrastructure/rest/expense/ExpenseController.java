@@ -4,7 +4,7 @@ import com.linkhogar.application.expense.GetSplitByExpense.ExpenseSplitResponse;
 import com.linkhogar.application.expense.GetSplitByExpense.GetSplitByExpenseCommand;
 import com.linkhogar.application.expense.createExpense.CreateExpenseCommand;
 import com.linkhogar.application.expense.deleteExpense.DeleteExpenseCommand;
-import com.linkhogar.application.expense.getByHome.GetExpenseByHomeQueryHandler;
+import com.linkhogar.application.expense.getExpenseByHome.GetExpenseByHomeQueryHandler;
 import com.linkhogar.application.expense.GetSplitByExpense.GetSplitByExpenseCommandHandler;
 import com.linkhogar.application.expense.createExpense.CreateExpenseCommandHandler;
 import com.linkhogar.application.expense.deleteExpense.DeleteExpenseCommandHandler;

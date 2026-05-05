@@ -26,6 +26,7 @@ import {Tasks} from './pages/home/tasks/tasks';
 import {HomeLayout} from './pages/home/home-layout/home-layout';
 import {Chat} from './pages/home/chat/chat';
 import {Expense} from './pages/home/expense/expense';
+import {Calendar} from './pages/home/calendar/calendar';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -63,7 +64,7 @@ export const routes: Routes = [
       { path: 'tareas', component: Tasks} ,
       { path: 'chat', component: Chat},
       { path: 'gastos', component: Expense },
-      { path: 'calendario', component: AdminUsersComponent }
+      { path: 'agenda', component: Calendar }
     ]
   },
   {path: "messages", component: Messages, canActivate: [authGuard]},

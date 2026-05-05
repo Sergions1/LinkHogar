@@ -8,6 +8,7 @@ import com.linkhogar.domain.expense.ExpenseSplit;
 import com.linkhogar.domain.expense.ExpenseSplitRepository;
 import com.linkhogar.domain.expense.enums.ExpenseCategory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

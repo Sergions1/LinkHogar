@@ -15,6 +15,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import Swal from 'sweetalert2';
 import {HomeService} from '../../../services/home/home-service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-tasks',
@@ -28,7 +29,7 @@ export class Tasks {
   private formBuilder = inject(FormBuilder);
   private changeDetectorRef = inject(ChangeDetectorRef);
   private homeService = inject(HomeService);
-
+  private route = inject(ActivatedRoute);
 
   todoTasks: HomeTaskResponse[] = [];
   inProgressTasks: HomeTaskResponse[] = [];
@@ -47,6 +48,15 @@ export class Tasks {
   });
 
   constructor() {
+    this.route.queryParams.subscribe(params => {
+      if (params['modal'] === 'create') {
+        // Le damos un pequeñísimo margen de tiempo (100ms) para que Angular renderice el HTML primero
+        setTimeout(() => {
+          document.getElementById('createButton')?.click();
+        }, 100);
+      }
+    });
+
     effect(() => {
       const homeId = this.currentUser()?.homeId
       if (homeId) {
@@ -179,7 +189,22 @@ export class Tasks {
     this.inProgressTasks = this.inProgressTasks.filter(t => t.id !== taskId);
     this.doneTasks = this.doneTasks.filter(t => t.id !== taskId);
 
+    // La eliminamos también del signal global
+    this.homeTaskService.tasks.update(tasks => tasks.filter(t => t.id !== taskId));
+
     // Le damos un toque a Angular para que actualice la vista al instante
     this.changeDetectorRef.detectChanges();
+  }
+
+  private updateTaskInSignal(updatedTask: HomeTaskResponse) {
+    this.homeTaskService.tasks.update(currentTasks => {
+      const index = currentTasks.findIndex(t => t.id === updatedTask.id);
+      if (index !== -1) {
+        const newTasks = [...currentTasks];
+        newTasks[index] = { ...updatedTask };
+        return newTasks;
+      }
+      return currentTasks;
+    });
   }
 }

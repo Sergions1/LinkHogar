@@ -6,6 +6,7 @@ import com.linkhogar.domain.expense.ExpenseErrors;
 import com.linkhogar.domain.expense.ExpenseRepository;
 import com.linkhogar.domain.expense.ExpenseSplitRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

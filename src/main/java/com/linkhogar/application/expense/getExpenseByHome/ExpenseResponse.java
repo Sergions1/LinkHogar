@@ -1,9 +1,11 @@
 package com.linkhogar.application.expense.getExpenseByHome;
 
+import com.linkhogar.application.expense.GetSplitByExpense.ExpenseSplitResponse;
 import com.linkhogar.domain.expense.enums.ExpenseCategory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record ExpenseResponse(
@@ -13,5 +15,6 @@ public record ExpenseResponse(
         BigDecimal amount,
         String description,
         ExpenseCategory category,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        List<ExpenseSplitResponse> splits
 ) {}

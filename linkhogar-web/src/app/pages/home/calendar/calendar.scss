@@ -1,0 +1,38 @@
+// calendar.scss
+
+::ng-deep {
+  .fc {
+    /* --- BOTONES DEL HEADER (Prev, Next, Today, Mes/Semana) --- */
+    --fc-button-bg-color: var(--color-acento); // Usamos tu azul principal
+    --fc-button-border-color: grey;
+    --fc-button-hover-bg-color: var(--color-acento-presionado);;
+    --fc-button-hover-border-color: grey;
+    --fc-button-active-bg-color: #0a58ca;
+    --fc-button-active-border-color: #0a58ca;
+
+    /* --- FONDO DEL DÍA ACTUAL (Today) --- */
+    --fc-today-bg-color: rgba(13, 110, 253, 0.05); // Un azul muy transparente y elegante
+
+    /* --- LÍNEAS DE LA CUADRÍCULA --- */
+    --fc-border-color: #eaecf0; // Un gris suave para que no sea muy agresivo a la vista
+
+    /* --- TEXTO GENERAL --- */
+    --fc-neutral-text-color: #495057;
+
+    /* Arreglo estético: quita el subrayado feo que traen por defecto los números de los días */
+    a.fc-col-header-cell-cushion,
+    a.fc-daygrid-day-number {
+      text-decoration: none !important;
+      color: #495057;
+      font-weight: 500;
+    }
+  }
+
+  .cursor-pointer {
+    cursor: pointer !important;
+  }
+
+  .cursor-default {
+    cursor: default !important;
+  }
+}

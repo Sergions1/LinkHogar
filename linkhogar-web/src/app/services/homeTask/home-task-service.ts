@@ -1,7 +1,7 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {map, Observable} from 'rxjs';
+import {map, Observable, tap} from 'rxjs';
 import {HomeTaskResponse, StatusTranslator, TaskStatusBackend} from '../../Models/homeTasks/HomeTaskResponse';
 
 @Injectable({
@@ -11,6 +11,8 @@ export class HomeTaskService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/homeTasks`;
 
+  public tasks = signal<HomeTaskResponse[]>([]);
+
   getTasksByHome(homeId: string): Observable<HomeTaskResponse[]> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -19,7 +21,8 @@ export class HomeTaskService {
       map(tasks => tasks.map(task => ({
         ...task,
         status: StatusTranslator[task.status as TaskStatusBackend] || 'por hacer' // Traducimos el status usando el diccionario
-      } as HomeTaskResponse)))
+      } as HomeTaskResponse))),
+      tap(mappedTasks => this.tasks.set(mappedTasks))
     );
   }
 
