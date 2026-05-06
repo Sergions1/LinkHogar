@@ -42,4 +42,29 @@ public class HomeErrors {
             "HomeTasks.GetChatFailed",
             "No se pudo obtener a el chat del hogar"
     );
+
+    public static final Error USER_IN_HOME = Error.failure(
+            "HomeTasks.UserInHome",
+            "El usuario ya pertenece a este hogar"
+    );
+
+    public static final Error USER_NOT_IN_HOME = Error.failure(
+            "HomeTasks.UserNotInHome",
+            "El usuario no pertenece a este hogar"
+    );
+
+    public static final Error USER_IN_OTHER_HOME = Error.failure(
+            "HomeTasks.UserInHome",
+            "El usuario ya está asignado a otro hogar diferente"
+    );
+
+    public static final Error ADD_MEMBER_FAILED = Error.failure(
+            "HomeTasks.AddMemberFailed",
+            "Ha ocurrido un error al añadir al usuario"
+    );
+
+    public static final Error REMOVE_MEMBER_FAILED = Error.failure(
+            "HomeTasks.RemoveMemberFailed",
+            "Ha ocurrido un error al eliminar al usuario"
+    );
 }

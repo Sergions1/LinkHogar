@@ -71,6 +71,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/events/getById/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/events/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/events/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/homes/*/members").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/homes/*/members/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/homeTasks/*/members").authenticated()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         .requestMatchers(

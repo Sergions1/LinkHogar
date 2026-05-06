@@ -60,11 +60,15 @@
         @if(isMyPublications){
           <span class="badge me-2" [ngClass]="getBadgeColor(house.publicationStatus)">{{ house.publicationStatus | publicationStatus }}</span>
           @if (house.publicationStatus !== 'ARCHIVED' ) {
-            <button class="btn btn-trash rounded-circle me-2 position-relative z-3"(click)="onDelete($event)">
+            <button class="btn btn-people rounded-circle me-2 position-relative z-3" (click)="onManageMembers($event)">
+              <i class="bi bi-people fs-4 text-acento"></i>
+            </button>
+
+            <button class="btn btn-trash rounded-circle me-2 position-relative z-3" (click)="onDelete($event)">
               <i class="bi bi-trash fs-4 text-danger"></i>
             </button>
 
-            <button class="btn btn-trash rounded-circle me-2 position-relative z-3"(click)="onEdit($event)">
+            <button class="btn btn-trash rounded-circle me-2 position-relative z-3" (click)="onEdit($event)">
               <i class="bi bi-pencil-square fs-4 text-acento"></i>
             </button>
           }

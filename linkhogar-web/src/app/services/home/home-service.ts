@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import {Observable} from 'rxjs';
 
 export interface HomeMember {
   id: string;
@@ -8,6 +9,7 @@ export interface HomeMember {
   lastName: string;
   name: string;
   avatarUrl?: string;
+  email?: string;
 }
 
 @Injectable({
@@ -32,5 +34,24 @@ export class HomeService {
           error: (err) => console.error('Error al cargar integrantes del hogar', err)
         });
     }
+  }
+
+  getHomeMembers(homeId: string): Observable<HomeMember[]> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    return this.http.get<HomeMember[]>(`${environment.apiUrl}/homeTasks/${homeId}/members`, { headers });
+  }
+
+  addMemberToHome(homeId: string, email: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    const payload = { email: email };
+    return this.http.post(`${this.apiUrl}/${homeId}/members`, payload, { headers });
+  }
+
+  removeMemberFromHome(homeId: string, memberId: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    return this.http.delete(`${this.apiUrl}/${homeId}/members/${memberId}`, { headers });
   }
 }

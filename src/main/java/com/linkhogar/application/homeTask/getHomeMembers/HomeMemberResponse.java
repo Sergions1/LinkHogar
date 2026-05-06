@@ -7,6 +7,7 @@ public record HomeMemberResponse (
         String firstName,
         String lastName,
         String name,
-        String avatarUrl
+        String avatarUrl,
+        String email
 ){
 }

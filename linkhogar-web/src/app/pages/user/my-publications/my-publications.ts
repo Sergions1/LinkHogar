@@ -8,10 +8,11 @@ import { HouseCard } from '../../shared/house-card/house-card';
 import { EntityCardView } from '../../shared/Grids/entity-card-view/entity-card-view';
 import { UserResponse } from '../../../Models/Users/UserResponse';
 import {Router} from '@angular/router';
+import {ManageMembersModal} from './manage-members-modal/manage-members-modal';
 
 @Component({
   selector: 'app-my-publications',
-  imports: [HouseCard, EntityCardView],
+  imports: [HouseCard, EntityCardView, ManageMembersModal],
   templateUrl: './my-publications.html',
   styleUrl: './my-publications.scss',
 })
@@ -23,6 +24,8 @@ export class MyPublications {
   houses = signal<PageResponse<HouseCardResponse> | null>(null);
   isLoading = signal(false);
   currentUser: UserResponse | null = null;
+
+  selectedHouseId = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -102,5 +105,13 @@ export class MyPublications {
 
   onEditPublication(houseId: string) {
     this.router.navigate(['/editar', houseId]);
+  }
+
+  onManageMembers(houseId: string) {
+    this.selectedHouseId.set(houseId);
+  }
+
+  closeMembersModal() {
+    this.selectedHouseId.set(null);
   }
 }

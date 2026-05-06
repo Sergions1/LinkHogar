@@ -2,6 +2,8 @@ package com.linkhogar.application.homeTask.getHomeMembers;
 
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.homeTasks.HomeErrors;
+import com.linkhogar.domain.house.House;
+import com.linkhogar.domain.house.HouseRepository;
 import com.linkhogar.domain.user.User;
 import com.linkhogar.domain.user.UserErrors;
 import com.linkhogar.domain.user.UserRepository;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GetHomeMembersQueryHandler {
     private final UserRepository userRepository;
+    private final HouseRepository houseRepository;
 
     public Result<List<HomeMemberResponse>> handle(GetHomeMembersQuery query){
         try {
@@ -26,11 +29,17 @@ public class GetHomeMembersQueryHandler {
             }
 
             User requester = requesterOpt.get();
+            House house = houseRepository.getById(query.homeId());
 
-            // Seguridad: Verificamos que el usuario pertenece al hogar que está consultando
-            if (requester.getHomeId() == null || !requester.getHomeId().equals(query.homeId())) {
+            // Seguridad: Verificamos que el usuario pertenece al hogar que está consultando o es el dueño
+            boolean isOwner = requester.getId().equals(house.getOwner().getId());
+            boolean isMember = requester.getHomeId() != null && requester.getHomeId().equals(query.homeId());
+
+            if (!isOwner && !isMember) {
                 return Result.failure(HomeErrors.UNAUTHORIZED_ACCESS);
             }
+
+
 
             // Obtenemos todos los usuarios con ese homeId
             List<User> members = userRepository.findByHome(query.homeId());
@@ -42,7 +51,8 @@ public class GetHomeMembersQueryHandler {
                             user.getFirstName(),
                             user.getLastName(),
                             user.getFirstName() + " " + user.getLastName(),
-                            user.getAvatarUrl()
+                            user.getAvatarUrl(),
+                            user.getMail()
                     ))
                     .collect(Collectors.toList());
 

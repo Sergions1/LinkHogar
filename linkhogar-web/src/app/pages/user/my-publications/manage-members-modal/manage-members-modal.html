@@ -1,0 +1,60 @@
+<div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow rounded-4">
+
+      <div class="modal-header border-0 pb-0">
+        <h5 class="fw-bold text-primary">Gestionar Hogar</h5>
+        <button type="button" class="btn-close" (click)="close.emit()"></button>
+      </div>
+
+      <div class="modal-body p-4">
+
+        <form [formGroup]="addForm" (ngSubmit)="addMember()" class="mb-4">
+          <label class="form-label fw-medium small text-muted">Añadir nuevo miembro</label>
+          <div class="input-group">
+            <input type="email" class="form-control" formControlName="email" placeholder="correo@ejemplo.com">
+            <button class="btn btn-primary px-4" type="submit" [disabled]="addForm.invalid || isSubmitting()">
+              @if (isSubmitting()) {
+                <span class="spinner-border spinner-border-sm"></span>
+              } @else {
+                Añadir
+              }
+            </button>
+          </div>
+        </form>
+
+        <hr class="text-muted opacity-25">
+
+        <h6 class="fw-bold text-muted mb-3">Miembros actuales</h6>
+
+        @if (isLoading()) {
+          <div class="text-center py-3">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+        } @else if (members().length === 0) {
+          <p class="text-muted small text-center">No hay nadie más en este hogar.</p>
+        } @else {
+          <ul class="list-group list-group-flush">
+            @for (member of members(); track member.id) {
+              <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="rounded-circle bg-light d-flex align-items-center justify-content-center text-primary fw-bold" style="width: 35px; height: 35px;">
+                    {{ member.name.charAt(0).toUpperCase() }}
+                  </div>
+                  <div>
+                    <span class="fw-medium d-block">{{ member.name }}</span>
+                    <span class="small text-muted">{{ member.email }}</span>
+                  </div>
+                </div>
+                <button class="btn btn-sm btn-outline-danger rounded-circle" (click)="removeMember(member.id)" title="Eliminar">
+                  <i class="bi bi-person-x"></i>
+                </button>
+              </div>
+            }
+          </ul>
+        }
+
+      </div>
+    </div>
+  </div>
+</div>
