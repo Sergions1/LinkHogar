@@ -40,5 +40,13 @@
   <house-card [house]="house"
               [isMyPublications]="true"
               (edit)="onEditPublication($event)"
-              (delete)="onDeletePublication($event)"/>
+              (delete)="onDeletePublication($event)"
+              (manageMembers)="onManageMembers($event)"/>
 </ng-template>
+
+@if (selectedHouseId()) {
+  <app-manage-members-modal
+    [homeId]="selectedHouseId()!"
+    (close)="closeMembersModal()">
+  </app-manage-members-modal>
+}

@@ -22,4 +22,5 @@ public class Message {
     private UUID senderId;
     private String content;
     private LocalDateTime createdAt;
+    private String senderName;
 }

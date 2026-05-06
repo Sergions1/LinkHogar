@@ -1,0 +1,60 @@
+<div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow rounded-4">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="fw-bold text-acento">Añadir Evento</h5>
+        <button type="button" class="btn-close" (click)="close.emit()"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form [formGroup]="eventForm" (ngSubmit)="submit()">
+
+          <div class="mb-3">
+            <label class="form-label fw-medium small text-muted">Título</label>
+            <input type="text" class="form-control rounded-3" formControlName="title">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-medium small text-muted">Descripción</label>
+            <textarea class="form-control rounded-3" formControlName="description" rows="2" ></textarea>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-medium small text-muted">Inicio</label>
+              <input type="datetime-local" class="form-control rounded-3" formControlName="startDate">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-medium small text-muted">Fin (Opcional)</label>
+              <input type="datetime-local" class="form-control rounded-3" formControlName="endDate">
+            </div>
+          </div>
+
+          <div class="mb-3 form-check form-switch">
+            <input class="form-check-input" type="checkbox" formControlName="allDay" id="allDayCheck">
+            <label class="form-check-label fw-medium small text-muted" for="allDayCheck">Todo el día</label>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-medium small text-muted">Recordatorio</label>
+            <select class="form-select rounded-3" formControlName="reminderMinutesBefore">
+              <option value="0">Sin recordatorio</option>
+              <option value="15">15 minutos antes</option>
+              <option value="60">1 hora antes</option>
+              <option value="1440">1 día antes</option>
+            </select>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn primary-btn rounded-pill py-2 fw-medium" [disabled]="eventForm.invalid || isSubmitting()">
+              @if (isSubmitting()) {
+                <span class="spinner-border spinner-border-sm me-2"></span> Guardando...
+              } @else {
+                Guardar Evento
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

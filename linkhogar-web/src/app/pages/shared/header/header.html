@@ -1,4 +1,4 @@
-<header class="p-3 bg-primario text-white" [class.admin-theme]="isAdminRoute">
+<header class="p-3 bg-primario text-white" [class.admin-theme]="isAdminRoute" [class.home-theme]="isHomeRoute">
   <div class="container">
     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 
@@ -8,6 +8,11 @@
 
       <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
         <li><a routerLink="/" class="nav-link px-2 text-white">Home</a></li>
+        @if (authService.isLoggedIn() && authService.haveHome()) {
+          <li>
+            <button class="nav-link px-2 text-white" (click)="home()">Mi hogar</button>
+          </li>
+        }
         @if (authService.isLoggedIn() && userService.isAdmin()) {
           <li>
             <button class="btn nav-link px-2 text-danger fw-semibold" (click)="admin()">

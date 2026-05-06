@@ -7,6 +7,7 @@ public record MessageResponse (UUID id,
                                UUID chatId,
                                UUID senderId,
                                String content,
-                               LocalDateTime createdAt) {
+                               LocalDateTime createdAt,
+                                String senderName) {
 
 }

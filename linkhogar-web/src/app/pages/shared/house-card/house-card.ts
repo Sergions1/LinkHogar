@@ -20,6 +20,7 @@ export class HouseCard {
 
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
+  @Output() manageMembers = new EventEmitter<string>();
 
   getBadgeColor(status: string | undefined): string {
     if (!status) return 'bg-secondary'; // Gris por defecto si viene vacío
@@ -54,6 +55,11 @@ export class HouseCard {
   onDelete(event: Event) {
     event.stopPropagation(); // 👈 Clave para que no se active el stretched-link
     this.delete.emit(this.house.id);
+  }
+
+  onManageMembers(event: Event) {
+    event.stopPropagation();
+    this.manageMembers.emit(this.house.id);
   }
 
   protected readonly PublicationStatusPipe = PublicationStatusPipe;

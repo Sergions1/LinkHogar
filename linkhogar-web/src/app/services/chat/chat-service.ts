@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -9,6 +9,12 @@ import { environment } from '../../../environments/environment';
 export class ChatService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/chat`;
+
+  // === CACHÉ EN MEMORIA PARA EL CHAT DEL HOGAR ===
+  homeChatId = signal<string | null>(null);
+  homeChatMessages = signal<any[]>([]);
+  hasMoreHomeMessages = signal<boolean>(true);
+  currentHomeMessagePage = signal<number>(0);
 
   /**
    * Inicia una nueva conversación de chat entre un usuario interesado y el dueño de una casa.
@@ -44,8 +50,20 @@ export class ChatService {
 
   getChatMessages(chatId: string, page: number = 0, size: number = 30): Observable<any[]> {
     const token = localStorage.getItem('token');
+    if (!token) {
+      console.error("Intento de cargar mensajes sin token en localStorage");
+      return throwError(() => new Error("No hay token de autenticación"));
+    }
+
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     return this.http.get<any[]>(`${this.apiUrl}/${chatId}/messages?page=${page}&size=${size}`, { headers });
+  }
+
+  getHomeChat(homeId: string): Observable<{chatId: string}> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<{chatId: string}>(`${this.apiUrl}/home/${homeId}`, { headers });
   }
 }

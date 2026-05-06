@@ -19,6 +19,9 @@ export class WebSocketService {
   public messageSubject = new Subject<any>();
   public notificationSubject = new Subject<UserNotification>();
 
+  public expenseSubject = new Subject<void>();
+  private homeExpenseSubscription: StompSubscription | null = null;
+
   constructor() {
     this.stompClient = new Client({
       reconnectDelay: 5000, // Si se cae internet, intenta reconectar cada 5s
@@ -125,4 +128,5 @@ export class WebSocketService {
       console.error('No se puede enviar el mensaje, WebSocket desconectado.');
     }
   }
+
 }

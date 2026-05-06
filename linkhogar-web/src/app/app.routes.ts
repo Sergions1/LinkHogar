@@ -20,6 +20,13 @@ import {Favourites} from './pages/user/favourites/favourites';
 import {MyPublications} from './pages/user/my-publications/my-publications';
 import {Edit} from './pages/house/edit/edit';
 import {Messages} from './pages/chat/messages/messages';
+import {hasHomeGuard} from './guards/hasHomeGuard';
+import {HomeDashboard} from './pages/home/home-dashboard/home-dashboard';
+import {Tasks} from './pages/home/tasks/tasks';
+import {HomeLayout} from './pages/home/home-layout/home-layout';
+import {Chat} from './pages/home/chat/chat';
+import {Expense} from './pages/home/expense/expense';
+import {Calendar} from './pages/home/calendar/calendar';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -45,6 +52,19 @@ export const routes: Routes = [
       { path: 'houses', component: AdminHousesComponent} ,
       { path: 'houses/requests', component: AdminRequests},
       { path: 'users', component: AdminUsersComponent }
+    ]
+  },
+  {
+    path: 'hogar',
+    component: HomeLayout, // El Layout padre
+    canActivate: [], //todo revisar guard
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Si entran a /admin, los manda al dashboard
+      { path: 'dashboard', component: HomeDashboard },
+      { path: 'tareas', component: Tasks} ,
+      { path: 'chat', component: Chat},
+      { path: 'gastos', component: Expense },
+      { path: 'agenda', component: Calendar }
     ]
   },
   {path: "messages", component: Messages, canActivate: [authGuard]},

@@ -1,0 +1,178 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-primary mb-0">Gestor de Gastos</h4>
+    <button class="btn primary-btn rounded-pill px-4 shadow-sm" (click)="showAddModal.set(true)">
+      <i class="bi bi-plus-lg me-2"></i> Añadir Gasto
+    </button>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm rounded-4 h-100"
+           [ngClass]="myBalance() >= 0 ? 'bg-primary text-white' : 'bg-danger text-white'">
+        <div class="card-body p-4 d-flex flex-column justify-content-center">
+          <h6 class="text-white-50 mb-1">Mi Balance General</h6>
+          <h2 class="fw-bold mb-0">
+            {{ myBalance() > 0 ? '+ ' : '' }}{{ myBalance() | currency:'EUR' }}
+          </h2>
+          <small class="mt-2 text-white-50">
+            @if (myBalance() > 0) {
+              <i class="bi bi-arrow-down-left-circle me-1"></i> Te deben dinero
+            } @else if (myBalance() < 0) {
+              <i class="bi bi-arrow-up-right-circle me-1"></i> Debes dinero a la casa
+            } @else {
+              <i class="bi bi-check-circle me-1"></i> Estás al día
+            }
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-white border-bottom-0 p-3 pb-0">
+          <h6 class="fw-bold mb-0 text-muted">¿Quién debe a quién?</h6>
+        </div>
+        <div class="card-body p-3 overflow-auto" style="max-height: 180px;">
+
+          @if (myRelevantRepayments().length === 0) {
+            <div class="text-center text-muted py-3">
+              <i class="bi bi-emoji-smile fs-4 d-block mb-2"></i>
+              <small>No tienes deudas pendientes.</small>
+            </div>
+          } @else {
+            <div class="list-group list-group-flush">
+              @for (rep of myRelevantRepayments(); track $index) {
+
+                @if (rep.creditorId === myUserId) {
+                  <div class="list-group-item px-0 border-0 d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-arrow-down-left"></i>
+                      </div>
+                      <span><strong>{{ rep.debtorName }}</strong> te debe</span>
+                    </div>
+                    <span class="fw-bold text-success">+ {{ rep.amount | currency:'EUR' }}</span>
+                  </div>
+                } @else {
+                  <div class="list-group-item px-0 border-0 d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-arrow-up-right"></i>
+                      </div>
+                      <span>Le debes a <strong>{{ rep.creditorName }}</strong></span>
+                    </div>
+                    <span class="fw-bold text-danger">- {{ rep.amount | currency:'EUR' }}</span>
+                  </div>
+                }
+
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-white border-bottom p-4">
+      <h6 class="fw-bold mb-0">Historial Reciente</h6>
+    </div>
+
+    <div class="card-body p-0">
+      @if (isLoading()) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
+      } @else if (expenseService.homeExpenses().length === 0) {
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-wallet2 fs-1 d-block mb-3 opacity-50"></i>
+          <p>No hay gastos registrados en esta casa.</p>
+        </div>
+      } @else {
+        <div class="list-group list-group-flush">
+          @for (expense of expenseService.homeExpenses(); track expense.id) {
+
+            <div class="list-group-item p-4 border-bottom hover-bg-light" style="cursor: pointer;" (click)="toggleExpenseSplits(expense.id)">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class=" text-primary d-flex align-items-center justify-content-center">
+                    <i [class]="getCategoryIcon(expense.category)" class="me-2 text-acento "></i>
+                    <span class="badge bg-acento text-white bg-opacity-10 border fw-normal" style="font-size: 0.7rem;">
+                      {{ expense.category | expenseCategory }}
+                    </span>
+                  </div>
+                  <div>
+                    <h6 class="mb-1 fw-bold">{{ expense.description }}</h6>
+                    <small class="text-muted">
+                      {{ expense.createdAt | date:'dd MMM yyyy' }} • Pagado por <strong>{{ expense.payerName }}</strong>
+                    </small>
+                  </div>
+                </div>
+
+                <div class="text-end d-flex align-items-center gap-3">
+                  <h5 class="fw-bold mb-0 text-dark">
+                    {{ expense.amount | currency:'EUR' }}
+                  </h5>
+                  @if (expense.payerId === myUserId) {
+                    <button class="btn btn-sm btn-outline-danger border-0 rounded-circle" (click)="deleteExpense(expense.id, $event)" title="Eliminar gasto">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              @if (expandedExpenseId() === expense.id) {
+                <div class="bg-light p-3 rounded-4 mt-3" (click)="$event.stopPropagation()">
+                  <h6 class="fw-bold mb-3 small text-muted text-uppercase">Desglose del gasto</h6>
+
+                  <div class="list-group list-group-flush gap-2">
+                    @for (split of expense.splits; track split.id) {
+                      <div class="list-group-item bg-white rounded-3 border-0 d-flex justify-content-between align-items-center shadow-sm py-2">
+
+                        <span class="fw-medium">{{ split.debtorName }}</span>
+
+                        <div class="d-flex align-items-center gap-3">
+                          <span class="fw-bold">{{ split.amountOwed | currency:'EUR' }}</span>
+
+                          @if (split.paid) {
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
+                              <i class="bi bi-check-circle-fill me-1"></i> Pagado
+                            </span>
+                          } @else {
+                            @if (expense.payerId === myUserId && split.debtorId !== myUserId) {
+                              <button class="btn btn-sm btn-success rounded-pill shadow-sm" (click)="markAsPaid(split.id, expense.id, $event)">
+                                <i class="bi bi-check2"></i> Marcar pagado
+                              </button>
+                            } @else {
+                              <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">
+                                <i class="bi bi-clock-fill me-1"></i> Pendiente
+                              </span>
+                            }
+                          }
+                        </div>
+
+                      </div>
+                    }
+                  </div>
+
+                </div>
+              }
+
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+@if (showAddModal()) {
+  <app-add-expense-modal
+    [homeId]="homeId!"
+    [myUserId]="myUserId!"
+    [members]="homeMembers()"
+    (close)="showAddModal.set(false)"
+    (expenseCreated)="onExpenseCreated()">
+  </app-add-expense-modal>
+}

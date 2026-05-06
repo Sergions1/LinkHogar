@@ -3,6 +3,11 @@ header.admin-theme {
   transition: background-color 0.5s ease;
 }
 
+header.home-theme {
+  background-color: var(--color-acento) !important;
+  transition: background-color 0.5s ease;
+}
+
 .dropdown-menu {
   z-index: 1060 !important;
 }

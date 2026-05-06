@@ -16,7 +16,8 @@ public record UserResponse (
     String phone,
     String role,
     Boolean enabled,
-    String avatarUrl
+    String avatarUrl,
+    UUID homeId
 ){
 
     public static  UserResponse mapToResponse(User user) {
@@ -30,7 +31,8 @@ public record UserResponse (
                 user.getPhone() != null ? user.getPhone().toString() : null,
                 user.getRole() != null ? user.getRole().toString() : null,
                 user.isEnabled(),
-                user.getAvatarUrl()
+                user.getAvatarUrl(),
+                user.getHomeId()
         );
     }
 }

@@ -1,7 +1,12 @@
 package com.linkhogar.application.chat.getMessagesByChat;
 
+import com.linkhogar.domain.chat.Chat;
 import com.linkhogar.domain.chat.ChatParticipantRepository;
+import com.linkhogar.domain.chat.ChatRepository;
 import com.linkhogar.domain.chat.MessageRepository;
+import com.linkhogar.domain.chat.enums.ChatType;
+import com.linkhogar.domain.user.User;
+import com.linkhogar.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +22,34 @@ import java.util.stream.Collectors;
 public class GetMessagesByChatQueryHandler {
     private final MessageRepository messageRepository;
     private final ChatParticipantRepository participantRepository;
+    private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
     @Transactional(readOnly = true)
     public List<MessageResponse> handle(GetMessagesByChatQuery query) {
 
-        boolean isParticipant = participantRepository.findByChatId(query.chatId()).stream()
-                .anyMatch(p -> p.getUserId().equals(query.userId()));
+        // 1. Buscamos el chat y el usuario en la BD
+        Chat chat = chatRepository.findById(query.chatId())
+                .orElseThrow(() -> new RuntimeException("Chat no encontrado"));
+        User user = userRepository.userById(query.userId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (!isParticipant) {
+        boolean hasAccess = false;
+
+        // 2. LÓGICA DE ACCESO DINÁMICA
+        if (chat.getType() == ChatType.GrupoHogar) {
+            // Si es chat de casa: comprobamos que el usuario vive en esa casa
+            if (user.getHomeId() != null && user.getHomeId().equals(chat.getReferenceId())) {
+                hasAccess = true;
+            }
+        } else {
+            // Si es un chat normal: miramos la tabla ChatParticipant
+            hasAccess = participantRepository.findByChatId(query.chatId()).stream()
+                    .anyMatch(p -> p.getUserId().equals(query.userId()));
+        }
+
+        // Si no pasa ninguno de los filtros, puerta (403)
+        if (!hasAccess) {
             throw new RuntimeException("No tienes acceso a este chat");
         }
 
@@ -37,7 +62,8 @@ public class GetMessagesByChatQueryHandler {
                         query.chatId(),
                         msg.getSenderId(),
                         msg.getContent(),
-                        msg.getCreatedAt()
+                        msg.getCreatedAt(),
+                        msg.getSenderName()
                 ))
                 .collect(Collectors.toList());
 
