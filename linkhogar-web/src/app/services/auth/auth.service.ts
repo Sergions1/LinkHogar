@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import {Injectable, signal, inject, computed} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, tap} from 'rxjs';
 import {jwtDecode} from 'jwt-decode';
@@ -20,7 +20,11 @@ export class AuthService {
   isLoggedIn = signal<boolean>(this.hasValidToken());
   currentUser = signal<UserResponse | null>(null);
   favouriteIds = signal<Set<string>>(new Set());
-  haveHome = signal<boolean>(this.currentUser()?.homeId !== null);
+  haveHome = computed(() => {
+    const user = this.currentUser(); //Cada vez que currentUser Cambia se comprueba de nuevo
+
+    return user != null && user.homeId != null;
+  });
 
   constructor() {
     if (this.hasValidToken()) {
