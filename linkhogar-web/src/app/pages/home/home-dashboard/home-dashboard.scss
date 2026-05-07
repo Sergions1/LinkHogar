@@ -53,3 +53,23 @@
     border-color: var(--color-acento) transparent transparent transparent;
   }
 }
+
+.btn-event{
+  background-color: cornflowerblue;
+  color: white;
+  border-color: cornflowerblue;
+}
+
+.btn-event:hover{
+  background-color: #5a8ce0;
+}
+
+.btn-task{
+  background-color: #4ac8ff;
+  color: white;
+  border-color: #4ac8ff;
+}
+
+.btn-task:hover{
+  background-color: #3abcff;
+}
