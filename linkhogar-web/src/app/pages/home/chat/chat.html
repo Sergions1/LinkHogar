@@ -45,24 +45,24 @@
     }
 
     @for (msg of chatService.homeChatMessages(); track msg.id) {
-      <div class="d-flex mb-3" [class.justify-content-end]="msg.senderId === myUserId">
+      <div class="d-flex mb-3" [class.justify-content-end]="msg.senderId === myUserId()">
 
         <div class="p-3 rounded-4 shadow-sm"
              style="max-width: 75%;"
-             [class.bg-primary]="msg.senderId === myUserId"
-             [class.text-white]="msg.senderId === myUserId"
-             [class.bg-white]="msg.senderId !== myUserId"
-             [class.border]="msg.senderId !== myUserId">
+             [class.bg-primary]="msg.senderId === myUserId()"
+             [class.text-white]="msg.senderId === myUserId()"
+             [class.bg-white]="msg.senderId !== myUserId()"
+             [class.border]="msg.senderId !== myUserId()">
 
-          @if (msg.senderId !== myUserId) {
+          @if (msg.senderId !== myUserId()) {
             <div class="small fw-bold text-primary mb-1">{{ msg.senderName || 'Alguien' }}</div>
           }
 
           <p class="mb-1" style="font-size: 0.95rem;">{{ msg.content }}</p>
 
-          <div class="text-end" [class.text-white-50]="msg.senderId === myUserId" [class.text-muted]="msg.senderId !== myUserId" style="font-size: 0.65rem;">
+          <div class="text-end" [class.text-white-50]="msg.senderId === myUserId()" [class.text-muted]="msg.senderId !== myUserId()" style="font-size: 0.65rem;">
             {{ msg.createdAt | date:'shortTime' }}
-            @if (msg.senderId === myUserId) {
+            @if (msg.senderId === myUserId()) {
               <i class="bi bi-check2-all ms-1"></i>
             }
           </div>

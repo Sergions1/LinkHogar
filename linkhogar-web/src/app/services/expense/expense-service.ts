@@ -34,6 +34,7 @@ export class ExpenseService {
 
   // Caché en memoria
   homeExpenses = signal<ExpenseResponse[]>([]);
+  homeBalances = signal<HomeBalancesResponse | null>(null);
 
   /**
    * Obtiene la lista de gastos asociados a una vivienda específica.

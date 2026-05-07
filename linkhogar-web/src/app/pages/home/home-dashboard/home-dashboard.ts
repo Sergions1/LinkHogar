@@ -58,26 +58,18 @@ export class HomeDashboard {
 
   constructor() {
     effect(() => {
+      // Leemos directamente del Signal que ya cargó el layout padre
+      const balances = this.expenseService.homeBalances();
       const user = this.currentUser();
-      if (user?.homeId) {
-        // Disparamos la carga de datos si la memoria está vacía
-        this.homeService.loadMembers(user.homeId);
-        this.taskService.getTasksByHome(user.homeId).subscribe();
-        this.eventService.getHomeEvents(user.homeId).subscribe();
 
-        //Cargar balances
-        this.expenseService.getHomeBalances(user.homeId).subscribe({
-          next: (res) => {
-            //Buscamos el balance neto del usuario logueado
-            const myBalance = res.balances.find(b => b.userId === user.id);
-            this.myNetBalance.set(myBalance ? myBalance.netBalance : 0);
+      if (balances && user) {
+        // Buscamos el balance neto del usuario logueado
+        const myBalance = balances.balances.find(b => b.userId === user.id);
+        this.myNetBalance.set(myBalance ? myBalance.netBalance : 0);
 
-            //Buscamos si hay algún pago pendiente que involucre al usuario
-            const nextRep = res.repayments.find(r => r.debtorId === user.id || r.creditorId === user.id);
-            this.myNextRepayment.set(nextRep || null);
-          },
-          error: (err) => console.error('Error cargando balances', err)
-        });
+        // Buscamos si hay algún pago pendiente que involucre al usuario
+        const nextRep = balances.repayments.find(r => r.debtorId === user.id || r.creditorId === user.id);
+        this.myNextRepayment.set(nextRep || null);
       }
     });
   }

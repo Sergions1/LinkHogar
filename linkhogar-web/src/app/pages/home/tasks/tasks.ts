@@ -58,23 +58,13 @@ export class Tasks {
     });
 
     effect(() => {
-      const homeId = this.currentUser()?.homeId
-      if (homeId) {
-        this.loadTasks(homeId);
+      // Escuchamos directamente la Signal cargada por HomeLayout
+      const allTasks = this.homeTaskService.tasks();
+      if (allTasks) {
+        this.distributeTasks(allTasks);
+        this.changeDetectorRef.detectChanges();
       }
     });
-  }
-
-  loadTasks(homeId: string) {
-    if (homeId) {
-      this.homeTaskService.getTasksByHome(homeId).subscribe({
-        next: (tasks) => {
-          this.distributeTasks(tasks);
-          this.changeDetectorRef.detectChanges();
-        },
-        error: (err) => console.error('Error al cargar tareas', err)
-      });
-    }
   }
 
   distributeTasks(allTasks: HomeTaskResponse[]) {
@@ -111,11 +101,11 @@ export class Tasks {
 
     this.homeTaskService.createTask(newTaskRequest).subscribe({
       next: () => {
-        // Recargamos el tablón
-        this.loadTasks(this.currentUser()?.homeId!);
-        // Reseteamos el formulario
+        // Refrescamos la Signal central para que el effect reaccione automáticamente
+        if (this.currentUser()?.homeId) {
+          this.homeTaskService.getTasksByHome(this.currentUser()?.homeId!).subscribe();
+        }
         this.taskForm.reset();
-        // Cerramos el modal de Bootstrap usando JS nativo
         document.getElementById('closeModalBtn')?.click();
       },
       error: (err) => console.error('Error al crear tarea', err)

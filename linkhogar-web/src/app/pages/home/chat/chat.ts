@@ -1,4 +1,4 @@
-import {Component, effect, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild} from '@angular/core';
+import {Component, computed, effect, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild} from '@angular/core';
 import {ChatService} from '../../../services/chat/chat-service';
 import {AuthService} from '../../../services/auth/auth.service';
 import {WebSocketService} from '../../../services/chat/web-socket-service';
@@ -24,18 +24,16 @@ export class Chat implements OnInit, OnDestroy {
 
   newMessage = signal<string>('');
   isLoadingMore = signal<boolean>(false);
-  isLoadingChat = signal<boolean>(true);
+  isLoadingChat = computed(() => !this.chatService.homeChatId());
 
-  myUserId = this.authService.currentUser()?.id;
+  myUserId = computed(() => this.authService.currentUser()?.id);
   private wsSubscription?: Subscription;
 
   constructor() {
     effect(() => {
-      const user = this.authService.currentUser();
-      if (user?.homeId && user?.id) {
-        this.myUserId = user.id;
-        this.wsService.connect();
-        this.initializeHomeChat(user.homeId);
+      const messages = this.chatService.homeChatMessages();
+      if (messages.length > 0) {
+        setTimeout(() => this.scrollToBottom(), 100);
       }
     });
   }
@@ -60,30 +58,6 @@ export class Chat implements OnInit, OnDestroy {
     // No nos desuscribimos del WebSocket del ChatService para que siga escuchando en background!
   }
 
-  initializeHomeChat(homeId: string) {
-    // Si ya tenemos el chat cargado en memoria, no hacemos la petición inicial
-    if (this.chatService.homeChatId()) {
-      this.isLoadingChat.set(false);
-      setTimeout(() => this.scrollToBottom(), 100);
-      return;
-    }
-
-    this.isLoadingChat.set(true);
-
-    this.chatService.getHomeChat(homeId).subscribe({
-      next: (response) => {
-        this.chatService.homeChatId.set(response.chatId);
-        this.wsService.subscribeToChat(response.chatId);
-        this.loadMessages();
-        this.isLoadingChat.set(false);
-      },
-      error: (err) => {
-        console.error('Error inicializando el chat del hogar', err);
-        this.isLoadingChat.set(false);
-      }
-    });
-  }
-
   loadMessages() {
     const chatId = this.chatService.homeChatId();
     if (!chatId || !this.chatService.hasMoreHomeMessages() || this.isLoadingMore()) return;
@@ -101,17 +75,14 @@ export class Chat implements OnInit, OnDestroy {
           this.chatService.hasMoreHomeMessages.set(false);
         }
 
-        if (currentPage === 0) {
-          this.chatService.homeChatMessages.set(orderedMessages);
-          setTimeout(() => this.scrollToBottom(), 100);
-        } else {
-          this.chatService.homeChatMessages.update(old => [...orderedMessages, ...old]);
-          setTimeout(() => {
-            if (container) {
-              container.scrollTop = container.scrollHeight - previousScrollHeight;
-            }
-          }, 0);
-        }
+        // Añadimos los mensajes antiguos al principio de la lista
+        this.chatService.homeChatMessages.update(old => [...orderedMessages, ...old]);
+
+        setTimeout(() => {
+          if (container) {
+            container.scrollTop = container.scrollHeight - previousScrollHeight;
+          }
+        }, 0);
 
         this.chatService.currentHomeMessagePage.update(p => p + 1);
         this.isLoadingMore.set(false);
@@ -126,10 +97,14 @@ export class Chat implements OnInit, OnDestroy {
   sendMessage() {
     const text = this.newMessage().trim();
     const chatId = this.chatService.homeChatId();
+    const userId = this.myUserId();
 
-    if (!text || !chatId || !this.myUserId) return;
+    if (!text || !chatId || !userId) {
+      console.warn("No se puede enviar: Faltan datos", {text, chatId, userId});
+      return;
+    }
 
-    this.wsService.sendMessage(chatId, this.myUserId, text);
+    this.wsService.sendMessage(chatId, userId, text);
     this.newMessage.set('');
   }
 
