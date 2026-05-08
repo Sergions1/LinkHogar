@@ -84,9 +84,14 @@ export class Tasks {
     if (this.taskForm.invalid) return;
 
     const formValue = this.taskForm.value;
+    const currentUser = this.currentUser();
+    const homeId = currentUser?.homeId;
+
+    if (!homeId) return;
+
 
     const selectedMember = this.homeMembers().find(m => m.id === formValue.assignedUserId);
-    const assignedName = selectedMember ? `${selectedMember.name}` : null;
+    const assignedName = selectedMember ? `${selectedMember.name} ` : 'Sin asignar';
 
     const newTaskRequest = {
       title: formValue.title,
@@ -94,21 +99,46 @@ export class Tasks {
       homeId: this.currentUser()?.homeId,
       assignedUserId: formValue.assignedUserId,
       assignedUserName: assignedName,
-      createdByName: this.currentUser()?.firstName + " " + this.currentUser()?.lastName, // Sacamos el nombre del creador del token/signal
       startDate: formValue.startDate ? new Date(formValue.startDate): null,
       dueDate: formValue.dueDate ? new Date(formValue.dueDate) : null
     };
 
+    const tempTaskId = `temp-${Date.now()}`;
+    const optimisticTask: HomeTaskResponse = {
+      id: tempTaskId,
+      title: formValue.title,
+      description: formValue.description,
+      status: 'Por hacer',
+      assignedUserId: formValue.assignedUserId,
+      assignedUserName: assignedName,
+      startDate: formValue.startDate ? new Date(formValue.startDate).toISOString() : undefined,
+      dueDate: formValue.dueDate ? new Date(formValue.dueDate).toISOString() : undefined
+    };
+
+    this.homeTaskService.tasks.update(tasks => [...tasks, optimisticTask]);
+
+    this.taskForm.reset();
+    document.getElementById('closeModalBtn')?.click();
+
     this.homeTaskService.createTask(newTaskRequest).subscribe({
       next: () => {
-        // Refrescamos la Signal central para que el effect reaccione automáticamente
-        if (this.currentUser()?.homeId) {
-          this.homeTaskService.getTasksByHome(this.currentUser()?.homeId!).subscribe();
-        }
-        this.taskForm.reset();
-        document.getElementById('closeModalBtn')?.click();
+        //Refrescamos silenciosamente para cambiar el ID temporal por el real de la BD
+        this.homeTaskService.getTasksByHome(homeId).subscribe();
       },
-      error: (err) => console.error('Error al crear tarea', err)
+      error: (err) => {
+        console.error('Error al crear tarea', err);
+
+        //ROLLBACK: Si el backend falla, eliminamos la tarea temporal de la vista
+        this.homeTaskService.tasks.update(tasks => tasks.filter(t => t.id !== tempTaskId));
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de conexión',
+          text: 'No se pudo crear la tarea. Comprueba tu conexión e inténtalo de nuevo.',
+          confirmButtonColor: 'var(--color-acento)',
+          confirmButtonText: 'Aceptar'
+        });
+      }
     });
   }
 
