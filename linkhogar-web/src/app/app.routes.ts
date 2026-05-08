@@ -57,7 +57,7 @@ export const routes: Routes = [
   {
     path: 'hogar',
     component: HomeLayout, // El Layout padre
-    canActivate: [], //todo revisar guard
+    canActivate: [hasHomeGuard], //todo revisar guard
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Si entran a /admin, los manda al dashboard
       { path: 'dashboard', component: HomeDashboard },

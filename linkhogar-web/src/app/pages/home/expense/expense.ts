@@ -116,22 +116,48 @@ export class Expense{
 
   markAsPaid(splitId: string, expenseId: string, event: Event) {
     event.stopPropagation();
+
+    this.expenseService.homeExpenses.update(expenses =>
+      expenses.map(exp => {
+        if (exp.id === expenseId) {
+          return {
+            ...exp,
+            splits: exp.splits.map(s => s.id === splitId ? { ...s, paid: true } : s)
+          };
+        }
+        return exp;
+      })
+    );
+
     this.expenseService.markSplitAsPaid(splitId).subscribe({
       next: () => {
+        this.refreshBalances();
+      },
+      error: (err) => {
+        console.error('Error marcando como pagado', err);
+
+        //ROLLBACK: Si falla, revertimos el split a 'Pendiente' (paid: false)
         this.expenseService.homeExpenses.update(expenses =>
           expenses.map(exp => {
             if (exp.id === expenseId) {
               return {
                 ...exp,
-                splits: exp.splits.map(s => s.id === splitId ? { ...s, paid: true } : s)
+                splits: exp.splits.map(s => s.id === splitId ? { ...s, paid: false } : s)
               };
             }
             return exp;
           })
         );
-        this.refreshBalances();
-      },
-      error: (err) => console.error('Error marcando como pagado', err)
+
+        // Y le avisamos al usuario para que sepa qué ha pasado
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de conexión',
+          text: 'No se ha podido registrar el pago. Inténtalo de nuevo.',
+          confirmButtonColor: 'var(--color-acento)',
+          confirmButtonText: 'Entendido'
+        });
+      }
     });
   }
 

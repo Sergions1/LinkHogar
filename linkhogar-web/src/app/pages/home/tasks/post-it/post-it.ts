@@ -28,26 +28,38 @@ export class PostIt {
   @Output() taskDeleted = new EventEmitter<string>();
 
   delete(){
-    this.homeTaskService.deleteTask(this.task.id).subscribe({
-      next: () => {
-        Swal.fire({
-          title: '¡Eliminado!',
-          text: 'La tarea ha sido eliminada correctamente.',
-          icon: 'success',
-          timer: 2000,
-          showConfirmButton: false
-        }).then(() => {
-          this.taskDeleted.emit(this.task.id);
+    Swal.fire({
+      title: '¿Eliminar tarea?',
+      text: `Se borrará "${this.task.title}" del tablón.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: 'var(--color-acento)',
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        this.taskDeleted.emit(this.task.id);
+
+        this.homeTaskService.deleteTask(this.task.id).subscribe({
+          next: () => {},
+          error: (err) => {
+            console.error('Error eliminando la tarea', err);
+
+            //ROLLBACK: Si falla, volvemos a meter la tarea entera en la memoria global (Signal)
+            this.homeTaskService.tasks.update(tasks => [...tasks, this.task]);
+
+            Swal.fire({
+              title: 'Error',
+              text: 'No se pudo eliminar la tarea. Inténtalo de nuevo más tarde.',
+              icon: 'error',
+              confirmButtonColor: 'var(--color-acento)',
+              confirmButtonText: 'Aceptar'
+            });
+          }
         });
-      },
-      error: (err) => {
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudo eliminar la tarea. Inténtalo de nuevo más tarde.',
-          icon: 'error',
-          confirmButtonColor: 'var(--color-acento)',
-          confirmButtonText: 'Aceptar'
-        });
+
       }
     });
   }
