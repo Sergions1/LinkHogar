@@ -108,7 +108,7 @@
 
       <div class="card border-0 shadow-sm rounded-4 mb-4 text-white overflow-hidden relative"
            [ngClass]="{
-             'bg-success': !isLoading() && myNetBalance() > 0,
+             'bg-primary': !isLoading() && myNetBalance() > 0,
              'bg-danger': !isLoading() && myNetBalance() < 0,
              'bg-secondary': isLoading() || myNetBalance() === 0
            }">
