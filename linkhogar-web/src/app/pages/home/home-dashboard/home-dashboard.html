@@ -5,7 +5,6 @@
       <p class="text-muted mb-0">Este es el resumen de tu casa para hoy.</p>
     </div>
 
-    <!-- RADAR DE CONVIVENCIA  -->
     <div class="d-flex align-items-center gap-2 bg-white p-2 rounded-pill shadow-sm border">
       @for (member of houseMembers(); track member.id) {
 
@@ -36,7 +35,6 @@
   <div class="row g-4">
     <div class="col-lg-8">
 
-      <!-- ACCESOS DIRECTOS -->
       <div class="d-flex gap-3 mb-4 overflow-auto pb-2">
         <button (click)="navigateAndOpenModal('gastos')"
                 class="btn btn-primary rounded-4 py-3 px-4 shadow-sm flex-fill fw-medium d-flex align-items-center justify-content-center gap-2">
@@ -52,7 +50,6 @@
         </button>
       </div>
 
-      <!-- LO INMINENTE (Hoy en Casa) -->
       <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-header bg-white border-0 pt-4 pb-0 px-4 d-flex align-items-center">
           <h5 class="fw-bold mb-0"><i class="bi bi-lightning-charge text-warning me-2"></i> Hoy en Casa</h5>
@@ -60,7 +57,11 @@
         <div class="card-body p-4">
 
           <h6 class="text-muted small fw-bold text-uppercase mb-3">Eventos de hoy</h6>
-          @if (todayEvents().length === 0) {
+          @if (isLoading()) {
+            <div class="text-center py-2 mb-4">
+              <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+            </div>
+          } @else if (todayEvents().length === 0) {
             <p class="text-muted small mb-4">No hay eventos programados para hoy.</p>
           } @else {
             <div class="list-group mb-4">
@@ -81,7 +82,11 @@
           }
 
           <h6 class="text-muted small fw-bold text-uppercase mb-3">Tareas pendientes</h6>
-          @if (todayTasks().length === 0) {
+          @if (isLoading()) {
+            <div class="text-center py-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+            </div>
+          } @else if (todayTasks().length === 0) {
             <p class="text-muted small mb-0">¡Todo al día! No hay tareas pendientes para hoy.</p>
           } @else {
             <div class="list-group">
@@ -99,55 +104,60 @@
       </div>
     </div>
 
-    <!-- Columna Lateral (Derecha) -->
     <div class="col-lg-4">
 
-      <!-- Finanzas -->
       <div class="card border-0 shadow-sm rounded-4 mb-4 text-white overflow-hidden relative"
            [ngClass]="{
-             'bg-success': myNetBalance() > 0,
-             'bg-danger': myNetBalance() < 0,
-             'bg-secondary': myNetBalance() === 0
+             'bg-success': !isLoading() && myNetBalance() > 0,
+             'bg-danger': !isLoading() && myNetBalance() < 0,
+             'bg-secondary': isLoading() || myNetBalance() === 0
            }">
         <div class="card-body p-4">
           <h5 class="fw-bold mb-4 opacity-75">
             <i class="bi bi-wallet2 me-2"></i> Balance Actual
           </h5>
 
-          <h2 class="display-5 fw-bold mb-1">
-            <!-- Si es mayor que 0 le ponemos un + delante. El filtro 'number' formatea a 2 decimales -->
-            {{ myNetBalance() > 0 ? '+ ' : '' }}{{ myNetBalance() | number:'1.2-2' }} €
-          </h2>
-
-          <p class="mb-4 opacity-75">
-            @if (myNetBalance() > 0) { En positivo (Te deben dinero) }
-            @else if (myNetBalance() < 0) { En negativo (Debes dinero) }
-            @else { Cuentas al día }
-          </p>
-
-          <hr class="border-white opacity-25">
-
-          <div class="mt-3">
-            @if (myNextRepayment(); as rep) {
-              @if (rep.debtorId === currentUser()?.id) {
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="small fw-medium"><i class="bi bi-arrow-up-right-circle me-1"></i>Debes pagar a:</span>
-                  <span class="fw-bold">{{ rep.creditorName }} ({{ rep.amount | number:'1.2-2' }}€)</span>
-                </div>
-              }
-              @else {
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="small fw-medium"><i class="bi bi-arrow-down-left-circle me-1"></i>Te debe:</span>
-                  <span class="fw-bold">{{ rep.debtorName }} ({{ rep.amount | number:'1.2-2' }}€)</span>
-                </div>
-              }
-
-            } @else {
-              <div class="text-center small opacity-75 fw-medium">
-                <i class="bi bi-check2-circle me-1"></i> No hay pagos pendientes
+          @if (isLoading()) {
+            <div class="d-flex justify-content-center align-items-center py-4 my-3">
+              <div class="spinner-border text-white" role="status">
+                <span class="visually-hidden">Cargando...</span>
               </div>
-            }
-          </div>
+            </div>
+          } @else {
+            <h2 class="display-5 fw-bold mb-1">
+              {{ myNetBalance() > 0 ? '+ ' : '' }}{{ myNetBalance() | number:'1.2-2' }} €
+            </h2>
+
+            <p class="mb-4 opacity-75">
+              @if (myNetBalance() > 0) { En positivo (Te deben dinero) }
+              @else if (myNetBalance() < 0) { En negativo (Debes dinero) }
+              @else { Cuentas al día }
+            </p>
+
+            <hr class="border-white opacity-25">
+
+            <div class="mt-3">
+              @if (myNextRepayment(); as rep) {
+                @if (rep.debtorId === currentUser()?.id) {
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="small fw-medium"><i class="bi bi-arrow-up-right-circle me-1"></i>Debes pagar a:</span>
+                    <span class="fw-bold">{{ rep.creditorName }} ({{ rep.amount | number:'1.2-2' }}€)</span>
+                  </div>
+                }
+                @else {
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="small fw-medium"><i class="bi bi-arrow-down-left-circle me-1"></i>Te debe:</span>
+                    <span class="fw-bold">{{ rep.debtorName }} ({{ rep.amount | number:'1.2-2' }}€)</span>
+                  </div>
+                }
+
+              } @else {
+                <div class="text-center small opacity-75 fw-medium">
+                  <i class="bi bi-check2-circle me-1"></i> No hay pagos pendientes
+                </div>
+              }
+            </div>
+          }
 
         </div>
       </div>

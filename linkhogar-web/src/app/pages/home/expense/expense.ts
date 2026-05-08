@@ -30,9 +30,11 @@ export class Expense{
   private homeService = inject(HomeService);
   private route = inject(ActivatedRoute);
 
-  isLoading = signal<boolean>(true);
-  myUserId: string | undefined;
-  homeId: string | undefined;
+
+  myUserId = computed(() => this.authService.currentUser()?.id);
+  homeId = computed(() => this.authService.currentUser()?.homeId);
+
+  isLoading = computed(() => this.expenseService.homeBalances() === null);
 
   showAddModal = signal<boolean>(false);
   homeMembers = this.homeService.members;
@@ -43,16 +45,20 @@ export class Expense{
   expandedExpenseId = signal<string | null>(null);
 
   myBalance = computed(() => {
-    const data = this.balancesData();
-    if (!data || !this.myUserId) return 0;
-    const myData = data.balances.find(b => b.userId === this.myUserId);
+    const data = this.expenseService.homeBalances();
+    const userId = this.myUserId();
+    if (!data || !userId) return 0;
+
+    const myData = data.balances.find(b => b.userId === userId);
     return myData ? myData.netBalance : 0;
   });
 
   myRelevantRepayments = computed(() => {
-    const data = this.balancesData();
-    if (!data || !this.myUserId) return [];
-    return data.repayments.filter(r => r.debtorId === this.myUserId || r.creditorId === this.myUserId);
+    const data = this.expenseService.homeBalances();
+    const userId = this.myUserId();
+    if (!data || !userId) return [];
+
+    return data.repayments.filter(r => r.debtorId === userId || r.creditorId === userId);
   });
 
   constructor() {
@@ -60,41 +66,6 @@ export class Expense{
       if (params['modal'] === 'create') {
         this.showAddModal.set(true);
       }
-    });
-
-    effect(() => {
-      const user = this.authService.currentUser();
-      if (user?.id && user?.homeId) {
-        this.myUserId = user.id;
-        this.homeId = user.homeId;
-        this.loadExpensesAndBalances(user.homeId);
-      }
-    });
-  }
-
-  loadExpensesAndBalances(homeId: string) {
-    this.loadExpenses(homeId);
-    this.loadBalances(homeId);
-  }
-
-  loadExpenses(homeId: string) {
-    this.isLoading.set(true);
-    this.expenseService.getHomeExpenses(homeId).subscribe({
-      next: (data) => {
-        this.expenseService.homeExpenses.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Error cargando gastos', err);
-        this.isLoading.set(false);
-      }
-    });
-  }
-
-  loadBalances(homeId: string) {
-    this.expenseService.getHomeBalances(homeId).subscribe({
-      next: (data) => this.balancesData.set(data),
-      error: (err) => console.error('Error cargando balances', err)
     });
   }
 
@@ -116,6 +87,7 @@ export class Expense{
             this.expenseService.homeExpenses.update(expenses =>
               expenses.filter(e => e.id !== expenseId)
             );
+            this.refreshBalances();
           },
           error: (err) => console.error('Error eliminando el gasto', err)
         });
@@ -125,8 +97,12 @@ export class Expense{
 
   onExpenseCreated() {
     this.showAddModal.set(false); // Cerramos el modal
-    if (this.homeId) {
-      this.loadExpensesAndBalances(this.homeId);
+    const currentHomeId = this.homeId();
+    if (currentHomeId) {
+      this.expenseService.getHomeExpenses(currentHomeId).subscribe({
+        next: (data) => this.expenseService.homeExpenses.set(data)
+      });
+      this.refreshBalances();
     }
   }
 
@@ -153,10 +129,20 @@ export class Expense{
             return exp;
           })
         );
-        if (this.homeId) this.loadBalances(this.homeId);
+        this.refreshBalances();
       },
       error: (err) => console.error('Error marcando como pagado', err)
     });
+  }
+
+  private refreshBalances() {
+    const currentHomeId = this.homeId();
+    if (currentHomeId) {
+      this.expenseService.getHomeBalances(currentHomeId).subscribe({
+        next: (data) => this.expenseService.homeBalances.set(data), //Actualizamos la memoria global
+        error: (err) => console.error('Error actualizando balances', err)
+      });
+    }
   }
 
   getCategoryIcon(category: ExpenseCategory): string {
@@ -170,4 +156,6 @@ export class Expense{
     };
     return icons[category] || 'bi-receipt';
   }
+
+
 }

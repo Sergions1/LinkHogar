@@ -32,6 +32,8 @@ export class HomeDashboard {
   myNetBalance = signal<number>(0);
   myNextRepayment = signal<DebtRepaymentDto | null>(null);
 
+  isLoading = computed(() => this.expenseService.homeBalances() === null);
+
   //Filtramos las tareas que son para HOY
   todayTasks = computed(() => {
     const today = new Date().toDateString();

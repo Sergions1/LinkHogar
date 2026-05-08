@@ -53,8 +53,8 @@
       </div>
 
       <div class="modal-footer border-top-0 pt-0">
-        <button type="button" class="btn btn-light rounded-pill px-4" (click)="closeModal()" [disabled]="isSubmitting()">Cancelar</button>
-        <button type="button" class="btn btn-primary rounded-pill px-4" (click)="submit()" [disabled]="!isValid() || isSubmitting()">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" (click)="closeModal()" [disabled]="isSubmitting()">Cancelar</button>
+        <button type="button" class="btn primary-btn rounded-pill px-4" (click)="submit()" [disabled]="!isValid() || isSubmitting()">
           @if (isSubmitting()) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             Guardando...
