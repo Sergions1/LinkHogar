@@ -129,6 +129,8 @@ export class Expense{
       })
     );
 
+
+
     this.expenseService.markSplitAsPaid(splitId).subscribe({
       next: () => {
         this.refreshBalances();
@@ -149,7 +151,6 @@ export class Expense{
           })
         );
 
-        // Y le avisamos al usuario para que sepa qué ha pasado
         Swal.fire({
           icon: 'error',
           title: 'Error de conexión',
