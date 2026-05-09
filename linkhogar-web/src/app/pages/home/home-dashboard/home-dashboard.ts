@@ -29,7 +29,23 @@ export class HomeDashboard {
   currentUser = this.authService.currentUser;
   houseMembers = this.homeService.members;
 
-  myNetBalance = signal<number>(0);
+  myNetBalance = computed(() => {
+    const balances = this.expenseService.homeBalances();
+    const user = this.currentUser();
+    if (balances && user) {
+      const myBalance = balances.balances.find(b => b.userId === user.id);
+      return myBalance ? myBalance.netBalance : 0;
+    }
+    return 0;
+  });
+
+  myRelevantRepayments = computed(() => {
+    const balances = this.expenseService.homeBalances();
+    const user = this.currentUser();
+    if (!balances || !user) return [];
+    return balances.repayments.filter(r => r.debtorId === user.id || r.creditorId === user.id);
+  });
+
   myNextRepayment = signal<DebtRepaymentDto | null>(null);
 
   isLoading = computed(() => this.expenseService.homeBalances() === null);
@@ -58,23 +74,6 @@ export class HomeDashboard {
     });
   });
 
-  constructor() {
-    effect(() => {
-      // Leemos directamente del Signal que ya cargó el layout padre
-      const balances = this.expenseService.homeBalances();
-      const user = this.currentUser();
-
-      if (balances && user) {
-        // Buscamos el balance neto del usuario logueado
-        const myBalance = balances.balances.find(b => b.userId === user.id);
-        this.myNetBalance.set(myBalance ? myBalance.netBalance : 0);
-
-        // Buscamos si hay algún pago pendiente que involucre al usuario
-        const nextRep = balances.repayments.find(r => r.debtorId === user.id || r.creditorId === user.id);
-        this.myNextRepayment.set(nextRep || null);
-      }
-    });
-  }
 
   navigateAndOpenModal(path: string) {
     this.router.navigate(['/hogar', path], { queryParams: { modal: 'create' } });
