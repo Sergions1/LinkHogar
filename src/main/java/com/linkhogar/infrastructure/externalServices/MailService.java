@@ -148,7 +148,7 @@ public class MailService {
                 + "</div>"
                 + "<p style='color: #555; font-size: 16px;'>¡Entra en la aplicación para ver el calendario completo!</p>"
                 + "<div style='text-align: center; margin-top: 30px;'>"
-                + "<a href='" + frontendUrl + "/hogar/calendario' style='background-color: #F08A5D; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Ver Calendario</a>"
+                + "<a href='" + frontendUrl + "/hogar/agenda' style='background-color: #F08A5D; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Ver Calendario</a>"
                 + "</div>"
                 + "</div>";
 
