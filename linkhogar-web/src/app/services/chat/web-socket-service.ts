@@ -22,6 +22,12 @@ export class WebSocketService {
   public expenseSubject = new Subject<void>();
   private homeExpenseSubscription: StompSubscription | null = null;
 
+  public taskSubject = new Subject<void>();
+  private homeTaskSubscription: StompSubscription | null = null;
+
+  public eventSubject = new Subject<void>();
+  private homeEventSubscription: StompSubscription | null = null;
+
   constructor() {
     this.stompClient = new Client({
       reconnectDelay: 5000, // Si se cae internet, intenta reconectar cada 5s
@@ -126,6 +132,77 @@ export class WebSocketService {
       });
     } else {
       console.error('No se puede enviar el mensaje, WebSocket desconectado.');
+    }
+  }
+
+  // --- GESTIÓN DE GASTOS DEL HOGAR ---
+
+  // Llama a esto en el ngOnInit() de tu componente de Gastos
+  subscribeToHomeExpenses(homeId: string) {
+    if (!this.stompClient.connected) {
+      setTimeout(() => this.subscribeToHomeExpenses(homeId), 300);
+      return;
+    }
+
+    this.unsubscribeFromHomeExpenses();
+
+    this.homeExpenseSubscription = this.stompClient.subscribe(`/topic/home.${homeId}.expenses`, () => {
+      // No necesitamos parsear el body, solo avisar de que "algo cambió"
+      this.expenseSubject.next();
+    });
+  }
+
+  // Llama a esto en el ngOnDestroy() de tu componente de Gastos
+  unsubscribeFromHomeExpenses() {
+    if (this.homeExpenseSubscription) {
+      this.homeExpenseSubscription.unsubscribe();
+      this.homeExpenseSubscription = null;
+    }
+  }
+
+  // --- GESTIÓN DE TAREAS DEL HOGAR ---
+
+  subscribeToHomeTasks(homeId: string) {
+    if (!this.stompClient.connected) {
+      setTimeout(() => this.subscribeToHomeTasks(homeId), 300);
+      return;
+    }
+
+    this.unsubscribeFromHomeTasks();
+
+    // Nos suscribimos al canal del tablón de tareas del hogar
+    this.homeTaskSubscription = this.stompClient.subscribe(`/topic/home.${homeId}.tasks`, () => {
+      // Avisamos a la vista para que recargue las tareas silenciosamente
+      this.taskSubject.next();
+    });
+  }
+
+  unsubscribeFromHomeTasks() {
+    if (this.homeTaskSubscription) {
+      this.homeTaskSubscription.unsubscribe();
+      this.homeTaskSubscription = null;
+    }
+  }
+
+  // --- GESTIÓN DE EVENTOS DEL HOGAR ---
+
+  subscribeToHomeEvents(homeId: string) {
+    if (!this.stompClient.connected) {
+      setTimeout(() => this.subscribeToHomeEvents(homeId), 300);
+      return;
+    }
+
+    this.unsubscribeFromHomeEvents();
+
+    this.homeEventSubscription = this.stompClient.subscribe(`/topic/home.${homeId}.events`, () => {
+      this.eventSubject.next();
+    });
+  }
+
+  unsubscribeFromHomeEvents() {
+    if (this.homeEventSubscription) {
+      this.homeEventSubscription.unsubscribe();
+      this.homeEventSubscription = null;
     }
   }
 

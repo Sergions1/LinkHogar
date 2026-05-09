@@ -1,16 +1,25 @@
 package com.linkhogar.application.event.create;
 
-import com.linkhogar.domain.common.result.Error;
+import com.linkhogar.application.homeTask.getHomeMembers.GetHomeMembersQuery;
+import com.linkhogar.application.homeTask.getHomeMembers.GetHomeMembersQueryHandler;
+import com.linkhogar.application.homeTask.getHomeMembers.HomeMemberResponse;
+import com.linkhogar.application.notifications.createNotification.CreateNotificationCommand;
+import com.linkhogar.application.notifications.createNotification.CreateNotificationCommandHandler;
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.event.HomeEvent;
 import com.linkhogar.domain.event.HomeEventErrors;
 import com.linkhogar.domain.event.HomeEventRepository;
+import com.linkhogar.infrastructure.externalServices.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -19,7 +28,9 @@ public class CreateEventCommandHandler {
 
     private final HomeEventRepository homeEventRepository;
     private final SimpMessagingTemplate messagingTemplate;
-    // private final BrevoEmailService emailService; <-- todo Inyecta aquí tu servicio de Brevo
+    private final CreateNotificationCommandHandler notificationHandler;
+    private final MailService mailService;
+    private final GetHomeMembersQueryHandler getHomeMembersQueryHandler;
 
     @Transactional
     public Result<UUID> handle(CreateEventCommand command) {
@@ -49,13 +60,48 @@ public class CreateEventCommandHandler {
         // 3. Guardar en Base de Datos
         homeEventRepository.save(newEvent);
 
-        // 4. DISPARADORES INMEDIATOS (Notificaciones)
+        messagingTemplate.convertAndSend("/topic/home." + command.homeId() + ".events", "REFRESH");
 
-        // A) Aviso en tiempo real a la app para recargar el calendario
-        messagingTemplate.convertAndSend("/topic/home." + command.homeId() + ".events", "RELOAD");
+        Result<List<HomeMemberResponse>> result = getHomeMembersQueryHandler.handle(new GetHomeMembersQuery(command.homeId(), command.creatorId()));
 
-        // B) todo Enviar correo de "Nuevo evento creado en tu casa"
-        // emailService.sendNewEventEmail(command.homeId(), newEvent);
+        List<HomeMemberResponse> homeMembers = result.getValue();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String formattedDate = command.startDate().format(formatter);
+
+        for (HomeMemberResponse member : homeMembers) {
+            // No notificamos al que ha creado el evento
+            if (member.id().equals(command.creatorId())) {
+                continue;
+            }
+
+            String title = "Nuevo evento en el calendario";
+            String message = command.creatorName() + " ha programado el evento: '" + command.title() + "' para el " + formattedDate + ".";
+
+            // B) Notificación In-App (Campanita)
+            notificationHandler.handle(new CreateNotificationCommand(
+                    member.id(),
+                    title,
+                    message
+            ));
+
+            // C) Notificación en Tiempo Real (Campanita WebSocket)
+            Map<String, String> wsNotification = new HashMap<>();
+            wsNotification.put("title", title);
+            wsNotification.put("message", message);
+            wsNotification.put("type", "EVENT");
+            messagingTemplate.convertAndSend("/topic/user." + member.id(), wsNotification);
+
+            // D) Correo Electrónico
+            if (member.email() != null) {
+                mailService.sendNewEventEmail(
+                        member.email(),
+                        command.creatorName(),
+                        command.title(),
+                        formattedDate
+                );
+            }
+        }
 
         return Result.success(newEvent.getId());
     }

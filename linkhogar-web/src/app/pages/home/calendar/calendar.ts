@@ -1,4 +1,4 @@
-import {Component, computed, effect, inject, signal} from '@angular/core';
+import {Component, computed, effect, inject, OnDestroy, signal} from '@angular/core';
 import {AuthService} from '../../../services/auth/auth.service';
 import {EventService} from '../../../services/event/event-service';
 import {CalendarOptions, EventInput} from '@fullcalendar/core';
@@ -11,6 +11,7 @@ import {CreateEventModal} from './create-event-modal/create-event-modal';
 import {ViewEventModal} from './view-event-modal/view-event-modal';
 import {HomeEventResponse} from '../../../Models/event/eventModel';
 import {ActivatedRoute} from '@angular/router';
+import {WebSocketService} from '../../../services/chat/web-socket-service';
 
 @Component({
   selector: 'app-calendar',
@@ -22,11 +23,12 @@ import {ActivatedRoute} from '@angular/router';
   templateUrl: './calendar.html',
   styleUrl: './calendar.scss',
 })
-export class Calendar {
+export class Calendar implements OnDestroy {
   private authService = inject(AuthService);
   private eventService = inject(EventService);
   private taskService = inject(HomeTaskService);
   private route = inject(ActivatedRoute);
+  private webSocketService = inject(WebSocketService);
 
   homeId: string | undefined;
   myUserId: string | undefined;
@@ -40,6 +42,8 @@ export class Calendar {
   showViewModal = signal<boolean>(false);
   selectedEvent = signal<HomeEventResponse | null>(null);
   eventToEdit = signal<HomeEventResponse | null>(null);
+
+  private wsSubscription: any;
 
   // Creamos un Signal "computado" que escucha los eventos y las tareas,
   // y los fusiona en el formato exacto que necesita FullCalendar
@@ -103,6 +107,12 @@ export class Calendar {
       }
     });
 
+    this.wsSubscription = this.webSocketService.eventSubject.subscribe(() => {
+      if (this.homeId) {
+        this.loadCalendarData(this.homeId);
+      }
+    });
+
     // Escuchamos cambios en currentUser para cargar los datos
     effect(() => {
       const user = this.authService.currentUser();
@@ -113,6 +123,7 @@ export class Calendar {
       if (user?.homeId) {
         this.homeId = user.homeId;
         this.loadCalendarData(user.homeId);
+        this.webSocketService.subscribeToHomeEvents(user.homeId);
       }
     });
 
@@ -178,5 +189,12 @@ export class Calendar {
     this.showCreateModal.set(false);
     this.eventToEdit.set(null);
     this.selectedDate.set(null);
+  }
+
+  ngOnDestroy() {
+    if (this.wsSubscription) {
+      this.wsSubscription.unsubscribe();
+    }
+    this.webSocketService.unsubscribeFromHomeEvents();
   }
 }

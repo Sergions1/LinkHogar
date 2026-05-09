@@ -25,6 +25,7 @@ export interface HomeTaskResponse {
   status: TaskStatus;
   assignedUserId?: string;
   assignedUserName?: string;
+  createdByName: string;
   startDate?: string;
   dueDate?: string;
   completedAt?: string;

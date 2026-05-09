@@ -98,4 +98,60 @@ public class MailService {
             System.err.println("Error general: " + e.getMessage());
         }
     }
+
+    @Async
+    public void sendNewExpenseEmail(String toEmail, String payerName, String description, java.math.BigDecimal amount) {
+        String htmlMsg = "<div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;'>"
+                + "<h2 style='color: #F08A5D; text-align: center;'>Nuevo Gasto en tu Hogar</h2>"
+                + "<p style='color: #555; font-size: 16px;'>Hola,</p>"
+                + "<p style='color: #555; font-size: 16px;'><strong>" + payerName + "</strong> acaba de añadir un nuevo gasto en el que estás involucrado/a:</p>"
+                + "<div style='background-color: #f8f9fa; padding: 15px; border-left: 4px solid #F08A5D; margin: 20px 0;'>"
+                + "<p style='margin: 0; font-size: 18px;'><strong>Motivo:</strong> " + description + "</p>"
+                + "<p style='margin: 10px 0 0 0; font-size: 18px; color: #dc3545;'><strong>Tu parte:</strong> " + amount + " €</p>"
+                + "</div>"
+                + "<p style='color: #555; font-size: 16px;'>Entra en la aplicación para revisar tus cuentas y saldar tus deudas.</p>"
+                + "<div style='text-align: center; margin-top: 30px;'>"
+                + "<a href='" + frontendUrl + "/hogar/gastos' style='background-color: #F08A5D; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Ver mis gastos</a>"
+                + "</div>"
+                + "</div>";
+
+        sendEmailViaBrevoAPI(toEmail, "Nuevo Gasto: " + description, htmlMsg);
+    }
+
+    @Async
+    public void sendNewTaskEmail(String toEmail, String assignerName, String taskTitle) {
+        String htmlMsg = "<div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;'>"
+                + "<h2 style='color: #F08A5D; text-align: center;'>Nueva Tarea Asignada</h2>"
+                + "<p style='color: #555; font-size: 16px;'>Hola,</p>"
+                + "<p style='color: #555; font-size: 16px;'><strong>" + assignerName + "</strong> te ha asignado una nueva tarea en el tablón del hogar:</p>"
+                + "<div style='background-color: #f8f9fa; padding: 15px; border-left: 4px solid #F08A5D; margin: 20px 0;'>"
+                + "<p style='margin: 0; font-size: 18px; font-weight: bold;'>" + taskTitle + "</p>"
+                + "</div>"
+                + "<p style='color: #555; font-size: 16px;'>¡Entra en la aplicación para ver los detalles y ponerte manos a la obra!</p>"
+                + "<div style='text-align: center; margin-top: 30px;'>"
+                + "<a href='" + frontendUrl + "/hogar/tareas' style='background-color: #F08A5D; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Ver Tablón de Tareas</a>"
+                + "</div>"
+                + "</div>";
+
+        sendEmailViaBrevoAPI(toEmail, "Nueva Tarea: " + taskTitle, htmlMsg);
+    }
+
+    @Async
+    public void sendNewEventEmail(String toEmail, String creatorName, String eventTitle, String startDate) {
+        String htmlMsg = "<div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;'>"
+                + "<h2 style='color: #F08A5D; text-align: center;'>Nuevo Evento en el Hogar</h2>"
+                + "<p style='color: #555; font-size: 16px;'>Hola,</p>"
+                + "<p style='color: #555; font-size: 16px;'><strong>" + creatorName + "</strong> ha añadido un nuevo evento al calendario de vuestra casa:</p>"
+                + "<div style='background-color: #f8f9fa; padding: 15px; border-left: 4px solid #F08A5D; margin: 20px 0;'>"
+                + "<p style='margin: 0; font-size: 18px; font-weight: bold;'>" + eventTitle + "</p>"
+                + "<p style='margin: 10px 0 0 0; font-size: 16px; color: #555;'><strong>Cuándo:</strong> " + startDate + "</p>"
+                + "</div>"
+                + "<p style='color: #555; font-size: 16px;'>¡Entra en la aplicación para ver el calendario completo!</p>"
+                + "<div style='text-align: center; margin-top: 30px;'>"
+                + "<a href='" + frontendUrl + "/hogar/calendario' style='background-color: #F08A5D; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Ver Calendario</a>"
+                + "</div>"
+                + "</div>";
+
+        sendEmailViaBrevoAPI(toEmail, "Nuevo Evento: " + eventTitle, htmlMsg);
+    }
 }

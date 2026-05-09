@@ -15,6 +15,7 @@ public class CreateNotificationCommandHandler {
 
     private final NotificationRepository notificationRepository;
 
+
     public Result<Void> handle(CreateNotificationCommand command) {
         try {
             Notification notification = Notification.builder()
