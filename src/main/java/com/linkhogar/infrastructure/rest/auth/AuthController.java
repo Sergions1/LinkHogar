@@ -6,6 +6,8 @@ import com.linkhogar.application.user.getPasswordCode.GetPasswordCodeQuery;
 import com.linkhogar.application.user.getPasswordCode.GetPasswordCodeQueryHandler;
 import com.linkhogar.application.user.login.UserLoginCommand;
 import com.linkhogar.application.user.login.UserLoginCommandHandler;
+import com.linkhogar.application.user.resetPassword.ResetPasswordCommand;
+import com.linkhogar.application.user.resetPassword.ResetPasswordCommandHandler;
 import com.linkhogar.application.user.verify.VerifyUserCommand;
 import com.linkhogar.application.user.verify.VerifyUserCommandHandler;
 import com.linkhogar.application.user.verifyPasswordCode.VerifyPasswordCodeQuery;
@@ -29,7 +31,7 @@ public class AuthController {
     private final VerifyUserCommandHandler verifyUserCommandHandler;
     private final GetPasswordCodeQueryHandler getPasswordCodeQueryHandler;
     private final VerifyPasswordCodeQueryHandler verifyPasswordCodeQueryHandler;
-
+    private final ResetPasswordCommandHandler resetPasswordCommandHandler;
 
     @Operation(
             summary = "Inicio de sesion de un usuario"
@@ -87,6 +89,19 @@ public class AuthController {
             verifyPasswordCodeQueryHandler.handle(query);
             return ResponseEntity.ok().build();
         }catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPasswordOutside(@RequestBody ResetPasswordCommand command) {
+        try {
+            resetPasswordCommandHandler.handle(command);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            // Si el código falla o expira
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

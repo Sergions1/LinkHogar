@@ -29,7 +29,7 @@ public class AddHouseFavouriteCommandHandler {
         }
 
         if(houseFavouriteRepository.isFavourite(command.userId(), command.houseId())) {
-            return Result.failure(Error.failure("402", "EL favaorito ya existe"));
+            return Result.success(null);
         }
 
         HouseFavourite favourite = HouseFavourite.builder()
