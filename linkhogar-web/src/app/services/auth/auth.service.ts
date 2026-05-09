@@ -132,17 +132,12 @@ export class AuthService {
   }
 
   requestPasswordCode(mail: string){
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
-    return this.http.post(`${this.apiUrl}/request-password-code`, {mail}, { headers });
+    return this.http.post(`${this.apiUrl}/request-password-code`, {mail});
   }
 
   verifyPasswordCode(payload: { mail: string, code: string }) {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-
-    return this.http.post(`${this.apiUrl}/verify-password-code`, payload, { headers , responseType: 'text' });
+    return this.http.post(`${this.apiUrl}/verify-password-code`, payload, {responseType: 'text' });
   }
 
   /**
@@ -183,6 +178,10 @@ export class AuthService {
       currentSet.add(houseId);
     }
     this.favouriteIds.set(currentSet);
+  }
+
+  resetPasswordOutside(payload: { mail: string; code: string; newPassword: string }) {
+    return this.http.post(`${this.apiUrl}/reset-password`, payload);
   }
 
 }

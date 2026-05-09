@@ -1,21 +1,23 @@
-// login.component.ts
 import {Component, inject, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../../services/auth/auth.service';
 import {Router, RouterLink} from '@angular/router';
 import {CommonModule} from '@angular/common';
+import {UserService} from '../../../services/user/user-service';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink],
+  imports: [FormsModule, CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   private authService = inject(AuthService);
+  private userService = inject(UserService);
   private router = inject(Router);
+  private fb = inject(FormBuilder);
 
   loginData = { mail: '', password: '' };
   isLoading = signal(false);
@@ -24,6 +26,15 @@ export class LoginComponent {
   // Errores de validación
   mailError = signal<string | null>(null);
   passwordError = signal<string | null>(null);
+
+  // --- Recuperación de Contraseña ---
+  forgotPasswordStep: 1 | 2 | 3 = 1;
+  forgotPasswordForm: FormGroup = this.fb.group({
+    mail: ['', [Validators.required, Validators.email]],
+    code: [''],
+    newPassword: [''],
+    confirmPassword: ['']
+  }, { validators: this.checkPasswords });
 
   togglePassword() {
     this.showPassword.update(v => !v);
@@ -77,8 +88,6 @@ export class LoginComponent {
         let msg = 'Ha ocurrido un error. Inténtalo de nuevo.';
         let icon: 'error' | 'warning' = 'error';
 
-        // Comprobamos si el error es de cuenta no habilitada (DisabledException)
-        // Spring Security suele devolver un 401 o 403 con un mensaje específico o un error "User is disabled"
         const backendError = error.error?.message || error.error || '';
 
         if (backendError.toString().toLowerCase().includes('disabled') || backendError.toString().toLowerCase().includes('desactivada') || error.status === 403) {
@@ -98,5 +107,111 @@ export class LoginComponent {
         });
       }
     });
+  }
+
+  // --- MÉTODOS DE RECUPERACIÓN DE CONTRASEÑA ---
+
+  checkPasswords(group: FormGroup) {
+    const pass = group.get('newPassword')?.value;
+    const confirmPass = group.get('confirmPassword')?.value;
+    if (pass || confirmPass) {
+      return pass === confirmPass ? null : { notSame: true };
+    }
+    return null;
+  }
+
+  initForgotPassword() {
+    this.forgotPasswordStep = 1;
+    this.forgotPasswordForm.reset();
+  }
+
+  requestRecoveryCode() {
+    const mailControl = this.forgotPasswordForm.get('mail');
+    if (mailControl?.valid) {
+      this.isLoading.set(true);
+      this.authService.requestPasswordCode(mailControl.value).subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.forgotPasswordStep = 2;
+          this.forgotPasswordForm.get('code')?.setValidators([Validators.required]);
+          this.forgotPasswordForm.get('code')?.updateValueAndValidity();
+        },
+        error: () => {
+          this.isLoading.set(false);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se ha podido enviar el código. Verifica que el correo electrónico es correcto y está registrado.',
+            icon: 'error',
+            confirmButtonColor: 'var(--color-acento)'
+          });
+        }
+      });
+    }
+  }
+
+  verifyRecoveryCode() {
+    const mailControl = this.forgotPasswordForm.get('mail');
+    const codeControl = this.forgotPasswordForm.get('code');
+
+    if (codeControl?.valid) {
+      this.isLoading.set(true);
+      const data = {
+        mail: mailControl?.value,
+        code: codeControl?.value
+      };
+
+      this.authService.verifyPasswordCode(data).subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.forgotPasswordStep = 3;
+          this.forgotPasswordForm.get('newPassword')?.setValidators([Validators.required, Validators.minLength(6)]);
+          this.forgotPasswordForm.get('confirmPassword')?.setValidators([Validators.required]);
+          this.forgotPasswordForm.get('newPassword')?.updateValueAndValidity();
+          this.forgotPasswordForm.get('confirmPassword')?.updateValueAndValidity();
+        },
+        error: () => {
+          this.isLoading.set(false);
+          codeControl?.setErrors({ invalidCode: true });
+        }
+      });
+    }
+  }
+
+  resetPassword() {
+    if (this.forgotPasswordForm.valid) {
+      this.isLoading.set(true);
+      const formValues = this.forgotPasswordForm.value;
+
+      const payload = {
+        mail: formValues.mail,
+        code: formValues.code,
+        newPassword: formValues.newPassword
+      };
+
+      // Usamos el NUEVO endpoint público del AuthService
+      this.authService.resetPasswordOutside(payload).subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          document.getElementById('closeForgotModal')?.click();
+          Swal.fire({
+            title: '¡Contraseña actualizada!',
+            text: 'Tu contraseña ha sido actualizada con éxito. Ya puedes iniciar sesión.',
+            icon: 'success',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: 'var(--color-acento)'
+          });
+        },
+        error: () => {
+          this.isLoading.set(false);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo actualizar la contraseña. El código puede haber expirado.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: 'var(--color-acento)'
+          });
+        }
+      });
+    }
   }
 }

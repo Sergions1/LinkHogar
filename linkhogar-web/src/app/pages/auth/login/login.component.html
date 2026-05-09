@@ -83,6 +83,91 @@
           </a>
         </p>
 
+
+        <div class="text-center mt-1">
+          <a href="javascript:void(0)" class="text-white fw-semibold small" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" (click)="initForgotPassword()">
+            ¿Has olvidado tu contraseña?
+          </a>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Recuperar Contraseña</h5>
+        <button type="button" id="closeForgotModal" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="forgotPasswordForm">
+
+          @if (forgotPasswordStep === 1) {
+            <div class="mb-3">
+              <p class="text-muted small mb-3">Introduce tu correo electrónico y te enviaremos un código de seguridad para poder restablecer tu contraseña.</p>
+              <label class="form-label text-muted small text-uppercase">Correo Electrónico</label>
+              <input type="email" class="form-control" formControlName="mail" placeholder="ejemplo@correo.com">
+            </div>
+          }
+
+          @if (forgotPasswordStep === 2) {
+            <div class="mb-4 text-center">
+              <p class="text-muted small mb-3">Hemos enviado un código de seguridad a <strong>{{ forgotPasswordForm.get('mail')?.value }}</strong>. Introdúcelo a continuación.</p>
+              <input type="text" class="form-control text-center fw-bold fs-4 mx-auto" style="width: 200px; letter-spacing: 5px;" formControlName="code" placeholder="------" maxlength="6">
+              @if (forgotPasswordForm.get('code')?.errors?.['invalidCode']) {
+                <div class="text-danger small mt-2 fw-medium">El código es incorrecto o ha expirado.</div>
+              }
+            </div>
+          }
+
+          @if (forgotPasswordStep === 3) {
+            <div class="mb-3">
+              <label class="form-label text-muted small text-uppercase">Nueva Contraseña</label>
+              <input type="password" class="form-control" formControlName="newPassword" placeholder="Mínimo 6 caracteres">
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small text-uppercase">Repetir Contraseña</label>
+              <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Vuelve a escribir la contraseña">
+              @if (forgotPasswordForm.errors?.['notSame'] && forgotPasswordForm.get('confirmPassword')?.touched) {
+                <div class="text-danger small mt-2 fw-medium">Las contraseñas no coinciden.</div>
+              }
+            </div>
+          }
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        @if (forgotPasswordStep === 1) {
+          <button type="button" class="btn primary-btn w-100" [disabled]="forgotPasswordForm.get('mail')?.invalid || isLoading()" (click)="requestRecoveryCode()">
+            @if (isLoading()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>Enviando...
+            } @else {
+              Enviar Código
+            }
+          </button>
+        }
+        @if (forgotPasswordStep === 2) {
+          <button type="button" class="btn primary-btn w-100" [disabled]="forgotPasswordForm.get('code')?.invalid || isLoading()" (click)="verifyRecoveryCode()">
+            @if (isLoading()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>Verificando...
+            } @else {
+              Verificar Código
+            }
+          </button>
+        }
+        @if (forgotPasswordStep === 3) {
+          <button type="button" class="btn btn-success w-100" [disabled]="forgotPasswordForm.invalid || isLoading()" (click)="resetPassword()">
+            @if (isLoading()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>Actualizando...
+            } @else {
+              Restablecer Contraseña
+            }
+          </button>
+        }
       </div>
     </div>
   </div>
