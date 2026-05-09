@@ -10,6 +10,7 @@ public record HomeTaskResponse(
         String status,
         UUID assignedUserId,
         String assignedUserName,
+        String createdByName,
         LocalDateTime startDate,
         LocalDateTime dueDate,
         LocalDateTime completedAt

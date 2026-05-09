@@ -33,6 +33,7 @@ public class GetByHomeQueryHandler {
                             task.getStatus().name(),
                             task.getAssignedUserId(),
                             task.getAssignedUserName(),
+                            task.getCreatedByName(),
                             task.getStartDate(),
                             task.getDueDate(),
                             task.getCompletedAt()

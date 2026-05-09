@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, effect, inject, OnInit, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, effect, inject, OnDestroy, OnInit, signal} from '@angular/core';
 import {HomeTaskService} from '../../../services/homeTask/home-task-service';
 import {AuthService} from '../../../services/auth/auth.service';
 import {HomeTaskResponse, StatusReverseTranslator} from '../../../Models/homeTasks/HomeTaskResponse';
@@ -16,6 +16,7 @@ import {
 import Swal from 'sweetalert2';
 import {HomeService} from '../../../services/home/home-service';
 import {ActivatedRoute} from '@angular/router';
+import {WebSocketService} from '../../../services/chat/web-socket-service';
 
 @Component({
   selector: 'app-tasks',
@@ -23,13 +24,15 @@ import {ActivatedRoute} from '@angular/router';
   templateUrl: './tasks.html',
   styleUrl: './tasks.scss',
 })
-export class Tasks {
+export class Tasks implements OnDestroy {
   private homeTaskService = inject(HomeTaskService);
   private authService = inject(AuthService);
   private formBuilder = inject(FormBuilder);
   private changeDetectorRef = inject(ChangeDetectorRef);
   private homeService = inject(HomeService);
   private route = inject(ActivatedRoute);
+  private webSocketService = inject(WebSocketService);
+  private subscription: any;
 
   todoTasks: HomeTaskResponse[] = [];
   inProgressTasks: HomeTaskResponse[] = [];
@@ -65,6 +68,24 @@ export class Tasks {
         this.changeDetectorRef.detectChanges();
       }
     });
+
+
+    const homeId = this.currentUser()?.homeId;
+    if (homeId) {
+      this.webSocketService.subscribeToHomeTasks(homeId);
+
+      // 2. Escuchamos el "megáfono". Si alguien toca una tarea, recargamos la lista.
+      this.subscription = this.webSocketService.taskSubject.subscribe(() => {
+        this.homeTaskService.getTasksByHome(homeId).subscribe();
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    this.webSocketService.unsubscribeFromHomeTasks();
   }
 
   distributeTasks(allTasks: HomeTaskResponse[]) {
@@ -99,6 +120,7 @@ export class Tasks {
       homeId: this.currentUser()?.homeId,
       assignedUserId: formValue.assignedUserId,
       assignedUserName: assignedName,
+      createdByName: this.currentUser()?.firstName + ' ' + this.currentUser()?.lastName,
       startDate: formValue.startDate ? new Date(formValue.startDate): null,
       dueDate: formValue.dueDate ? new Date(formValue.dueDate) : null
     };
@@ -111,6 +133,7 @@ export class Tasks {
       status: 'Por hacer',
       assignedUserId: formValue.assignedUserId,
       assignedUserName: assignedName,
+      createdByName: this.currentUser()?.firstName + ' ' + this.currentUser()?.lastName,
       startDate: formValue.startDate ? new Date(formValue.startDate).toISOString() : undefined,
       dueDate: formValue.dueDate ? new Date(formValue.dueDate).toISOString() : undefined
     };
