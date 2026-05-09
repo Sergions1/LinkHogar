@@ -22,6 +22,7 @@
           <button
             class="btn btn-heart rounded-circle m-3 shadow-sm p-2 lh-1 boton-Favorito heart-btn"
             [class.heart-active]="isFavourite()"
+            [disabled]="isToggling()"
             (click)="toggleFavourite()">
             <i class="bi" [class.bi-heart]="!isFavourite()" [class.bi-heart-fill]="isFavourite()"></i>
           </button>

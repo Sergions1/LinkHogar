@@ -32,6 +32,7 @@ export class Detail implements OnInit {
   currentImageIndex = 0; // 👈
   isFavourite = signal(false);
   currentUser = this.authService.currentUser;
+  isToggling = signal(false); //Señal para controlar bloqueo de carrera
 
   @Input() previewData: HouseForm | null = null;
 
@@ -88,11 +89,15 @@ export class Detail implements OnInit {
       return;
     }
 
+    if (this.isToggling()) return;
+
     const userId = this.currentUser()?.id;
     if (!this.houseId || !userId) return;
 
     //Guardamos el estado anterior por si falla
     const wasFavourite = this.isFavourite();
+
+    this.isToggling.set(true)
 
     this.isFavourite.set(!wasFavourite);
     this.authService.toggleFavoriteLocal(this.houseId);
@@ -100,13 +105,17 @@ export class Detail implements OnInit {
     if (!wasFavourite) {
       // Si antes NO era favorito, lo añadimos
       this.userService.addFavouriteHouse(userId, this.houseId).subscribe({
-        next: () => {},
+        next: () => {
+          this.isToggling.set(false)
+        },
         error: (err) => this.rollbackFavourite(wasFavourite, this.houseId!)
       });
     } else {
       // Si antes SÍ era favorito, lo quitamos
       this.userService.deleteFavouriteHosue(userId, this.houseId).subscribe({
-        next: () => {},
+        next: () => {
+          this.isToggling.set(false)
+        },
         error: (err) => this.rollbackFavourite(wasFavourite, this.houseId!)
       });
     }
@@ -116,6 +125,7 @@ export class Detail implements OnInit {
   private rollbackFavourite(previousState: boolean, houseId: string) {
     this.isFavourite.set(previousState);
     this.authService.toggleFavoriteLocal(houseId); // Revertimos en la caché local
+    this.isToggling.set(false)
 
     Swal.fire({
       title: 'Error de conexión',
