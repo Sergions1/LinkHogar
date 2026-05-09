@@ -82,56 +82,48 @@ export class Detail implements OnInit {
     }
   }
 
-  addFavourite(){
-
-    if(this.authService.currentUser == null){
+  toggleFavourite() {
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
     }
 
-    const userId = this.currentUser()?.id || null;
+    const userId = this.currentUser()?.id;
+    if (!this.houseId || !userId) return;
 
-    if (this.houseId != null && userId != null) {
+    //Guardamos el estado anterior por si falla
+    const wasFavourite = this.isFavourite();
+
+    this.isFavourite.set(!wasFavourite);
+    this.authService.toggleFavoriteLocal(this.houseId);
+
+    if (!wasFavourite) {
+      // Si antes NO era favorito, lo añadimos
       this.userService.addFavouriteHouse(userId, this.houseId).subscribe({
-        next: params => {
-          this.authService.toggleFavoriteLocal(this.houseId?.toString() || "");
-          this.isFavourite.set(true);
-        },
-        error: err => {
-          Swal.fire({
-            title: 'Error',
-            text: 'No se pudo añadir a favoritos.',
-            icon: 'error',
-            confirmButtonText: 'Aceptar',
-            confirmButtonColor: 'var(--color-acento)'
-          });
-        }
+        next: () => {},
+        error: (err) => this.rollbackFavourite(wasFavourite, this.houseId!)
       });
-    }else{
-      this.router.navigate(["/login"]);
+    } else {
+      // Si antes SÍ era favorito, lo quitamos
+      this.userService.deleteFavouriteHosue(userId, this.houseId).subscribe({
+        next: () => {},
+        error: (err) => this.rollbackFavourite(wasFavourite, this.houseId!)
+      });
     }
   }
 
-  deleteFavourite(){
-    const userId = this.currentUser()?.id || null;
+  // Función auxiliar para revertir los cambios si el servidor falla
+  private rollbackFavourite(previousState: boolean, houseId: string) {
+    this.isFavourite.set(previousState);
+    this.authService.toggleFavoriteLocal(houseId); // Revertimos en la caché local
 
-    if (this.houseId != null && userId != null) {
-      this.userService.deleteFavouriteHosue(userId, this.houseId).subscribe({
-        next: params => {
-          this.authService.toggleFavoriteLocal(this.houseId?.toString() || "");
-          this.isFavourite.set(false);
-        },
-        error: err => {
-          Swal.fire({
-            title: 'Error',
-            text: 'No se pudo eliminar de favoritos.',
-            icon: 'error',
-            confirmButtonText: 'Aceptar',
-            confirmButtonColor: 'var(--color-acento)'
-          });
-        }
-      });
-    }
+    Swal.fire({
+      title: 'Error de conexión',
+      text: 'No se pudo actualizar favoritos. Inténtalo de nuevo más tarde.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: 'var(--color-acento)'
+    });
   }
 
   report(){

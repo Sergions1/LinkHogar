@@ -1,0 +1,25 @@
+/* Animación del corazón */
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.heart-active {
+  color: #ff3b30 !important; /* Rojo pasión */
+  animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.heart-active i {
+  color: #ff3b30 !important;
+}
+
+.heart-btn {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background-color: white;
+}
+
+.heart-btn:hover {
+  transform: scale(1.1);
+}

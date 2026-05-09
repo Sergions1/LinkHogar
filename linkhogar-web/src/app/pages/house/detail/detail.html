@@ -19,15 +19,12 @@
           <p class="text-muted">{{house.address.street}} {{house.address.city}}, {{house.address.province}}</p>
         </div>
         <div>
-          @if (!isFavourite()) {
-            <button class="btn btn-heart rounded-circle m-3 shadow-sm p-2 lh-1 boton-Favorito" id="botonFav" data-id="${piso.id}" (click)="addFavourite()" )>
-              <i class="bi bi-heart"></i>
-            </button>
-          } @else {
-            <button class="btn btn-heart rounded-circle m-3 shadow-sm p-2 lh-1 boton-Favorito" id="botonFav" data-id="${piso.id}" (click)="deleteFavourite()" )>
-              <i class="bi bi-heart-fill text-danger"></i>
-            </button>
-          }
+          <button
+            class="btn btn-heart rounded-circle m-3 shadow-sm p-2 lh-1 boton-Favorito heart-btn"
+            [class.heart-active]="isFavourite()"
+            (click)="toggleFavourite()">
+            <i class="bi" [class.bi-heart]="!isFavourite()" [class.bi-heart-fill]="isFavourite()"></i>
+          </button>
         </div>
       </div>
       @if (house.images && house.images.length > 0) {
