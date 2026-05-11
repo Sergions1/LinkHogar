@@ -5,6 +5,7 @@ import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.house.enums.HouseType;
+import com.linkhogar.domain.house.enums.RentalMode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class HouseCardResponse
     private HouseType houseType;
     private HouseStatus status;
     private PublicationStatus publicationStatus;
+    private RentalMode rentalMode;
 
     private int size;
     private int rooms;
@@ -51,6 +53,7 @@ public class HouseCardResponse
                 house.getHouseType(),
                 house.getStatus(),
                 house.getPublicationStatus(),
+                house.getRentalMode(),
                 house.getSize(),
                 house.getRooms(),
                 house.getBaths(),

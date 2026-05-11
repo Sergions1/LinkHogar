@@ -1,11 +1,14 @@
 package com.linkhogar.application.house.get;
 
 import com.linkhogar.application.Address.AddressResponse;
+import com.linkhogar.application.house.getById.RoomResponse;
+import com.linkhogar.application.house.getById.TenantProfileResponse;
 import com.linkhogar.application.user.getById.UserResponse;
 import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.house.enums.HouseType;
+import com.linkhogar.domain.house.enums.RentalMode;
 import com.linkhogar.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,6 +19,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Data
@@ -54,6 +58,9 @@ public class HouseResponse {
 
     private List<String> images;
 
+    private RentalMode rentalMode;
+    private List<RoomResponse> roomList;
+
     public static HouseResponse mapToResponse(House house) {
         if (house == null) return null;
 
@@ -90,6 +97,27 @@ public class HouseResponse {
 
                 // 👇 Mapeo SEGURO del Usuario (solo info pública)
                 .owner(UserResponse.mapToResponse(house.getOwner()))
+
+                .rentalMode(house.getRentalMode())
+
+                .roomList(house.getRoomList() != null ? house.getRoomList().stream()
+                        .map(room -> new RoomResponse(
+                                room.getId().toString(),
+                                room.getName(),
+                                room.getPrice(),
+                                room.getSize(),
+                                room.isHasPrivateBath(),
+                                room.getBedType(),
+                                room.getStatus(),
+                                room.getCurrentTenant() != null ? new TenantProfileResponse(
+                                        room.getCurrentTenant().getGender(),
+                                        room.getCurrentTenant().getAgeRange(),
+                                        room.getCurrentTenant().getOccupation(),
+                                        room.getCurrentTenant().getDescription(),
+                                        room.getCurrentTenant().getIsSmoker(),
+                                        room.getCurrentTenant().getHasPets()
+                                ) : null
+                        )).collect(Collectors.toList()) : List.of())
 
 
                 .build();
