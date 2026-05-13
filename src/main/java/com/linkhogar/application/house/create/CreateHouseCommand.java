@@ -4,7 +4,6 @@ import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.house.enums.HouseType;
 import com.linkhogar.domain.house.enums.RentalMode;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,5 +54,5 @@ public class CreateHouseCommand {
     private Double longitude;
 
     private RentalMode rentalMode;
-    private List<CreateRoomDto> roomDetails;
+    private List<CreateRoomDto> roomList;
 }

@@ -5,6 +5,7 @@ import com.linkhogar.domain.room.enums.RoomStatus;
 
 public record CreateRoomDto (
         String name,
+        String description,
         Long price, // Usamos Long para coincidir con tu entidad House
         Double size,
         Boolean hasPrivateBath,

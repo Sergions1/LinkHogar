@@ -54,8 +54,14 @@ export class HouseService {
    * @returns Un Observable con la respuesta de la creación
    */
   createHouse(data: HouseForm) {
-    console.log('latitude:', data.location.latitude);   // 👈
-    console.log('longitude:', data.location.longitude); // 👈
+    const mappedRooms = data.roomList.map(room => ({
+      name: room.name,
+      description: room.description,
+      price: room.price,
+      size: room.size,
+      bedType: room.bedType,
+      hasPrivateBath: room.hasPrivateBath
+    }));
 
     const payload = {
       title: data.details.title,
@@ -87,6 +93,8 @@ export class HouseService {
       petsAllowed: data.features.petsAllowed,
       latitude: data.location.latitude,
       longitude: data.location.longitude,
+      rentalMode: data.rentalMode,
+      roomList: mappedRooms,
     };
 
     const token = localStorage.getItem('token'); // O el servicio donde guardes tu JWT
@@ -120,6 +128,36 @@ export class HouseService {
     const headers = new HttpHeaders({'Authorization': `Bearer ${token}`});
 
     return this.http.post(`${this.apiUrl}/${houseId}/images`, formData, {
+      headers,
+      responseType: 'text'
+    });
+  }
+
+  /**
+   * Sube las imágenes de una habitación específica
+   *
+   * @param roomId El ID de la habitación (generado por el backend)
+   * @param files Un array de objetos File nativos
+   */
+  uploadRoomImages(houseId: string, roomId: string, files: File[]): Observable<any> {
+    if (!files || files.length === 0) {
+      // Si no hay fotos, devolvemos un observable resuelto para no romper la cadena
+      return new Observable(subscriber => {
+        subscriber.next(null);
+        subscriber.complete();
+      });
+    }
+
+    const formData = new FormData();
+    files.forEach(file => {
+      formData.append('files', file);
+    });
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({'Authorization': `Bearer ${token}`});
+
+    // todo Ajusta esta URL a la ruta exacta de tu controlador Java
+    return this.http.post(`${this.apiUrl}/${houseId}/rooms/${roomId}/images`, formData, {
       headers,
       responseType: 'text'
     });
@@ -173,6 +211,9 @@ export class HouseService {
       petsAllowed: data.features.petsAllowed,
       latitude: data.location.latitude,
       longitude: data.location.longitude,
+
+      rentalMode: data.rentalMode,
+      roomList: data.roomList
     };
 
     const token = localStorage.getItem('token');
@@ -236,5 +277,13 @@ export class HouseService {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
     return this.http.delete(`${this.apiUrl}/houseReport/delete/${reportId}`, {headers});
+  }
+
+  deleteRoomImage(houseId: string, roomId: string, imageUrl: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    const safeUrl = encodeURIComponent(imageUrl);
+
+    return this.http.delete(`${this.apiUrl}/${houseId}/rooms/${roomId}/image?url=${safeUrl}`, { headers });
   }
 }

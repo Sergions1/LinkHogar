@@ -40,7 +40,7 @@ export const routes: Routes = [
   {path:"perfil", component: Profile, canActivate: [authGuard]},
   {path: "favoritos", component: Favourites, canActivate: [authGuard]},
   {path: "mis-publicaciones", component: MyPublications, canActivate: [authGuard]},
-  {path:"new-announcement", component: Create},
+  {path:"new-announcement", component: Create, canActivate: [authGuard]},
   {path:"editar/:id", component: Create},
   {
     path: 'admin',

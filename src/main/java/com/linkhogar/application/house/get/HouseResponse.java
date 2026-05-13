@@ -104,6 +104,7 @@ public class HouseResponse {
                         .map(room -> new RoomResponse(
                                 room.getId().toString(),
                                 room.getName(),
+                                room.getDescription(),
                                 room.getPrice(),
                                 room.getSize(),
                                 room.isHasPrivateBath(),
@@ -116,7 +117,8 @@ public class HouseResponse {
                                         room.getCurrentTenant().getDescription(),
                                         room.getCurrentTenant().getIsSmoker(),
                                         room.getCurrentTenant().getHasPets()
-                                ) : null
+                                ) : null,
+                                room.getPhotoUrls()
                         )).collect(Collectors.toList()) : List.of())
 
 

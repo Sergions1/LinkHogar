@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/admin/create-user").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.GET, "/admin/pendind").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.GET, "/houses/owner/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/houses/*/rooms/*/images").authenticated()
                         .requestMatchers(HttpMethod.GET, "/houses/houseReports/getAll").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.POST, "/houseReport/delete/*").hasAnyAuthority("Admin", "LinkHogar")
                         .requestMatchers(HttpMethod.GET, "/houses/**").permitAll()

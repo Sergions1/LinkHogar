@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +24,7 @@ public class CreateHouseCommandHandler {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
 
-    public UUID handle(CreateHouseCommand command, String userId) {
+    public CreateHouseResponse handle(CreateHouseCommand command, String userId) {
         User owner = userRepository.userById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException(("El usuario del token no existe")));
 
         Address address = Address.builder()
@@ -60,6 +59,7 @@ public class CreateHouseCommandHandler {
                 .price(command.getPrice())
                 .address(address)
                 .owner(owner)
+                .rentalMode(command.getRentalMode())
                 .build();
 
         house.setLift(Boolean.TRUE.equals(command.getLift()));
@@ -74,18 +74,19 @@ public class CreateHouseCommandHandler {
         house.setPetsAllowed(Boolean.TRUE.equals(command.getPetsAllowed()));
 
         //Creación de habitaciones
-        if (command.getRentalMode() == RentalMode.BY_ROOM && command.getRoomDetails() != null) {
-            if (command.getRoomDetails() == null || command.getRoomDetails().size() != command.getRooms()) {
+        if (command.getRentalMode() == RentalMode.BY_ROOM && command.getRoomList() != null) {
+            if (command.getRoomList() == null || command.getRoomList().size() != command.getRooms()) {
                 throw new IllegalArgumentException("Incongruencia de datos: La casa indica tener "
                         + command.getRooms() + " habitaciones, pero se han enviado detalles de "
-                        + (command.getRoomDetails() == null ? 0 : command.getRoomDetails().size()) + ".");
+                        + (command.getRoomList() == null ? 0 : command.getRoomList().size()) + ".");
             }
 
             //Mapeamos los DTOs a entidades de Dominio
-            List<Room> domainRooms = command.getRoomDetails().stream()
+            List<Room> domainRooms = command.getRoomList().stream()
                     .map(this::mapToDomainRoom)
                     .toList();
 
+            domainRooms.forEach(room -> room.setHouse(house));
             house.setRoomList(domainRooms);
 
             // Buscamos el precio más barato que esté disponible
@@ -101,13 +102,18 @@ public class CreateHouseCommandHandler {
 
         houseRepository.save(house);
 
-        return house.getId();
+        java.util.Map<String, UUID> roomIds = new java.util.HashMap<>();
+        if (house.getRoomList() != null) {
+            house.getRoomList().forEach(room -> roomIds.put(room.getName(), room.getId()));
+        }
+
+        return new CreateHouseResponse(house.getId(), roomIds);
     }
 
     private Room mapToDomainRoom(CreateRoomDto dto) {
         return Room.builder()
-                .id(UUID.randomUUID())
                 .name(dto.name())
+                .description(dto.description())
                 .price(dto.price())
                 .size(dto.size())
                 .hasPrivateBath(dto.hasPrivateBath())

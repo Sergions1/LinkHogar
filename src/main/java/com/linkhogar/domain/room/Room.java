@@ -5,7 +5,6 @@ import com.linkhogar.domain.room.enums.RoomStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +20,8 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_id", nullable = false)
@@ -53,4 +54,10 @@ public class Room {
     @CollectionTable(name = "room_photos", joinColumns = @JoinColumn(name = "room_id"))
     @Column(name = "photo_url")
     private List<String> photoUrls = new ArrayList<>();
+
+    public void addPhoto(String url) {
+        if (url != null && !url.trim().isEmpty()) {
+            this.photoUrls.add(url);
+        }
+    }
 }

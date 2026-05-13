@@ -2,12 +2,17 @@ package com.linkhogar.infrastructure.rest.house;
 
 import com.linkhogar.application.house.Image.addImage.AddHouseImagesCommand;
 import com.linkhogar.application.house.Image.addImage.AddHouseImagesCommandHandler;
+import com.linkhogar.application.house.Image.addRoomImage.AddRoomImagesCommand;
+import com.linkhogar.application.house.Image.addRoomImage.AddRoomImagesCommandHandler;
 import com.linkhogar.application.house.Image.deleteImage.DeleteHouseImageCommand;
 import com.linkhogar.application.house.Image.deleteImage.DeleteHouseImageCommandHandler;
+import com.linkhogar.application.house.Image.deleteRoomImage.DeleteRoomImageCommand;
+import com.linkhogar.application.house.Image.deleteRoomImage.DeleteRoomImageCommandHandler;
 import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommand;
 import com.linkhogar.application.house.SetHouseStatus.SetHouseStatusCommandHandler;
 import com.linkhogar.application.house.create.CreateHouseCommand;
 import com.linkhogar.application.house.create.CreateHouseCommandHandler;
+import com.linkhogar.application.house.create.CreateHouseResponse;
 import com.linkhogar.application.house.createReport.CreateReportCommand;
 import com.linkhogar.application.house.createReport.CreateReportCommandHandler;
 import com.linkhogar.application.house.createReport.ReportHouseRequest;
@@ -67,6 +72,8 @@ public class HouseController {
     private final CreateReportCommandHandler createReportCommandHandler;
     private final GetAllReportsQueryHandler getAllReportsQueryHandler;
     private final DeleteReportCommandHandler deleteReportCommandHandler;
+    private final AddRoomImagesCommandHandler addRoomImagesCommandHandler;
+    private final DeleteRoomImageCommandHandler deleteRoomImageCommandHandler;
 
     @Operation(
             summary = "Obtención de todas las casas",
@@ -85,13 +92,15 @@ public class HouseController {
             summary = "Creación de una casa"
     )
     @PostMapping
-    public ResponseEntity<?> createHouse(@RequestBody CreateHouseCommand request, Authentication authentication){
+    public ResponseEntity<CreateHouseResponse> createHouse(@RequestBody CreateHouseCommand request, Authentication authentication){
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         String userId = authentication.getName();
 
-        UUID houseId = createHouseCommandHandler.handle(request, userId);
-
-        Map<String, UUID> response = new HashMap<>();
-        response.put("id", houseId);
+        // Ahora nos devuelve nuestro nuevo Response con la casa y el mapa de habitaciones
+        CreateHouseResponse response = createHouseCommandHandler.handle(request, userId);
 
         return ResponseEntity.ok(response);
     }
@@ -149,6 +158,27 @@ public class HouseController {
 
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error subiendo las imágenes: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(value ="/{houseId}/rooms/{roomId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadRoomImages(
+            @PathVariable UUID houseId,
+            @PathVariable UUID roomId,
+            @RequestParam("files") List<MultipartFile> files,
+            Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        try {
+            AddRoomImagesCommand command = new AddRoomImagesCommand(roomId, houseId, files);
+            addRoomImagesCommandHandler.handle(command);
+
+            return ResponseEntity.ok().body(Map.of("message", "Imágenes de la habitación subidas correctamente"));
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("error subiendo las imagenes de la habitación", e.getMessage()));
         }
     }
 
@@ -226,7 +256,6 @@ public class HouseController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Extraemos el Principal (asegúrate de que coincida con tu implementación de seguridad)
         String user = authentication.getName();
 
         UpdateCommand command = new UpdateCommand(
@@ -236,12 +265,13 @@ public class HouseController {
                 authentication.getAuthorities()
         );
 
-        Result<Void> result = updateCommandHandler.handle(command);
+        // 👇 Atrapamos el Result con el mapa de IDs
+        Result<CreateHouseResponse> result = updateCommandHandler.handle(command);
 
         if (result.isSuccess()) {
-            return ResponseEntity.ok().build();
+            // 👇 Devolvemos el cuerpo con los IDs a Angular
+            return ResponseEntity.ok(result.getValue());
         } else {
-            // Si el error es de permisos, podrías devolver un 403 (FORBIDDEN)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
         }
     }
@@ -257,6 +287,32 @@ public class HouseController {
 
         DeleteHouseImageCommand command = new DeleteHouseImageCommand(houseId, imageUrl, UUID.fromString(user), authentication.getAuthorities());
         Result<Void> result = deleteHouseImageCommandHandler.handle(command);
+
+        if (result.isSuccess()) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
+        }
+    }
+
+    @DeleteMapping("/{houseId}/rooms/{roomId}/image")
+    public ResponseEntity<?> deleteRoomImage(
+            @PathVariable UUID houseId,
+            @PathVariable UUID roomId,
+            @RequestParam("url") String imageUrl,
+            Authentication authentication) {
+
+        if (authentication == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        DeleteRoomImageCommand command = new DeleteRoomImageCommand(
+                houseId,
+                roomId,
+                imageUrl,
+                UUID.fromString(authentication.getName()),
+                authentication.getAuthorities()
+        );
+
+        Result<Void> result = deleteRoomImageCommandHandler.handle(command);
 
         if (result.isSuccess()) {
             return ResponseEntity.ok().build();

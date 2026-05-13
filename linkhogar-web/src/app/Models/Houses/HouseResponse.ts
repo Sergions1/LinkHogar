@@ -1,5 +1,7 @@
 import { AddressResponse } from "../Address/addressResponse.interface";
 import {UserResponse} from '../Users/UserResponse';
+import {RentalMode} from '../../pipes/RentalModePipe';
+import {RoomDetail} from '../../pages/house/create/create';
 
 
 export interface HouseResponse {
@@ -40,4 +42,7 @@ export interface HouseResponse {
   // 🏠 Objetos anidados
   address: AddressResponse;
   owner: UserResponse;
+
+  rentalMode: RentalMode;
+  roomList: RoomDetail[];
 }
