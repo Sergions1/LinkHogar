@@ -52,6 +52,8 @@ public class UpdateRoomTenantCommandHandler {
             targetRoom.setCurrentTenant(tenantProfile);
         }
 
+        house.recalculatePrice();
+
         houseRepository.save(house);
         return Result.success(null);
     }
