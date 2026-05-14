@@ -79,10 +79,12 @@
 
       <h4 class="mb-3">Características principales</h4>
       <div class="row mb-4 border-bottom pb-3">
-        <div class="col-6 col-md-3 mb-2"><i class="bi bi-door-open-fill me-2 text-primario"></i>{{house.rooms}} hab.</div>
-        <div class="col-6 col-md-3 mb-2"><i class="bi bi-heptagon-fill me-2 text-primario"></i>{{house.baths}} baños</div>
-        <div class="col-6 col-md-3 mb-2"><i class="bi bi-arrows-angle-expand me-2 text-primario"></i>{{house.size}} m²</div>
-        <div class="col-6 col-md-3 mb-2"><i class="bi bi-building-fill me-2 text-primario"></i>{{house.address.floor}}ª Planta</div>
+        <div class="col-6 col-md-3 mb-2"><i class="bi bi-door-open-fill me-2 text-acento"></i>{{house.rooms}} hab.</div>
+        <div class="col-6 col-md-3 mb-2"><i class="bi bi-badge-wc-fill me-2 text-acento"></i>{{house.baths}} baños</div>
+        <div class="col-6 col-md-3 mb-2"><i class="bi bi-arrows-angle-expand me-2 text-acento"></i>{{house.size}} m²</div>
+        @if(house.address.floor){
+          <div class="col-6 col-md-3 mb-2"><i class="bi bi-building-fill me-2 text-acento"></i>{{house.address.floor}}ª Planta</div>
+        }
       </div>
 
       <h4 class="mb-3">Descripción</h4>
@@ -93,14 +95,14 @@
 
         @if (house.lift) {
           <div class="col-md-6 mb-2 d-flex align-items-center">
-            <i class="bi bi-buildings me-2 text-acento fs-5"></i>
+            <i class="bi bi-arrow-up-square me-2 text-acento fs-5"></i>
             <span>Ascensor</span>
           </div>
         }
 
         @if (house.airConditioned) {
           <div class="col-md-6 mb-2 d-flex align-items-center">
-            <i class="bi bi-snow me-2 text-acento fs-5"></i>
+            <i class="bi bi-wind me-2 text-acento fs-5"></i>
             <span>Aire acondicionado</span>
           </div>
         }
@@ -121,7 +123,7 @@
 
         @if (house.balcony) {
           <div class="col-md-6 mb-2 d-flex align-items-center">
-            <i class="bi bi-aspect-ratio-fill me-2 text-acento fs-5"></i>
+            <i class="bi bi-brightness-low me-2 text-acento fs-5"></i>
             <span>Balcón</span>
           </div>
         }
@@ -149,14 +151,14 @@
 
         @if (house.commonAreas) {
           <div class="col-md-6 mb-2 d-flex align-items-center">
-            <i class="bi bi-tree-fill me-2 text-acento fs-5"></i>
-            <span>Zonas Comunes (Jardín)</span>
+            <i class="bi bi-people me-2 text-acento fs-5"></i>
+            <span>Zonas Comunes</span>
           </div>
         }
 
         @if (house.petsAllowed) {
           <div class="col-md-6 mb-2 d-flex align-items-center">
-            <i class="bi bi-paw-fill me-2 text-acento fs-5"></i>
+            <i class="bi bi-hearts me-2 text-acento fs-5"></i>
             <span>Mascotas Permitidas</span>
           </div>
         }
@@ -166,6 +168,111 @@
         }
 
       </div>
+
+      @if (house.rentalMode === 'BY_ROOM' && house.roomList && house.roomList.length > 0) {
+        <h4 class="mb-3 mt-5">Habitaciones disponibles</h4>
+        <div class="rooms-section mb-5">
+
+          <ul class="nav nav-pills mb-4 gap-2 border-bottom pb-3" style="overflow-x: auto; flex-wrap: nowrap;">
+            @for (room of house.roomList; track room.id; let i = $index) {
+              <li class="nav-item">
+                <button class="nav-link rounded-pill fw-semibold text-nowrap px-4"
+                        style="transition: all 0.2s ease;"
+                        [class.active]="activeRoomIndex() === i"
+                        [class.bg-primario]="activeRoomIndex() === i"
+                        [class.text-white]="activeRoomIndex() === i"
+                        [class.text-muted]="activeRoomIndex() !== i"
+                        [class.bg-light]="activeRoomIndex() !== i"
+                        (click)="setActiveRoom(i)">
+                  {{ room.name }}
+                </button>
+              </li>
+            }
+          </ul>
+
+          @if (house.roomList[activeRoomIndex()]; as activeRoom) {
+            <div class="card border-0 bg-fondo-secundario rounded-4 p-4 shadow-sm">
+              <div class="row g-4">
+
+                <div class="col-lg-6">
+                  @if (activeRoom.images && activeRoom.images.length > 0) {
+                    <div class="mb-3 rounded-4 overflow-hidden shadow-sm border" style="height: 280px;">
+                      <img [src]="activeRoom.images[0]" class="w-100 h-100 object-fit-cover" alt="Foto principal">
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                      @for (img of activeRoom.images; track img) {
+                        <div class="rounded-3 overflow-hidden shadow-sm border" style="width: 70px; height: 70px;">
+                          <img [src]="img" class="w-100 h-100 object-fit-cover" alt="Miniatura">
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <div class="bg-light rounded-4 d-flex flex-column align-items-center justify-content-center text-muted border" style="height: 280px;">
+                      <i class="bi bi-camera fs-1 mb-2"></i>
+                      <span class="fw-medium">Sin fotos de la habitación</span>
+                    </div>
+                  }
+                </div>
+
+                <div class="col-lg-6 d-flex flex-column">
+
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h3 class="fw-bold text-primario mb-0">{{ activeRoom.price }} €<span class="fs-6 text-muted fw-normal">/mes</span></h3>
+                    <span class="badge rounded-pill fs-6 px-3 py-2"
+                          [class.bg-success]="activeRoom.status === 'AVAILABLE'"
+                          [class.bg-secondary]="activeRoom.status !== 'AVAILABLE'">
+                      {{ activeRoom.status === 'AVAILABLE' ? 'Disponible' : 'Ocupada' }}
+                    </span>
+                  </div>
+
+                  <div class="text-muted mb-4">{{ activeRoom.description || 'Sin descripción adicional detallada.' }}</div>
+
+                  <div class="row g-3 mb-4 bg-white p-3 rounded-4 border mx-0">
+                    <div class="col-6 d-flex align-items-center gap-2">
+                      <i class="bi bi-arrows-angle-expand text-primario fs-5"></i>
+                      <span class="fw-medium">{{ activeRoom.size ? activeRoom.size + ' m²' : '-- m²' }}</span>
+                    </div>
+                    <div class="col-6 d-flex align-items-center gap-2">
+                      <i class="bi bi-moon-stars text-primario fs-5"></i>
+                      <span class="fw-medium">{{ activeRoom.bedType | titlecase }}</span>
+                    </div>
+                    <div class="col-12 d-flex align-items-center gap-2 mt-2">
+                      <i class="bi bi-droplet text-primario fs-5"></i>
+                      <span class="fw-medium">{{ activeRoom.hasPrivateBath ? 'Baño privado' : 'Baño compartido' }}</span>
+                    </div>
+                  </div>
+
+                  @if (activeRoom.status !== 'AVAILABLE') {
+                    <div class="mt-auto border-top pt-3">
+                      <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-person-badge text-primario"></i> Perfil del inquilino
+                      </h6>
+                      @if (activeRoom.currentTenant) {
+                        <div class="row g-2 text-muted small">
+                          <div class="col-6"><i class="bi bi-gender-ambiguous me-1"></i> <strong>Género:</strong> {{ activeRoom.currentTenant.gender | gender }}</div>
+                          <div class="col-6"><i class="bi bi-calendar-event me-1"></i> <strong>Edad:</strong> {{ activeRoom.currentTenant.ageRange || 'No indica' }}</div>
+                          <div class="col-12"><i class="bi bi-briefcase me-1"></i> <strong>Ocupación:</strong> {{ activeRoom.currentTenant.occupation | occupation }}</div>
+                          <div class="col-6"><i class="bi bi-lungs me-1"></i> <strong>Fumador:</strong> {{ activeRoom.currentTenant.isSmoker ? 'Sí' : 'No' }}</div>
+                          <div class="col-6"><i class="bi bi-bug me-1"></i> <strong>Mascotas:</strong> {{ activeRoom.currentTenant.hasPets ? 'Sí' : 'No' }}</div>
+
+                          @if (activeRoom.currentTenant.description) {
+                            <div class="col-12 mt-2 px-3 py-2 bg-light rounded-3 fst-italic">
+                              "{{ activeRoom.currentTenant.description }}"
+                            </div>
+                          }
+                        </div>
+                      } @else {
+                        <p class="text-muted fst-italic small mb-0">El propietario no ha proporcionado detalles sobre el inquilino.</p>
+                      }
+                    </div>
+                  }
+
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
 
       <h4 class="mb-3" id="labelUbicacion">Ubicación</h4>
       <div id="map" class="mb-2" data-direccion="${piso.direccion}, ${piso.codigoPostal}, ${piso.ciudad}, ${piso.provincia}, España"></div>

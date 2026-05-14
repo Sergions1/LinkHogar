@@ -4,6 +4,15 @@
 
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
     <div class="d-flex align-items-center gap-2 mb-3">
+      <i class="bi bi-card-heading text-primario fs-5"></i>
+      <h6 class="fw-bold mb-0">Detalles del anuncio</h6>
+    </div>
+    <h5 class="fw-bold text-dark mb-2">{{ data.details.title }}</h5>
+    <p class="text-muted small mb-0" style="white-space: pre-wrap;">{{ data.details.description }}</p>
+  </div>
+
+  <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
+    <div class="d-flex align-items-center gap-2 mb-3">
       <i class="bi bi-geo-alt-fill text-primario fs-5"></i>
       <h6 class="fw-bold mb-0">Ubicación</h6>
     </div>
@@ -25,9 +34,15 @@
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
     <div class="d-flex align-items-center gap-2 mb-3">
       <i class="bi bi-house-fill text-primario fs-5"></i>
-      <h6 class="fw-bold mb-0">Tipo de propiedad</h6>
+      <h6 class="fw-bold mb-0">Propiedad y Alquiler</h6>
     </div>
-    <span class="badge bg-primario rounded-pill px-3 py-2">{{ data.type }}</span>
+    <div class="d-flex flex-wrap gap-2">
+      <span class="badge bg-primario rounded-pill px-3 py-2">{{ data.type }}</span>
+      <span class="badge bg-primario bg-opacity-10 text-primario rounded-pill px-3 py-2">
+        <i class="bi {{ data.rentalMode | rentalMode:'icon' }} me-1"></i>
+        {{ data.rentalMode | rentalMode }}
+      </span>
+    </div>
   </div>
 
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
@@ -36,18 +51,29 @@
       <h6 class="fw-bold mb-0">Características</h6>
     </div>
 
-    <div class="row g-3 mb-3">
-      <div class="col-4 text-center">
-        <div class="fw-bold fs-5">{{ data.features.size }}</div>
-        <div class="text-muted small">m²</div>
+    <div class="row g-3 mb-3 justify-content-center">
+      <div class="col-4 d-flex justify-content-center">
+        <div class="rounded-circle d-flex flex-column justify-content-center align-items-center text-center"
+             style="width: 100px; height: 100px; background-color: rgba(0, 0, 0, 0.04);">
+          <div class="fw-bold fs-5">{{ data.features.size }}</div>
+          <div class="text-muted small">m²</div>
+        </div>
       </div>
-      <div class="col-4 text-center">
-        <div class="fw-bold fs-5">{{ data.features.rooms }}</div>
-        <div class="text-muted small">Habitaciones</div>
+
+      <div class="col-4 d-flex justify-content-center">
+        <div class="rounded-circle d-flex flex-column justify-content-center align-items-center text-center"
+             style="width: 100px; height: 100px; background-color: rgba(0, 0, 0, 0.04);">
+          <div class="fw-bold fs-5">{{ data.features.rooms }}</div>
+          <div class="text-muted" style="font-size: 0.75rem;">Habitaciones</div>
+        </div>
       </div>
-      <div class="col-4 text-center">
-        <div class="fw-bold fs-5">{{ data.features.baths }}</div>
-        <div class="text-muted small">Baños</div>
+
+      <div class="col-4 d-flex justify-content-center">
+        <div class="rounded-circle d-flex flex-column justify-content-center align-items-center text-center"
+             style="width: 100px; height: 100px; background-color: rgba(0, 0, 0, 0.04);">
+          <div class="fw-bold fs-5">{{ data.features.baths }}</div>
+          <div class="text-muted small">Baños</div>
+        </div>
       </div>
     </div>
 
@@ -63,22 +89,57 @@
     }
   </div>
 
+  @if (data.rentalMode === 'BY_ROOM' && data.roomList.length > 0) {
+    <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-door-closed text-primario fs-5"></i>
+        <h6 class="fw-bold mb-0">Desglose de Habitaciones ({{ data.roomList.length }})</h6>
+      </div>
+
+      <div class="row g-3">
+        @for (room of data.roomList; track room.name) {
+          <div class="col-12 col-md-6">
+            <div class="bg-white p-3 rounded-3 border shadow-sm h-100 d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="fw-bold text-dark">{{ room.name }}</span>
+                <span class="badge bg-primario text-white">{{ room.price }} €/mes</span>
+              </div>
+              <div class="d-flex flex-wrap gap-2 text-muted small mb-2">
+                @if (room.size) { <span><i class="bi bi-rulers me-1"></i>{{ room.size }} m²</span> }
+                <span><i class="bi bi-bed me-1"></i>{{ room.bedType }}</span>
+                @if (room.hasPrivateBath) { <span class="text-acento fw-semibold"><i class="bi bi-droplet-fill me-1"></i>Baño privado</span> }
+              </div>
+              @if (room.description) {
+                <p class="small text-muted mb-2 text-truncate">{{ room.description }}</p>
+              }
+              <div class="mt-auto pt-2 border-top text-muted small">
+                <i class="bi bi-camera me-1"></i> {{ room.photos?.length || 0 }} fotos adjuntas
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-3">
     <div class="d-flex align-items-center gap-2 mb-3">
       <i class="bi bi-tag-fill text-primario fs-5"></i>
-      <h6 class="fw-bold mb-0">Precio</h6>
+      <h6 class="fw-bold mb-0">Precio {{ data.rentalMode === 'BY_ROOM' ? 'calculado' : '' }}</h6>
     </div>
     <div class="justify-content-center">
-      <span class="fs-3 fw-bold">{{ data.price }} €</span>
+      @if (data.rentalMode === 'BY_ROOM') {
+        <span class="text-muted fs-5 fw-semibold me-1">Desde</span>
+      }
+      <span class="fs-3 fw-bold text-primario">{{ data.price }} €</span>
       <span class="text-muted small ms-1">/ mes</span>
     </div>
-
   </div>
 
   <div class="card border-0 bg-fondo-secundario rounded-4 p-4 mb-4">
     <div class="d-flex align-items-center gap-2 mb-3">
       <i class="bi bi-images text-primario fs-5"></i>
-      <h6 class="fw-bold mb-0">Fotos</h6>
+      <h6 class="fw-bold mb-0">Fotos de la vivienda</h6>
     </div>
 
     <div class="row g-2">

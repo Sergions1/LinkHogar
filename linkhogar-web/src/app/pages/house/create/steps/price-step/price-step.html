@@ -1,38 +1,57 @@
 <div>
   <h4 class="fw-bold mb-1">¿Cuál es el alquiler mensual?</h4>
-  <p class="text-muted mb-4">Establece un precio competitivo para atraer a más inquilinos.</p>
 
-  <div class="row justify-content-center mb-4">
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">
-        Alquiler mensual <span class="text-danger">*</span>
-      </label>
-      <div class="input-group input-group-lg">
-        <input
-          type="number"
-          class="form-control"
-          placeholder="0"
-          min="1"
-          [value]="price() ?? ''"
-          (input)="onPriceInput($any($event.target).value)">
-        <span class="input-group-text fw-bold">€ / mes</span>
-      </div>
+  @if (rentalMode === 'BY_ROOM') {
+    <p class="text-muted mb-4">El precio se ha calculado automáticamente basándose en la habitación más económica.</p>
 
-      @if (price() && price()! > 0) {
-        <div class="mt-2 text-muted small">
-          <i class="bi bi-info-circle me-1"></i>
-          Eso es aproximadamente
-          <strong>{{ (price()! / 30) | number:'1.0-0' }} €/día</strong>
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-8">
+        <div class="card border-0 bg-primario bg-opacity-10 rounded-4 p-4 text-center text-white">
+          <span class="text-primario fw-bold small text-uppercase mb-2">Precio del anuncio</span>
+          <div class="display-6 fw-bold">
+            Desde {{ minRoomPrice }} €/mes
+          </div>
+          <p class="small mt-3 mb-0">
+            <i class="bi bi-info-circle me-1"></i>
+            Puedes modificar los precios individuales volviendo al paso de "Habitaciones".
+          </p>
         </div>
-      }
+      </div>
     </div>
-  </div>
 
-  @if (price() && price()! > 3000) {
-    <div class="alert alert-warning rounded-3 mt-4 d-flex gap-2 align-items-center">
-      <i class="bi bi-exclamation-triangle-fill"></i>
-      <span>Este precio está por encima de la media. Asegúrate de que refleja el valor del inmueble.</span>
+  } @else {
+    <p class="text-muted mb-4">Establece un precio competitivo para atraer a más inquilinos.</p>
+
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">
+          Alquiler mensual <span class="text-danger">*</span>
+        </label>
+        <div class="input-group input-group-lg">
+          <input
+            type="number"
+            class="form-control"
+            placeholder="0"
+            min="1"
+            [value]="price() ?? ''"
+            (input)="onPriceInput($any($event.target).value)">
+          <span class="input-group-text fw-bold">€ / mes</span>
+        </div>
+
+        @if (price() && price()! > 0) {
+          <div class="mt-2 text-muted small">
+            <i class="bi bi-info-circle me-1"></i>
+            Eso es aproximadamente <strong>{{ (price()! / 30) | number:'1.0-0' }} €/día</strong>
+          </div>
+        }
+      </div>
     </div>
+
+    @if (price() && price()! > 3000) {
+      <div class="alert alert-warning rounded-3 mt-4 d-flex gap-2 align-items-center">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Este precio está por encima de la media.</span>
+      </div>
+    }
   }
-
 </div>

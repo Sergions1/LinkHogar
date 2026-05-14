@@ -4,6 +4,7 @@ import com.linkhogar.application.house.get.HouseResponse;
 import com.linkhogar.domain.house.HouseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 public class GetByIdQueryHandler {
     private final HouseRepository houseRepository;
 
+    @Transactional(readOnly = true)
     public HouseResponse handle(GetByIdQuery query){
         UUID houseId = UUID.fromString(query.houseId());
 

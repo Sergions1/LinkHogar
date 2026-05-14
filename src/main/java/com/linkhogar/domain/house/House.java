@@ -4,11 +4,14 @@ import com.linkhogar.domain.address.Address;
 import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.house.enums.HouseType;
+import com.linkhogar.domain.house.enums.RentalMode;
+import com.linkhogar.domain.room.Room;
 import com.linkhogar.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,6 +64,10 @@ public class House {
 
     private long price;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rental_mode", nullable = false)
+    private RentalMode rentalMode = RentalMode.COMPLETE; //Indicará si se alquila completa o por habitaciones
+
     //Relaciones
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
@@ -74,10 +81,22 @@ public class House {
     @Column(name = "image_url")
     private List<String> images;
 
+    @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Room> roomList = new ArrayList<>();
 
     public void addImage(String imageUrl){
         if (this.images == null) return;
 
         this.images.add(imageUrl);
+    }
+
+    public void addRoom(Room room) {
+        roomList.add(room);
+        room.setHouse(this);
+    }
+
+    public void removeRoom(Room room) {
+        roomList.remove(room);
+        room.setHouse(null);
     }
 }

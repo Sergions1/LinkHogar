@@ -3,13 +3,14 @@ package com.linkhogar.application.house.create;
 import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.house.enums.HouseType;
-import jakarta.persistence.Column;
+import com.linkhogar.domain.house.enums.RentalMode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -51,4 +52,7 @@ public class CreateHouseCommand {
 
     private Double latitude;
     private Double longitude;
+
+    private RentalMode rentalMode;
+    private List<CreateRoomDto> roomList;
 }

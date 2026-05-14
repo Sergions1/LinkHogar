@@ -9,10 +9,11 @@ import { EntityCardView } from '../../shared/Grids/entity-card-view/entity-card-
 import { UserResponse } from '../../../Models/Users/UserResponse';
 import {Router} from '@angular/router';
 import {ManageMembersModal} from './manage-members-modal/manage-members-modal';
+import {ManageRoomsModal} from './manage-rooms-modal/manage-rooms-modal';
 
 @Component({
   selector: 'app-my-publications',
-  imports: [HouseCard, EntityCardView, ManageMembersModal],
+  imports: [HouseCard, EntityCardView, ManageMembersModal, ManageRoomsModal],
   templateUrl: './my-publications.html',
   styleUrl: './my-publications.scss',
 })
@@ -26,6 +27,7 @@ export class MyPublications {
   currentUser: UserResponse | null = null;
 
   selectedHouseId = signal<string | null>(null);
+  selectedHouseForRooms = signal<HouseCardResponse | null>(null);
 
   constructor() {
     effect(() => {
@@ -43,6 +45,7 @@ export class MyPublications {
     this.isLoading.set(true);
     this.houseService.getHousesByOwner(this.currentUser.id, page).subscribe({
       next: (response) => {
+
         this.houses.set(response);
         this.isLoading.set(false);
       },
@@ -113,5 +116,13 @@ export class MyPublications {
 
   closeMembersModal() {
     this.selectedHouseId.set(null);
+  }
+
+  onManageRooms(houseId: string) {
+    const found = this.houses()?.content.find(h => h.id === houseId);
+    if (found) this.selectedHouseForRooms.set(found);
+  }
+  closeRoomsModal() {
+    this.selectedHouseForRooms.set(null);
   }
 }

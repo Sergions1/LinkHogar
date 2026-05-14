@@ -12,11 +12,30 @@ import {HouseService} from '../../../services/house/house-service';
 import {ActivatedRoute, Router} from '@angular/router';
 import Swal from 'sweetalert2';
 import {HouseResponse} from '../../../Models/Houses/HouseResponse';
+import {RoomsStep} from './steps/room-step/room-step';
+import {forkJoin, Observable} from 'rxjs';
+import {TenantProfileResponse} from '../../../Models/Houses/TenantProfileResponse';
+
+export interface RoomDetail {
+  id? :string;
+  name: string;
+  description: string;
+  status?: string
+  price: number | null;
+  size: number | null;
+  bedType: string;
+  hasPrivateBath: boolean;
+  photos: File[];
+  existingPhotosUrls?: string[];
+  currentTenant?: TenantProfileResponse;
+}
 
 export interface HouseForm {
   location: UbicationData;
   type: string;
   features: FeaturesData;
+  rentalMode: 'COMPLETE' | 'BY_ROOM';
+  roomList: RoomDetail[];
   price: number | null;
   photos: File[];
   details: AnnouncementDetailData;
@@ -30,6 +49,7 @@ export interface HouseForm {
     UbicationStep,
     TypeStep,
     FeaturesStep,
+    RoomsStep,
     PriceStep,
     PhotosStep,
     AnnouncementDetailStep,
@@ -43,14 +63,15 @@ export class Create implements OnInit{
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  readonly steps = [
-    { label: 'Location',    icon: 'bi-geo-alt' },
-    { label: 'Type',        icon: 'bi-house' },
-    { label: 'Features',    icon: 'bi-list-check' },
-    { label: 'Price',       icon: 'bi-tag' },
-    { label: 'Photos',      icon: 'bi-images' },
-    { label: 'Desripción',  icon: 'bi-comments' },
-    { label: 'Revisión',      icon: 'bi-check-circle' },
+  readonly allSteps = [
+    { id: 'location', label: 'Ubicación',   icon: 'bi-geo-alt' },
+    { id: 'type',     label: 'Tipo',        icon: 'bi-house' },
+    { id: 'features', label: 'Características', icon: 'bi-list-check' },
+    { id: 'rooms',    label: 'Habitaciones',icon: 'bi-door-closed' }, // Paso dinámico
+    { id: 'price',    label: 'Precio',      icon: 'bi-tag' },
+    { id: 'photos',   label: 'Fotos',       icon: 'bi-images' },
+    { id: 'details',  label: 'Descripción', icon: 'bi-comments' },
+    { id: 'review',   label: 'Revisión',    icon: 'bi-check-circle' },
   ];
 
   currentStep = signal(0);
@@ -78,6 +99,8 @@ export class Create implements OnInit{
       terrace: false, balcony: false, garage: false,
       pool: false, petsAllowed: false, storage: false, commonAreas: false
     },
+    rentalMode: 'COMPLETE',
+    roomList: [],
     price: null,
     photos: [],
     details:{
@@ -86,12 +109,23 @@ export class Create implements OnInit{
     }
   });
 
-  progress = computed(() =>
-    Math.round(((this.currentStep()) / 6) * 100)
-  );
+  visibleSteps = computed(() => {
+    if (this.formData().rentalMode === 'BY_ROOM') {
+      return this.allSteps;
+    }
+    return this.allSteps.filter(s => s.id !== 'rooms');
+  });
 
+  progress = computed(() => Math.round((this.currentStep() / (this.visibleSteps().length - 1)) * 100));
   isFirst = computed(() => this.currentStep() === 0);
-  isLast  = computed(() => this.currentStep() === this.steps.length - 1);
+  isLast  = computed(() => this.currentStep() === this.visibleSteps().length - 1);
+
+  calculatedMinRoomPrice = computed(() => {
+    const rooms = this.formData().roomList;
+    if (rooms.length === 0) return 0;
+    const validPrices = rooms.map(r => r.price).filter((p): p is number => p !== null && p > 0);
+    return validPrices.length > 0 ? Math.min(...validPrices) : 0;
+  });
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -142,6 +176,15 @@ export class Create implements OnInit{
     this.formData.update(d => ({ ...d, features }));
   }
 
+  onRentalModeChange(rentalMode: 'COMPLETE' | 'BY_ROOM') {
+    this.formData.update(d => ({ ...d, rentalMode }));
+  }
+
+  // 👇 Nuevo handler para las habitaciones
+  onRoomsChange(roomList: RoomDetail[]) {
+    this.formData.update(d => ({ ...d, roomList }));
+  }
+
   onPriceChange(price: number | null) {
     this.formData.update(d => ({ ...d, price }));
   }
@@ -173,52 +216,87 @@ export class Create implements OnInit{
   }
 
   submitCreate() {
-    console.log('Publishing:', this.formData());
-
     this.isLoading.set(true);
-    this.houseService.createHouse(this.formData()).subscribe({
-      next: (response: any) =>{
-        const tituloLimpio = this.formData().details.title
-          .toLowerCase()
-          .replace(/\s+/g, '-');
-        const photos = this.formData().photos;
 
-        if (photos && photos.length > 0){
-          this.houseService.uploadHouseImages(response.id, photos).subscribe({
-            next: () => {
-              this.isLoading.set(false);
-              Swal.fire({
-                title: '¡Anuncio publicado!',
-                text: 'Su anuncio ha sido publicado con éxito',
-                icon: 'success',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: 'var(--color-primario)'
-              }).then((result) =>{
-                this.router.navigate(['/inmueble', tituloLimpio, response.id]);
-              })
-            },
-            error: (imgErr: any) => {
-              console.log(imgErr);
-              Swal.fire({
-                title: 'Atención!',
-                text: 'Su anuncio ha sido publicado con éxito, pero hubo un error con las imagenes',
-                icon: 'warning',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: 'var(--color-primario)'
-              }).then((result) =>{
-                this.router.navigate(['/inmueble', tituloLimpio, response.id]);
-              })
-            }
-          })
+    this.houseService.createHouse(this.formData()).subscribe({
+      next: (response: any) => {
+        // response ahora tiene { id: '...', rooms: { 'Habitación 1': '...', 'Habitación 2': '...' } }
+        const houseId = response.id;
+        const roomIdsMap = response.rooms || {};
+        const tituloLimpio = this.formData().details.title.toLowerCase().replace(/\s+/g, '-');
+
+        // Aquí guardaremos todas las peticiones de subida de fotos que hay que hacer
+        const uploadObservables: Observable<any>[] = [];
+
+        // 1. Añadimos la subida de fotos de la casa (si hay)
+        const housePhotos = this.formData().photos;
+        if (housePhotos && housePhotos.length > 0) {
+          uploadObservables.push(this.houseService.uploadHouseImages(houseId, housePhotos));
         }
 
+        // 2. Añadimos la subida de fotos de cada habitación (si hay)
+        if (this.formData().rentalMode === 'BY_ROOM') {
+          this.formData().roomList.forEach(room => {
+            if (room.photos && room.photos.length > 0) {
+              const roomId = roomIdsMap[room.name]; // Buscamos su ID por el nombre
+              if (roomId) {
+                uploadObservables.push(this.houseService.uploadRoomImages(houseId, roomId, room.photos));
+              }
+            }
+          });
+        }
+
+        // 3. Ejecutamos todas las subidas a la vez
+        if (uploadObservables.length > 0) {
+          forkJoin(uploadObservables).subscribe({
+            next: () => {
+              this.isLoading.set(false);
+              this.showSuccessAndNavigate(tituloLimpio, houseId);
+            },
+            error: (err) => {
+              console.log('Error subiendo alguna foto:', err);
+              this.isLoading.set(false);
+              this.showWarningAndNavigate(tituloLimpio, houseId);
+            }
+          });
+        } else {
+          // Si no había NINGUNA foto que subir, terminamos directamente
+          this.isLoading.set(false);
+          this.showSuccessAndNavigate(tituloLimpio, houseId);
+        }
       },
-      error: (err) =>{
-        console.log(err);
+      error: (err) => {
+        console.log('Error creando la casa:', err);
         this.isLoading.set(false);
         this.showCreatingError();
       }
-    })
+    });
+  }
+
+  // --- Métodos de ayuda para las alertas ---
+
+  private showSuccessAndNavigate(tituloLimpio: string, id: string) {
+    Swal.fire({
+      title: '¡Anuncio publicado!',
+      text: 'Su anuncio ha sido publicado con éxito',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: 'var(--color-primario)'
+    }).then(() => {
+      this.router.navigate(['/inmueble', tituloLimpio, id]);
+    });
+  }
+
+  private showWarningAndNavigate(tituloLimpio: string, id: string) {
+    Swal.fire({
+      title: '¡Atención!',
+      text: 'Su anuncio ha sido publicado, pero hubo un error subiendo algunas de las imágenes.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: 'var(--color-primario)'
+    }).then(() => {
+      this.router.navigate(['/inmueble', tituloLimpio, id]);
+    });
   }
 
 
@@ -226,13 +304,11 @@ export class Create implements OnInit{
     this.isLoading.set(true);
 
     this.houseService.getHouseById(id).subscribe({
-      next: (house: HouseResponse) => { // Idealmente cambia 'any' por tu modelo HouseResponse
-
-        // Transformamos la respuesta del backend al formato del HouseForm
+      next: (house: HouseResponse) => {
         this.formData.set({
           location: {
             street: house.address.street,
-            number: house.address.number?.toString() || "Bajo", // Asigna los campos exactos
+            number: house.address.number?.toString() || "Bajo",
             city: house.address.city,
             province: house.address.province,
             cp: house.address.cp?.toString() || "",
@@ -241,7 +317,7 @@ export class Create implements OnInit{
             latitude: house.address.latitude,
             longitude: house.address.longitude
           },
-          type: house.houseType, // Ajusta según tu DTO
+          type: house.houseType,
           features: {
             size: house.size, rooms: house.rooms, baths: house.baths,
             lift: house.lift, furnished: house.furnished, airConditioned: house.airConditioned,
@@ -249,6 +325,19 @@ export class Create implements OnInit{
             pool: house.pool, petsAllowed: house.petsAllowed, storage: house.storage,
             commonAreas: house.commonAreas
           },
+          // 👇 Mapeo del modo y las habitaciones
+          rentalMode: house.rentalMode === 'BY_ROOM' ? 'BY_ROOM' : 'COMPLETE',
+          roomList: house.roomList ? house.roomList.map((r: any) => ({
+            id: r.id,
+            name: r.name,
+            description: r.description || '', // Asumiendo que añades descripción
+            price: r.price,
+            size: r.size,
+            bedType: r.bedType,
+            hasPrivateBath: r.hasPrivateBath,
+            photos: [], // Las fotos existentes de habitaciones habría que traerlas del backend si aplica
+            existingPhotosUrls: r.images || r.photoUrls || []
+          })) : [],
           price: house.price,
           photos: [],
           details: {
@@ -257,16 +346,13 @@ export class Create implements OnInit{
           }
         });
 
-        // Guardamos las URLs de las fotos antiguas separadas para pasárselas al PhotosStep
         this.existingPhotosUrls.set(house.images || []);
-
-        // Como ya tiene datos cargados de la base de datos, el primer paso es válido
         this.stepValid.set(true);
         this.isLoading.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.isLoading.set(false);
-        Swal.fire('Error', 'No se pudieron cargar los datos de la vivienda', 'error');
+        Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
         this.router.navigate(['/mis-publicaciones']);
       }
     });
@@ -275,19 +361,49 @@ export class Create implements OnInit{
   submitEdit() {
     this.isLoading.set(true);
     const id = this.editHouseId();
-    if(!id) return;
+    if (!id) return;
 
     // 1. Actualizamos el texto primero
     this.houseService.updateHouse(id, this.formData()).subscribe({
-      next: () => {
-        const photos = this.formData().photos; // Son las NUEVAS fotos (objetos File)
+      next: (response: any) => {
         const tituloLimpio = this.formData().details.title.toLowerCase().replace(/\s+/g, '-');
 
-        // 2. Si el usuario ha añadido fotos nuevas en el proceso de edición, las subimos
-        if (photos && photos.length > 0) {
-          this.houseService.uploadHouseImages(id, photos).subscribe({
-            next: () => this.finishSubmit(tituloLimpio, id, true),
-            error: () => this.finishSubmit(tituloLimpio, id, false, true) // Error subiendo fotos
+        // Extraemos los IDs de las habitaciones (Igual que en la creación)
+        const roomIdsMap = response?.rooms || {};
+
+        // Preparamos el array de subidas
+        const uploadObservables: Observable<any>[] = [];
+
+        // A. Fotos nuevas de la casa
+        const housePhotos = this.formData().photos;
+        if (housePhotos && housePhotos.length > 0) {
+          uploadObservables.push(this.houseService.uploadHouseImages(id, housePhotos));
+        }
+
+        // B. Fotos nuevas de las habitaciones
+        if (this.formData().rentalMode === 'BY_ROOM') {
+          this.formData().roomList.forEach(room => {
+            if (room.photos && room.photos.length > 0) {
+              const roomId = roomIdsMap[room.name];
+              if (roomId) {
+                uploadObservables.push(this.houseService.uploadRoomImages(id, roomId, room.photos));
+              } else {
+                console.warn(`No se encontró ID para la habitación ${room.name} en la respuesta del servidor.`);
+              }
+            }
+          });
+        }
+
+        // 2. Si hay fotos que subir (de casa o habitaciones), las lanzamos en paralelo
+        if (uploadObservables.length > 0) {
+          forkJoin(uploadObservables).subscribe({
+            next: () => {
+              this.finishSubmit(tituloLimpio, id, true);
+            },
+            error: (err) => {
+              console.error('Error subiendo imágenes en edición:', err);
+              this.finishSubmit(tituloLimpio, id, false, true);
+            }
           });
         } else {
           // Si no hay fotos nuevas, terminamos
@@ -297,7 +413,7 @@ export class Create implements OnInit{
       error: (err) => {
         console.error(err);
         this.isLoading.set(false);
-
+        Swal.fire('Error', 'No se ha podido actualizar el anuncio', 'error');
       }
     });
   }
@@ -306,11 +422,21 @@ export class Create implements OnInit{
     this.isLoading.set(false);
 
     if (isImageError) {
-      Swal.fire('Atención!', 'Anuncio actualizado con éxito, pero hubo un error subiendo las nuevas imágenes', 'warning')
-        .then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
+      Swal.fire({
+        title: '¡Atención!',
+        text: 'Anuncio actualizado con éxito, pero hubo un error subiendo las nuevas imágenes',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: 'var(--color-acento)'
+      }).then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
     } else {
-      Swal.fire('¡Éxito!', `Su anuncio ha sido ${this.isEditMode() ? 'actualizado' : 'publicado'} con éxito`, 'success')
-        .then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
+      Swal.fire({
+        title: '¡Éxito!',
+        text: `Su anuncio ha sido ${this.isEditMode() ? 'actualizado' : 'publicado'} con éxito`,
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: 'var(--color-acento)'
+      }).then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
     }
   }
 
@@ -329,19 +455,55 @@ export class Create implements OnInit{
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.isLoading.set(true);
-        this.houseService.deleteHouseImage(id, imageUrl).subscribe({
-          next: () => {
-            //Quitamos la URL del signal para que desaparezca de la pantalla automáticamente
-            const filteredUrls = this.existingPhotosUrls().filter(url => url !== imageUrl);
-            this.existingPhotosUrls.set(filteredUrls);
+        const backupUrls = [...this.existingPhotosUrls()];
 
-            this.isLoading.set(false);
-          },
+        this.existingPhotosUrls.set(this.existingPhotosUrls().filter(url => url !== imageUrl));
+        this.houseService.deleteHouseImage(id, imageUrl).subscribe({
+          next: () => {},
           error: (err) => {
             console.error(err);
-            this.isLoading.set(false);
-            Swal.fire('Error', 'No se pudo borrar la imagen.', 'error');
+            // 4. RESTAURAR SI FALLA
+            this.existingPhotosUrls.set(backupUrls);
+            Swal.fire('Error', 'No se pudo borrar la imagen en el servidor. Se ha restaurado.', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  deleteOldRoomPhoto(roomIndex: number, imageUrl: string) {
+    const houseId = this.editHouseId();
+    const room = this.formData().roomList[roomIndex];
+
+    if (!houseId || !room.id) return;
+
+    Swal.fire({
+      title: '¿Borrar imagen de la habitación?',
+      text: "Se eliminará permanentemente.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, borrar',
+      confirmButtonColor: '#d33',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const backupRoomList = [...this.formData().roomList];
+
+        this.formData.update(old => {
+          const newList = [...old.roomList];
+          newList[roomIndex] = {
+            ...newList[roomIndex],
+            existingPhotosUrls: newList[roomIndex].existingPhotosUrls?.filter(u => u !== imageUrl)
+          };
+          return { ...old, roomList: newList };
+        });
+
+        this.houseService.deleteRoomImage(houseId, room.id!, imageUrl).subscribe({
+          next: () => {},
+          error: (err) => {
+            console.error(err);
+            this.formData.update(old => ({ ...old, roomList: backupRoomList }));
+            Swal.fire('Error', 'No se pudo borrar la imagen en el servidor. Se ha restaurado.', 'error');
           }
         });
       }

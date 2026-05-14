@@ -11,6 +11,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class PriceStep implements OnInit {
   @Input() data!: number | null;
+  @Input() rentalMode: 'COMPLETE' | 'BY_ROOM' = 'COMPLETE';
+  @Input() minRoomPrice: number = 0;
+
   @Output() validChange = new EventEmitter<boolean>();
   @Output() dataChange = new EventEmitter<number | null>();
 
@@ -19,13 +22,20 @@ export class PriceStep implements OnInit {
   readonly suggestions = [500, 750, 1000, 1250, 1500, 2000];
 
   ngOnInit() {
-    if (this.data) {
+    if (this.rentalMode === 'BY_ROOM') {
+      // Si es por habitaciones, el precio es automáticamente el mínimo
+      this.price.set(this.minRoomPrice);
+      this.dataChange.emit(this.minRoomPrice);
+      this.validChange.emit(true);
+    } else if (this.data) {
       this.price.set(this.data);
       this.emitValidity();
     }
   }
 
   onPriceInput(value: string) {
+    if (this.rentalMode === 'BY_ROOM') return;
+
     const parsed = parseFloat(value);
     const result = isNaN(parsed) ? null : parsed;
     this.price.set(result);

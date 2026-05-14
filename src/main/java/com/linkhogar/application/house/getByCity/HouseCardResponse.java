@@ -1,16 +1,20 @@
 package com.linkhogar.application.house.getByCity;
 
+import com.linkhogar.application.house.getById.RoomResponse;
+import com.linkhogar.application.house.getById.TenantProfileResponse;
 import com.linkhogar.domain.address.Address;
 import com.linkhogar.domain.common.enums.PublicationStatus;
 import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.house.enums.HouseType;
+import com.linkhogar.domain.house.enums.RentalMode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -25,6 +29,7 @@ public class HouseCardResponse
     private HouseType houseType;
     private HouseStatus status;
     private PublicationStatus publicationStatus;
+    private RentalMode rentalMode;
 
     private int size;
     private int rooms;
@@ -33,6 +38,8 @@ public class HouseCardResponse
     private Address address;
 
     private List<String> images;
+
+    private List<RoomResponse> roomList;
 
 
 
@@ -51,12 +58,33 @@ public class HouseCardResponse
                 house.getHouseType(),
                 house.getStatus(),
                 house.getPublicationStatus(),
+                house.getRentalMode(),
                 house.getSize(),
                 house.getRooms(),
                 house.getBaths(),
                 house.getPrice(),
                 house.getAddress(),
-                house.getImages()
+                house.getImages(),
+                house.getRoomList() != null ? house.getRoomList().stream()
+                        .map(room -> new RoomResponse(
+                                room.getId().toString(),
+                                room.getName(),
+                                room.getDescription(),
+                                room.getPrice(),
+                                room.getSize(),
+                                room.isHasPrivateBath(),
+                                room.getBedType(),
+                                room.getStatus(),
+                                room.getCurrentTenant() != null ? new TenantProfileResponse(
+                                        room.getCurrentTenant().getGender(),
+                                        room.getCurrentTenant().getAgeRange(),
+                                        room.getCurrentTenant().getOccupation(),
+                                        room.getCurrentTenant().getDescription(),
+                                        room.getCurrentTenant().getIsSmoker(),
+                                        room.getCurrentTenant().getHasPets()
+                                ) : null,
+                                room.getPhotoUrls()
+                        )).collect(Collectors.toList()) : List.of()
         );
     }
 }

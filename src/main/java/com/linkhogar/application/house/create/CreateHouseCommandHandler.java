@@ -5,12 +5,16 @@ import com.linkhogar.domain.address.AddressRepository;
 import com.linkhogar.domain.house.House;
 import com.linkhogar.domain.house.HouseRepository;
 import com.linkhogar.domain.house.enums.HouseStatus;
+import com.linkhogar.domain.house.enums.RentalMode;
+import com.linkhogar.domain.room.Room;
+import com.linkhogar.domain.room.enums.RoomStatus;
 import com.linkhogar.domain.user.User;
 import com.linkhogar.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,7 +24,7 @@ public class CreateHouseCommandHandler {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
 
-    public UUID handle(CreateHouseCommand command, String userId) {
+    public CreateHouseResponse handle(CreateHouseCommand command, String userId) {
         User owner = userRepository.userById(UUID.fromString(userId)).orElseThrow(() -> new RuntimeException(("El usuario del token no existe")));
 
         Address address = Address.builder()
@@ -55,6 +59,7 @@ public class CreateHouseCommandHandler {
                 .price(command.getPrice())
                 .address(address)
                 .owner(owner)
+                .rentalMode(command.getRentalMode())
                 .build();
 
         house.setLift(Boolean.TRUE.equals(command.getLift()));
@@ -68,8 +73,53 @@ public class CreateHouseCommandHandler {
         house.setCommonAreas(Boolean.TRUE.equals(command.getCommonAreas()));
         house.setPetsAllowed(Boolean.TRUE.equals(command.getPetsAllowed()));
 
+        //Creación de habitaciones
+        if (command.getRentalMode() == RentalMode.BY_ROOM && command.getRoomList() != null) {
+            if (command.getRoomList() == null || command.getRoomList().size() != command.getRooms()) {
+                throw new IllegalArgumentException("Incongruencia de datos: La casa indica tener "
+                        + command.getRooms() + " habitaciones, pero se han enviado detalles de "
+                        + (command.getRoomList() == null ? 0 : command.getRoomList().size()) + ".");
+            }
+
+            //Mapeamos los DTOs a entidades de Dominio
+            List<Room> domainRooms = command.getRoomList().stream()
+                    .map(this::mapToDomainRoom)
+                    .toList();
+
+            domainRooms.forEach(room -> room.setHouse(house));
+            house.setRoomList(domainRooms);
+
+            // Buscamos el precio más barato que esté disponible
+            Long minAvailablePrice = domainRooms.stream()
+                    .filter(r -> r.getStatus() == RoomStatus.AVAILABLE)
+                    .map(Room::getPrice)
+                    .min(Long::compareTo)
+                    .orElse(0L); // Si todas están ocupadas, se queda en 0
+
+            // Sobrescribimos el precio global con el "Desde X€"
+            house.setPrice(minAvailablePrice);
+        }
+
         houseRepository.save(house);
 
-        return house.getId();
+        java.util.Map<String, UUID> roomIds = new java.util.HashMap<>();
+        if (house.getRoomList() != null) {
+            house.getRoomList().forEach(room -> roomIds.put(room.getName(), room.getId()));
+        }
+
+        return new CreateHouseResponse(house.getId(), roomIds);
+    }
+
+    private Room mapToDomainRoom(CreateRoomDto dto) {
+        return Room.builder()
+                .name(dto.name())
+                .description(dto.description())
+                .price(dto.price())
+                .size(dto.size())
+                .hasPrivateBath(dto.hasPrivateBath())
+                .bedType(dto.bedType())
+                .status(dto.status() != null ? dto.status() : RoomStatus.AVAILABLE) //Por defecto estará Disponible
+                .currentTenant(null) //Sin inquilino en la creación
+                .build();
     }
 }

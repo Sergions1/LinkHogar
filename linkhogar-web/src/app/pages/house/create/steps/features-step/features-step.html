@@ -1,9 +1,37 @@
-<!-- steps/features-step/features-step.html -->
 <div>
   <h4 class="fw-bold mb-1">Características</h4>
   <p class="text-muted mb-4">Introduce las características y comodidades de tu propiedad.</p>
 
-  <!-- Campos numéricos -->
+  <div class="mb-4 p-3 bg-fondo-secundario rounded-4 border-0">
+    <label class="form-label fw-semibold mb-3">Modo de alquiler <span class="text-danger">*</span></label>
+    <div class="d-flex gap-3">
+      <div class="flex-fill">
+        <input type="radio" class="btn-check" id="modeEntire" name="rentalMode"
+               [checked]="mode() === 'COMPLETE'"
+               (change)="updateMode('COMPLETE')">
+        <label class="btn w-100 py-3 rounded-4"
+               [class.primary-btn]="mode() === 'COMPLETE'"
+               [class.text-white]="mode() === 'COMPLETE'"
+               [class.btn-outline-acento]="mode() !== 'COMPLETE'"
+               for="modeEntire">
+          <i class="bi bi-house-door d-block fs-3 mb-1"></i> {{ 'COMPLETE' | rentalMode }}
+        </label>
+      </div>
+      <div class="flex-fill">
+        <input type="radio" class="btn-check" id="modeRooms" name="rentalMode"
+               [checked]="mode() === 'BY_ROOM'"
+               (change)="updateMode('BY_ROOM')">
+        <label class="btn w-100 py-3 rounded-4"
+               [class.primary-btn]="mode() === 'BY_ROOM'"
+               [class.text-white]="mode() === 'BY_ROOM'"
+               [class.btn-outline-acento]="mode() !== 'BY_ROOM'"
+               for="modeRooms">
+          <i class="bi bi-door-closed d-block fs-3 mb-1"></i> {{ 'BY_ROOM' | rentalMode }}
+        </label>
+      </div>
+    </div>
+  </div>
+
   <div class="row g-3 mb-4">
     <div class="col-md-4">
       <label class="form-label fw-semibold">
@@ -51,7 +79,6 @@
     </div>
   </div>
 
-  <!-- Toggles de características -->
   <label class="form-label fw-semibold mb-3">Comodidades</label>
   <div class="row g-2">
     @for (toggle of toggles; track toggle.key) {

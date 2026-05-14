@@ -2,11 +2,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HouseForm } from '../../create';
+import {RentalModePipe} from '../../../../../pipes/RentalModePipe';
 
 @Component({
   selector: 'app-review-step',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RentalModePipe],
   templateUrl: './review-step.html',
 })
 export class ReviewStep implements OnInit {
