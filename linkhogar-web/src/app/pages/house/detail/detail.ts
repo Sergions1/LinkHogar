@@ -37,6 +37,7 @@ export class Detail implements OnInit {
   isToggling = signal(false); //Señal para controlar bloqueo de carrera
 
   activeRoomIndex = signal<number>(0);
+  roomImageIndices = signal<Record<string, number>>({});
 
   @Input() previewData: HouseForm | null = null;
 
@@ -266,6 +267,30 @@ export class Detail implements OnInit {
 
   setActiveRoom(index: number) {
     this.activeRoomIndex.set(index);
+  }
+
+  prevRoomImage(roomId: string, imagesLength: number) {
+    this.roomImageIndices.update(indices => {
+      const currentIndex = indices[roomId] || 0;
+      const newIndex = currentIndex === 0 ? imagesLength - 1 : currentIndex - 1;
+      return { ...indices, [roomId]: newIndex };
+    });
+  }
+
+  nextRoomImage(roomId: string, imagesLength: number) {
+    this.roomImageIndices.update(indices => {
+      const currentIndex = indices[roomId] || 0;
+      const newIndex = currentIndex === imagesLength - 1 ? 0 : currentIndex + 1;
+      return { ...indices, [roomId]: newIndex };
+    });
+  }
+
+  goToRoomImage(roomId: string, index: number) {
+    this.roomImageIndices.update(indices => ({ ...indices, [roomId]: index }));
+  }
+
+  getRoomImageIndex(roomId: string): number {
+    return this.roomImageIndices()[roomId] || 0;
   }
 
   protected readonly String = String;
