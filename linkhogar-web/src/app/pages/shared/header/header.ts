@@ -114,13 +114,15 @@ export class Header implements OnInit, OnDestroy {
   }
 
   markAsRead(notification: UserNotification, event: Event) {
-    event.stopPropagation(); // Evita que el panel se cierre al hacer clic
+    event.stopPropagation();
+    this.unreadNotifications.update(list => list.filter(n => n.id !== notification.id));
     this.notificationService.markAsRead(notification.id).subscribe({
-      next: () => {
-        // Filtramos la notificación leída para que desaparezca al instante
-        this.unreadNotifications.update(list => list.filter(n => n.id !== notification.id));
-      },
-      error: (err) => console.error('Error al marcar como leída', err)
+      next: () => {},
+      error: (err) => {
+        console.error('Error al marcar como leída', err);
+        //RollBack en caso de error
+        this.unreadNotifications.update(list => [notification, ...list]);
+      }
     });
   }
 

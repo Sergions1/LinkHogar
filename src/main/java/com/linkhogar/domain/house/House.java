@@ -6,6 +6,7 @@ import com.linkhogar.domain.house.enums.HouseStatus;
 import com.linkhogar.domain.house.enums.HouseType;
 import com.linkhogar.domain.house.enums.RentalMode;
 import com.linkhogar.domain.room.Room;
+import com.linkhogar.domain.room.enums.RoomStatus;
 import com.linkhogar.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -98,5 +99,15 @@ public class House {
     public void removeRoom(Room room) {
         roomList.remove(room);
         room.setHouse(null);
+    }
+
+    public void recalculatePrice() {
+        if (this.rentalMode == RentalMode.BY_ROOM && this.roomList != null && !this.roomList.isEmpty()) {
+            this.price = this.roomList.stream()
+                    .filter(room -> room.getStatus() == RoomStatus.AVAILABLE)
+                    .mapToLong(Room::getPrice)
+                    .min()
+                    .orElse(this.price); // Si todas están ocupadas, mantiene el último precio base
+        }
     }
 }
