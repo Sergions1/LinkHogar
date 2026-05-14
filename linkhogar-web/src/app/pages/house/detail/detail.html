@@ -196,16 +196,42 @@
 
                 <div class="col-lg-6">
                   @if (activeRoom.images && activeRoom.images.length > 0) {
-                    <div class="mb-3 rounded-4 overflow-hidden shadow-sm border" style="height: 280px;">
-                      <img [src]="activeRoom.images[0]" class="w-100 h-100 object-fit-cover" alt="Foto principal">
+
+                    <div class="position-relative shadow-sm rounded-4 mb-3 overflow-hidden border" style="height: 280px;">
+
+                      <img [src]="activeRoom.images[getRoomImageIndex(activeRoom.id)]"
+                           class="w-100 h-100 object-fit-cover"
+                           alt="Foto {{ getRoomImageIndex(activeRoom.id) + 1 }} de {{ activeRoom.name }}">
+
+                      @if (activeRoom.images.length > 1) {
+                        <button class="position-absolute top-50 start-0 translate-middle-y btn btn-dark btn-sm opacity-75 ms-2"
+                                (click)="prevRoomImage(activeRoom.id, activeRoom.images.length)">
+                          <i class="bi bi-chevron-left"></i>
+                        </button>
+
+                        <button class="position-absolute top-50 end-0 translate-middle-y btn btn-dark btn-sm opacity-75 me-2"
+                                (click)="nextRoomImage(activeRoom.id, activeRoom.images.length)">
+                          <i class="bi bi-chevron-right"></i>
+                        </button>
+                      }
+
+                      <span class="position-absolute top-0 end-0 badge bg-dark opacity-75 m-2">
+                        {{ getRoomImageIndex(activeRoom.id) + 1 }} / {{ activeRoom.images.length }}
+                      </span>
                     </div>
+
                     <div class="d-flex flex-wrap gap-2">
-                      @for (img of activeRoom.images; track img) {
-                        <div class="rounded-3 overflow-hidden shadow-sm border" style="width: 70px; height: 70px;">
+                      @for (img of activeRoom.images; track $index; let i = $index) {
+                        <button class="rounded-3 overflow-hidden shadow-sm border p-0"
+                                style="width: 70px; height: 70px; transition: all 0.2s; background: none;"
+                                [class.border-primario]="i === getRoomImageIndex(activeRoom.id)"
+                                [style.opacity]="i === getRoomImageIndex(activeRoom.id) ? '1' : '0.6'"
+                                (click)="goToRoomImage(activeRoom.id, i)">
                           <img [src]="img" class="w-100 h-100 object-fit-cover" alt="Miniatura">
-                        </div>
+                        </button>
                       }
                     </div>
+
                   } @else {
                     <div class="bg-light rounded-4 d-flex flex-column align-items-center justify-content-center text-muted border" style="height: 280px;">
                       <i class="bi bi-camera fs-1 mb-2"></i>
