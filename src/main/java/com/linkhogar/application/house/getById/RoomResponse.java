@@ -16,3 +16,5 @@ public record RoomResponse(
         TenantProfileResponse currentTenant,
         List<String> images
 ) {}
+
+

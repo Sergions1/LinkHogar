@@ -10,11 +10,13 @@ import {AuthService} from '../../../services/auth/auth.service';
 import Swal from 'sweetalert2';
 import {FormsModule} from '@angular/forms';
 import {ChatService} from '../../../services/chat/chat-service';
+import {GenderPipe} from '../../../pipes/GenderPipe';
+import {OccupationPipe} from '../../../pipes/OccupationPipe';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
-  imports: [DecimalPipe, CommonModule, MapView, FormsModule],
+  imports: [DecimalPipe, CommonModule, MapView, FormsModule, GenderPipe, OccupationPipe],
   templateUrl: './detail.html',
   styleUrl: './detail.scss',
 })
@@ -33,6 +35,8 @@ export class Detail implements OnInit {
   isFavourite = signal(false);
   currentUser = this.authService.currentUser;
   isToggling = signal(false); //Señal para controlar bloqueo de carrera
+
+  activeRoomIndex = signal<number>(0);
 
   @Input() previewData: HouseForm | null = null;
 
@@ -71,7 +75,8 @@ export class Detail implements OnInit {
       this.houseService.getHouseById(this.houseId).subscribe({
         next: params => {
           this.house.set(params);
-          this.currentImageIndex = 0; // 👈 reset al cargar
+          this.currentImageIndex = 0;
+          this.activeRoomIndex.set(0);
           this.isFavourite.set(this.authService.isFavorite(this.houseId?.toString() || ''));
           this.isLoading.set(false);
         },
@@ -258,4 +263,10 @@ export class Detail implements OnInit {
       });
     }
   }
+
+  setActiveRoom(index: number) {
+    this.activeRoomIndex.set(index);
+  }
+
+  protected readonly String = String;
 }

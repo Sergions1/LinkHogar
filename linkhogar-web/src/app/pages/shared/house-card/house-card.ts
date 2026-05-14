@@ -21,6 +21,7 @@ export class HouseCard {
   @Output() edit = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
   @Output() manageMembers = new EventEmitter<string>();
+  @Output() manageRooms = new EventEmitter<string>();
 
   getBadgeColor(status: string | undefined): string {
     if (!status) return 'bg-secondary'; // Gris por defecto si viene vacío
@@ -60,6 +61,11 @@ export class HouseCard {
   onManageMembers(event: Event) {
     event.stopPropagation();
     this.manageMembers.emit(this.house.id);
+  }
+
+  onManageRooms(event: Event) { // 👈 NUEVO
+    event.stopPropagation();
+    this.manageRooms.emit(this.house.id);
   }
 
   protected readonly PublicationStatusPipe = PublicationStatusPipe;

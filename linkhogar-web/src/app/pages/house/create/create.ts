@@ -14,17 +14,20 @@ import Swal from 'sweetalert2';
 import {HouseResponse} from '../../../Models/Houses/HouseResponse';
 import {RoomsStep} from './steps/room-step/room-step';
 import {forkJoin, Observable} from 'rxjs';
+import {TenantProfileResponse} from '../../../Models/Houses/TenantProfileResponse';
 
 export interface RoomDetail {
   id? :string;
   name: string;
   description: string;
+  status?: string
   price: number | null;
   size: number | null;
   bedType: string;
   hasPrivateBath: boolean;
   photos: File[];
   existingPhotosUrls?: string[];
+  currentTenant?: TenantProfileResponse;
 }
 
 export interface HouseForm {
@@ -419,11 +422,21 @@ export class Create implements OnInit{
     this.isLoading.set(false);
 
     if (isImageError) {
-      Swal.fire('Atención!', 'Anuncio actualizado con éxito, pero hubo un error subiendo las nuevas imágenes', 'warning')
-        .then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
+      Swal.fire({
+        title: '¡Atención!',
+        text: 'Anuncio actualizado con éxito, pero hubo un error subiendo las nuevas imágenes',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: 'var(--color-acento)'
+      }).then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
     } else {
-      Swal.fire('¡Éxito!', `Su anuncio ha sido ${this.isEditMode() ? 'actualizado' : 'publicado'} con éxito`, 'success')
-        .then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
+      Swal.fire({
+        title: '¡Éxito!',
+        text: `Su anuncio ha sido ${this.isEditMode() ? 'actualizado' : 'publicado'} con éxito`,
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: 'var(--color-acento)'
+      }).then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
     }
   }
 

@@ -41,7 +41,8 @@
               [isMyPublications]="true"
               (edit)="onEditPublication($event)"
               (delete)="onDeletePublication($event)"
-              (manageMembers)="onManageMembers($event)"/>
+              (manageMembers)="onManageMembers($event)"
+              (manageRooms)="onManageRooms($event)"/>
 </ng-template>
 
 @if (selectedHouseId()) {
@@ -49,4 +50,11 @@
     [homeId]="selectedHouseId()!"
     (close)="closeMembersModal()">
   </app-manage-members-modal>
+}
+
+@if (selectedHouseForRooms()) {
+  <app-manage-rooms-modal
+    [house]="selectedHouseForRooms()!"
+    (close)="closeRoomsModal()">
+  </app-manage-rooms-modal>
 }

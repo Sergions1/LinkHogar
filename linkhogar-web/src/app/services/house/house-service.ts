@@ -286,4 +286,16 @@ export class HouseService {
 
     return this.http.delete(`${this.apiUrl}/${houseId}/rooms/${roomId}/image?url=${safeUrl}`, { headers });
   }
+
+  updateRoomTenant(houseId: string, roomId: string, tenant: any, status: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    const payload = {
+      status: status,
+      tenant: tenant
+    };
+
+    return this.http.put(`${this.apiUrl}/${houseId}/rooms/${roomId}/tenant`, payload, { headers });
+  }
 }

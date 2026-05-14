@@ -1,0 +1,105 @@
+<div class="modal d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+
+      <div class="modal-header border-bottom-0 p-4">
+        <h5 class="modal-title fw-bold">Gestionar habitaciones - {{house.title}}</h5>
+        <button type="button" class="btn-close" (click)="onClose()"></button>
+      </div>
+
+      <div class="modal-body p-4 pt-0">
+        <ul class="nav nav-pills mb-4 gap-2 border-bottom pb-3 overflow-x-auto flex-nowrap">
+          @for (room of house.roomList; track room.id; let i = $index) {
+            <li class="nav-item">
+              <button class="nav-link rounded-pill fw-semibold"
+                      [class.bg-acento]="activeRoomIndex() === i"
+                      [class.text-white]="activeRoomIndex() === i"
+                      [class.text-acento]="activeRoomIndex() !== i"
+                      (click)="setActiveRoom(i)">
+                {{room.name}}
+              </button>
+            </li>
+          }
+        </ul>
+
+        @if (house.roomList[activeRoomIndex()]; as room) {
+          <div class="row g-4">
+            <div class="col-md-12">
+              <label class="form-label fw-bold small">Estado de disponibilidad</label>
+              <select class="form-select rounded-3" [(ngModel)]="room.status">
+                <option value="AVAILABLE">Disponible</option>
+                <option value="OCCUPIED">Ocupada</option>
+              </select>
+            </div>
+
+            @if (room.status === 'OCCUPIED' && room.currentTenant) {
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold small">Género</label>
+                <select class="form-select rounded-3" [(ngModel)]="room.currentTenant.gender">
+                  <option [ngValue]="null">No indica</option>
+                  <option value="MALE">Hombre</option>
+                  <option value="FEMALE">Mujer</option>
+                  <option value="OTHER">Otro</option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold small">Ocupación</label>
+                <select class="form-select rounded-3" [(ngModel)]="room.currentTenant.occupation">
+                  <option [ngValue]="null">No indica</option>
+                  <option value="STUDENT">Estudiante</option>
+                  <option value="WORKER">Trabajador/a</option>
+                  <option value="STUDY_AND_WORK">Estudia y trabaja</option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold small">Edad aprox.</label>
+                <input type="text" class="form-control rounded-3"
+                       [(ngModel)]="room.currentTenant.ageRange"
+                       placeholder="Ej: 25 años, 20-30...">
+              </div>
+
+              <div class="col-md-6 d-flex align-items-center mt-2">
+                <div class="form-check form-switch">
+                  <input class="form-check-input cursor-pointer" type="checkbox" role="switch"
+                         id="smokerSwitch" [(ngModel)]="room.currentTenant.isSmoker">
+                  <label class="form-check-label small ms-2 cursor-pointer" for="smokerSwitch">
+                    Es fumador/a
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-md-6 d-flex align-items-center mt-2">
+                <div class="form-check form-switch">
+                  <input class="form-check-input cursor-pointer" type="checkbox" role="switch"
+                         id="petsSwitch" [(ngModel)]="room.currentTenant.hasPets">
+                  <label class="form-check-label small ms-2 cursor-pointer" for="petsSwitch">
+                    Tiene mascotas
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-12 mt-3">
+                <label class="form-label fw-bold small">Sobre el inquilino (Opcional)</label>
+                <textarea class="form-control rounded-3" rows="3"
+                          [(ngModel)]="room.currentTenant.description"
+                          placeholder="Escribe algún detalle extra..."></textarea>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer border-top-0 p-4">
+        <button type="button" class="btn btn-light rounded-pill px-4" (click)="onClose()">Cancelar</button>
+        <button type="button" class="btn primary-btn rounded-pill px-4"
+                [disabled]="isSaving()" (click)="saveTenantInfo()">
+          {{ isSaving() ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

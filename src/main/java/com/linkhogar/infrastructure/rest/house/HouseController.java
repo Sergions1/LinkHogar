@@ -34,6 +34,9 @@ import com.linkhogar.application.house.getByOwnerId.GetByOwnerIdQuery;
 import com.linkhogar.application.house.getByOwnerId.GetByOwnerIdQueryHandler;
 import com.linkhogar.application.house.update.UpdateCommand;
 import com.linkhogar.application.house.update.UpdateCommandHandler;
+import com.linkhogar.application.house.updateRoomTenant.UpdateRoomTenantCommand;
+import com.linkhogar.application.house.updateRoomTenant.UpdateRoomTenantCommandHandler;
+import com.linkhogar.application.house.updateRoomTenant.UpdateRoomTenantRequest;
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.house.HouseReport;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,6 +77,7 @@ public class HouseController {
     private final DeleteReportCommandHandler deleteReportCommandHandler;
     private final AddRoomImagesCommandHandler addRoomImagesCommandHandler;
     private final DeleteRoomImageCommandHandler deleteRoomImageCommandHandler;
+    private final UpdateRoomTenantCommandHandler updateRoomTenantCommandHandler;
 
     @Operation(
             summary = "Obtención de todas las casas",
@@ -374,6 +378,35 @@ public class HouseController {
         if(result.isSuccess()){
             return ResponseEntity.ok().build();
         }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
+        }
+    }
+
+    @PutMapping("/{houseId}/rooms/{roomId}/tenant")
+    public ResponseEntity<?> updateRoomTenant(
+            @PathVariable UUID houseId,
+            @PathVariable UUID roomId,
+            @RequestBody UpdateRoomTenantRequest request,
+            Authentication authentication) {
+
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UpdateRoomTenantCommand command = new UpdateRoomTenantCommand(
+                houseId,
+                roomId,
+                request.status(),
+                request.tenant(),
+                UUID.fromString(authentication.getName()),
+                authentication.getAuthorities()
+        );
+
+        Result<Void> result = updateRoomTenantCommandHandler.handle(command);
+
+        if (result.isSuccess()) {
+            return ResponseEntity.ok().build();
+        } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
         }
     }

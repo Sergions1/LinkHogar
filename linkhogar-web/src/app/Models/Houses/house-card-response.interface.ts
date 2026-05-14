@@ -1,4 +1,6 @@
-import { AddressResponse } from "../Address/addressResponse.interface"; // Asegúrate de importar tu modelo de Address
+import { AddressResponse } from "../Address/addressResponse.interface";
+import {RoomResponse} from './RoomResponse';
+import {RentalMode} from '../../pipes/RentalModePipe'; // Asegúrate de importar tu modelo de Address
 
 export interface HouseCardResponse {
   id: string;
@@ -12,6 +14,7 @@ export interface HouseCardResponse {
   houseType: string;
   status:string;
   publicationStatus: string;
+  rentalMode: RentalMode;
 
   size: number;
   rooms: number;
@@ -20,4 +23,5 @@ export interface HouseCardResponse {
   address: AddressResponse;
 
   images: string;
+  roomList: RoomResponse[];
 }
