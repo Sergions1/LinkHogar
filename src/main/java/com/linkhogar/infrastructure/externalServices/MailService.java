@@ -154,4 +154,22 @@ public class MailService {
 
         sendEmailViaBrevoAPI(toEmail, "Nuevo Evento: " + eventTitle, htmlMsg);
     }
+
+    @Async
+    public void sendEventReminderEmail(String toEmail, String eventTitle, String startDate) {
+        String htmlMsg = "<div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;'>"
+                + "<h2 style='color: #F08A5D; text-align: center;'>¡Recordatorio de Evento!</h2>"
+                + "<p style='color: #555; font-size: 16px;'>Hola,</p>"
+                + "<p style='color: #555; font-size: 16px;'>Te escribimos para recordarte que tienes un evento programado en tu hogar muy pronto:</p>"
+                + "<div style='background-color: #f8f9fa; padding: 15px; border-left: 4px solid #F08A5D; margin: 20px 0;'>"
+                + "<p style='margin: 0; font-size: 18px; font-weight: bold;'>" + eventTitle + "</p>"
+                + "<p style='margin: 10px 0 0 0; font-size: 16px; color: #555;'><strong>Fecha/Hora:</strong> " + startDate + "</p>"
+                + "</div>"
+                + "<div style='text-align: center; margin-top: 30px;'>"
+                + "<a href='" + frontendUrl + "/hogar/agenda' style='background-color: #F08A5D; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Ir al Calendario</a>"
+                + "</div>"
+                + "</div>";
+
+        sendEmailViaBrevoAPI(toEmail, "Recordatorio: " + eventTitle, htmlMsg);
+    }
 }

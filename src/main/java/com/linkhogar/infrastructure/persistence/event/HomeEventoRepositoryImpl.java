@@ -27,8 +27,8 @@ public class HomeEventoRepositoryImpl implements HomeEventRepository {
     }
 
     @Override
-    public List<HomeEvent> findPendingReminders(LocalDateTime now) {
-        return jpaHomeEventRepository.findPendingReminders(now);
+    public List<HomeEvent> findPendingReminders() {
+        return jpaHomeEventRepository.findPendingReminders();
     }
 
     @Override

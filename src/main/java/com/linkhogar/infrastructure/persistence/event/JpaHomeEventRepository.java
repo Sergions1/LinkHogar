@@ -13,6 +13,6 @@ public interface JpaHomeEventRepository extends JpaRepository<HomeEvent, UUID> {
     List<HomeEvent> findByHomeIdOrderByStartDateAsc(UUID homeId);
 
     // Busca eventos futuros que tengan recordatorio configurado y aún no se haya enviado
-    @Query("SELECT e FROM HomeEvent e WHERE e.reminderSent = false AND e.reminderMinutesBefore > 0 AND e.startDate > :now")
-    List<HomeEvent> findPendingReminders(@Param("now") LocalDateTime now);
+    @Query("SELECT e FROM HomeEvent e WHERE e.reminderSent = false AND e.reminderMinutesBefore > 0")
+    List<HomeEvent> findPendingReminders();
 }

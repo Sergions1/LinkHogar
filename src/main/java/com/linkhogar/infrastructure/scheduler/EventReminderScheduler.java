@@ -2,6 +2,8 @@ package com.linkhogar.infrastructure.scheduler;
 
 import com.linkhogar.domain.event.HomeEvent;
 import com.linkhogar.domain.event.HomeEventRepository;
+import com.linkhogar.domain.user.User;
+import com.linkhogar.domain.user.UserRepository;
 import com.linkhogar.infrastructure.externalServices.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -20,34 +21,36 @@ public class EventReminderScheduler {
 
     private final HomeEventRepository homeEventRepository;
     private final MailService mailService;
-    //private final WebS webSocketService; (Tu servicio para notificar a la app)
-
-    // Se ejecuta cada minuto (segundo 0)
+    private final UserRepository userRepository;
     @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void processEventReminders() {
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        List<HomeEvent> pendingEvents = homeEventRepository.findPendingReminders();
 
-        List<HomeEvent> pendingEvents = homeEventRepository.findPendingReminders(now);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
         for (HomeEvent event : pendingEvents) {
-            // Calculamos en qué momento exacto debería saltar la alarma
-            LocalDateTime triggerTime = event.getStartDate().minusMinutes(event.getReminderMinutesBefore());
 
-            if (!now.isBefore(triggerTime)) {
 
-                //Enviar notificación WebSocket
-                // webSocketService.sendNotification(event.getHomeId(), "Recordatorio: " + event.getTitle());
+            List<User> members = userRepository.findByHome(event.getHomeId());
 
-                //Enviar correo vía Brevo
-                //mailService.sendEventReminder(event.getHomeId(), event);
+            if (members != null &&  !members.isEmpty()) {
+                String formattedDate = event.getStartDate().format(formatter);
 
-                //Marcar como enviado para no repetir
-                event.setReminderSent(true);
-                homeEventRepository.save(event);
-
-                log.info("Recordatorio enviado para el evento: {}", event.getTitle());
+                for (User member : members) {
+                    mailService.sendEventReminderEmail(
+                            member.getMail(),
+                            event.getTitle(),
+                            formattedDate
+                    );
+                }
             }
+
+            event.setReminderSent(true);
+            homeEventRepository.save(event);
+
+            log.info("Recordatorio enviado para el evento: {} a todos los miembros", event.getTitle());
+
         }
     }
 }
