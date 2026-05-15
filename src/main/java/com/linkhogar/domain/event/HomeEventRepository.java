@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface HomeEventRepository {
     HomeEvent save(HomeEvent event);
     List<HomeEvent> findByHomeIdOrderByStartDateAsc(UUID homeId);
-    List<HomeEvent> findPendingReminders(LocalDateTime now);
+    List<HomeEvent> findPendingReminders();
     void deleteEvent(UUID eventId);
     Optional<HomeEvent> findById(UUID eventId);
 }
