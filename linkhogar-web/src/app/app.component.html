@@ -5,5 +5,7 @@
 <router-outlet></router-outlet>
 
 @if(showlayout){
-  <app-footer></app-footer>
+  <div [class.d-none]="isDashboard" [class.d-md-block]="isDashboard">
+    <app-footer></app-footer>
+  </div>
 }

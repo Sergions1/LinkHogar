@@ -41,5 +41,28 @@
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
+@media (max-width: 767px) {
+  .kanban-mobile-scroll {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    padding-bottom: 15px;
+
+    > div {
+      flex: 0 0 85%; /* Las columnas ocupan un 85% para que asome la siguiente y sea intuitivo */
+    }
+  }
+
+  .kanban-column {
+    min-height: 400px;
+  }
+}
+
+/*Cuando agarras una tarjeta, nos aseguramos de que no haya barreras invisibles */
+.cdk-drag-preview {
+  touch-action: none; /* Evita que el navegador intente hacer scroll nativo mientras arrastras */
+}
+
 
 

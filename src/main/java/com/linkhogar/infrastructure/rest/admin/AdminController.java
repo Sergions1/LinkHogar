@@ -8,6 +8,9 @@ import com.linkhogar.application.house.get.HouseResponse;
 import com.linkhogar.application.house.getPendingHouses.GetPendingHousesQuery;
 import com.linkhogar.application.house.getPendingHouses.GetPendingHousesQueryHandler;
 import com.linkhogar.domain.common.enums.PublicationStatus;
+import com.linkhogar.domain.house.HouseReportRepository;
+import com.linkhogar.domain.house.enums.ReportStatus;
+import com.linkhogar.infrastructure.persistence.house.JpaHouseReportRepository;
 import com.linkhogar.infrastructure.persistence.user.JpaUserRepository;
 import com.linkhogar.infrastructure.persistence.house.JpaHouseRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +31,7 @@ public class AdminController {
 
     private final JpaUserRepository userRepository;
     private final JpaHouseRepository houseRepository;
+    private final HouseReportRepository houseReportRepository;
     private final CreateUserByAdminHandler createUserByAdminHandler;
     private final GetPendingHousesQueryHandler getPendingHousesQueryHandler;
 
@@ -37,7 +41,7 @@ public class AdminController {
 
         long totalUsers = userRepository.count();
 
-        long pendingHouses = houseRepository.countByPublicationStatus(PublicationStatus.PENDING_REVIEW);
+        long pendingHouses = houseReportRepository.countByPendant();
         long publishedHouses = houseRepository.countByPublicationStatus(PublicationStatus.PUBLISHED);
 
         return new DashboardStatsResponse(totalUsers, pendingHouses, publishedHouses);

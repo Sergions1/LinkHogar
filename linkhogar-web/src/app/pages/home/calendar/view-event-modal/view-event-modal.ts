@@ -13,6 +13,8 @@ import {DatePipe} from '@angular/common';
 export class ViewEventModal {
   @Input() event!: HomeEventResponse;
 
+  @Input() isTask: boolean = false;
+
   @Output() close = new EventEmitter<void>();
   @Output() edit = new EventEmitter<HomeEventResponse>();
 

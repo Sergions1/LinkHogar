@@ -1,8 +1,9 @@
 .admin-container {
-  /* Calculamos el alto de la pantalla menos lo que ocupe tu Header normal */
   min-height: calc(100vh - 70px);
+  position: relative;
 }
 
+/* --- ESTILOS DE ESCRITORIO --- */
 .sidebar {
   width: 200px;
   transition: all 0.3s ease-in-out;
@@ -12,24 +13,77 @@
     width: 80px;
 
     .nav-link {
-      text-align: center;
-      padding-left: 0;
-      padding-right: 0;
-    }
-
-    .me-2 {
-      margin-right: 0 !important; /* Quitamos el margen del icono si está colapsado */
+      justify-content: center;
     }
   }
 
-  /* Para que el botón routerLinkActive cambie de color al pulsarlo */
+  .nav-link {
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+
+  /* Efecto bonito al activar la pestaña */
   .nav-link.active {
-    background-color: var(--color-acento); /* Usa tu variable de color acento */
-    color: black;
+    background-color: var(--color-acento); /* Asegúrate de que destaque con tu paleta */
+    color: black !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    i {
+      transform: scale(1.1); /* Agranda un poquito el icono seleccionado */
+    }
   }
 }
 
 .main-content {
   overflow-y: auto;
-  max-height: calc(100vh - 70px);
+  height: calc(100vh - 70px);
+}
+
+/* --- VISTA MÓVIL: Barra Inferior --- */
+@media (max-width: 767px) {
+
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100% !important; /* Ignoramos el colapso en móvil */
+    height: 75px;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1) !important;
+    padding: 5px !important;
+    display: flex;
+    align-items: center;
+
+    .nav-link {
+      padding: 5px !important;
+
+      .icon-nav {
+        font-size: 1.4rem; /* Iconos más grandes y fáciles de pulsar */
+        transition: transform 0.2s;
+      }
+
+      .nav-text {
+        font-size: 0.65rem; /* Texto diminuto tipo app nativa */
+        font-weight: 600;
+        display: block !important;
+      }
+
+      /* Efecto de saltito al pulsar en móvil */
+      &.active {
+        transform: translateY(-5px);
+        background-color: transparent !important; /* Quitamos el fondo para que quede más limpio en móvil */
+        box-shadow: none;
+
+        .icon-nav {
+          color: black !important; /* El icono activo se pone negro */
+        }
+      }
+    }
+  }
+
+  .main-content {
+    /* Le damos padding abajo para que la barra inferior no nos tape la última tarjeta o mensaje del chat */
+    padding-bottom: 90px !important;
+    height: 100vh;
+  }
 }

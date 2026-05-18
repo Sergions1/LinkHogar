@@ -17,10 +17,11 @@ import Swal from 'sweetalert2';
 import {HomeService} from '../../../services/home/home-service';
 import {ActivatedRoute} from '@angular/router';
 import {WebSocketService} from '../../../services/chat/web-socket-service';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-tasks',
-  imports: [CommonModule, ReactiveFormsModule, PostIt, CdkDropList, CdkDrag, CdkDropListGroup],
+  imports: [CommonModule, ReactiveFormsModule, PostIt, CdkDropList, CdkDrag, CdkDropListGroup, CdkScrollable],
   templateUrl: './tasks.html',
   styleUrl: './tasks.scss',
 })

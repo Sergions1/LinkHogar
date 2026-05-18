@@ -1,11 +1,12 @@
-<div class="admin-container d-flex">
+<div class="admin-container d-flex flex-column flex-md-row">
 
-  <div class="sidebar bg-acento p-3 shadow-sm" [class.collapsed]="isCollapsed">
-    <div class="d-flex align-items-center mb-4"
+  <div class="sidebar bg-acento p-2 p-md-3 shadow-sm z-3" [class.collapsed]="isCollapsed">
+
+    <div class="d-none d-md-flex align-items-center mb-4"
          [class.justify-content-between]="!isCollapsed"
          [class.justify-content-center]="isCollapsed">
       @if (!isCollapsed) {
-        <h5 class="m-0 text-accent font-weight-bold">Panel LinkHogar</h5>
+        <h5 class="m-0 text-dark fw-bold">Panel LinkHogar</h5>
       }
       <button class="btn border-0 btn-sm" (click)="toggleSidebar()">
         @if (isCollapsed) {
@@ -16,35 +17,40 @@
       </button>
     </div>
 
-    <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item mb-2">
-        <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link text-black">
-          <span class="me-2"><i class="bi bi-info-square-fill text-light"></i></span>
-          @if (!isCollapsed) { <span>Dashboard</span> }
+    <ul class="nav nav-pills flex-row flex-md-column justify-content-around justify-content-md-start mb-0 mb-md-auto w-100">
+
+      <li class="nav-item mb-0 mb-md-2 flex-fill px-1 text-center">
+        <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link text-black d-flex flex-column flex-md-row align-items-center p-2 p-md-3">
+          <i class="bi bi-info-square-fill text-light icon-nav"></i>
+          @if (!isCollapsed) { <span class="nav-text mt-1 mt-md-0 ms-md-2">Dashboard</span> }
         </a>
       </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/admin/houses" routerLinkActive="active" class="nav-link text-black">
-          <span class="me-2"><i class="bi bi-houses-fill text-light"></i></span>
-          @if (!isCollapsed) { <span>Gestión de Anuncios</span> }
+
+      <li class="nav-item mb-0 mb-md-2 flex-fill px-1 text-center">
+        <a routerLink="/admin/houses" routerLinkActive="active" class="nav-link text-black d-flex flex-column flex-md-row align-items-center p-2 p-md-3">
+          <i class="bi bi-houses-fill text-light icon-nav"></i>
+          @if (!isCollapsed) { <span class="nav-text mt-1 mt-md-0 ms-md-2">Anuncios</span> }
         </a>
       </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/admin/users" routerLinkActive="active" class="nav-link text-black">
-          <span class="me-2"><i class="bi bi-people-fill text-light"></i></span>
-          @if (!isCollapsed) { <span>Usuarios</span> }
+
+      <li class="nav-item mb-0 mb-md-2 flex-fill px-1 text-center">
+        <a routerLink="/admin/users" routerLinkActive="active" class="nav-link text-black d-flex flex-column flex-md-row align-items-center p-2 p-md-3">
+          <i class="bi bi-people-fill text-light icon-nav"></i>
+          @if (!isCollapsed) { <span class="nav-text mt-1 mt-md-0 ms-md-2">Usuarios</span> }
         </a>
       </li>
-      <li class="nav-item mb-2 mt-4 border-top pt-3">
-        <a routerLink="/admin/ajustes" routerLinkActive="active" class="nav-link text-black">
-          <span class="me-2"><i class="bi bi-gear-fill text-light"></i></span>
-          @if (!isCollapsed) { <span>Ajustes Sistema</span> }
+
+      <li class="nav-item mb-0 mb-md-2 mt-md-4 border-top-desktop pt-md-3 flex-fill px-1 text-center">
+        <a routerLink="/admin/ajustes" routerLinkActive="active" class="nav-link text-black d-flex flex-column flex-md-row align-items-center p-2 p-md-3">
+          <i class="bi bi-gear-fill text-light icon-nav"></i>
+          @if (!isCollapsed) { <span class="nav-text mt-1 mt-md-0 ms-md-2">Ajustes</span> }
         </a>
       </li>
+
     </ul>
   </div>
 
-  <div class="main-content flex-grow-1 bg-light p-4">
+  <div class="main-content flex-grow-1 bg-light p-3 p-md-4">
     <router-outlet></router-outlet>
   </div>
 

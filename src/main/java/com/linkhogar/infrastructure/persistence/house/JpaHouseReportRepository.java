@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface JpaHouseReportRepository extends JpaRepository<HouseReport, UUID> {
     List<HouseReport> findByStatus(ReportStatus status);
-
+    Long countByStatus(ReportStatus status);
     Page<HouseReport> findAllByStatus(ReportStatus status, Pageable pageable);
 }
 

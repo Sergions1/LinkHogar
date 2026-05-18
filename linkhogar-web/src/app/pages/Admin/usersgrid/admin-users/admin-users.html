@@ -1,13 +1,11 @@
-<!-- admin/usuarios/admin-usuarios.html -->
 <div class="container-fluid py-3">
 
-  <!-- Cabecera -->
-  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 border-bottom pb-3 gap-3">
     <div>
       <h2 class="fw-bold mb-0">Gestión de Usuarios</h2>
       <p class="text-muted mb-0">Administra todos los usuarios registrados en la plataforma</p>
     </div>
-    <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-3 w-100 w-md-auto justify-content-between justify-content-md-end">
       <span class="badge bg-secondary fs-6">{{ totalElements }} usuarios</span>
       <button class="btn primary-btn btn-sm fw-semibold" (click)="openModal()">
         <i class="bi bi-person-plus me-2"></i>Nuevo usuario
@@ -15,7 +13,6 @@
     </div>
   </div>
 
-  <!-- Filtros -->
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-body">
       <div class="row g-3 align-items-end">
@@ -50,7 +47,7 @@
 
         <div class="col-12 col-md-2 d-flex gap-2">
           <button class="btn primary-btn w-100" (click)="applyFilters()">
-            <i class="bi bi-search me-1"></i> Buscar
+            <i class="bi bi-search me-1"></i>
           </button>
           <button class="btn btn-outline-secondary" (click)="clearFilters()" title="Limpiar filtros">
             <i class="bi bi-x-lg"></i>
@@ -61,7 +58,6 @@
     </div>
   </div>
 
-  <!-- Loading -->
   @if (isLoading()) {
     <div class="d-flex justify-content-center align-items-center py-5">
       <div class="spinner-border text-primary" role="status"></div>
@@ -69,12 +65,12 @@
     </div>
   }
 
-  <!-- Tabla -->
   @else if (usersList.length > 0) {
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0 bg-transparent bg-lg-white">
       <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
+
+        <div class="table-responsive d-none d-lg-block">
+          <table class="table table-hover align-middle mb-0 bg-white">
             <thead class="table-light">
             <tr>
               <th class="ps-4">Usuario</th>
@@ -89,7 +85,6 @@
             <tbody>
               @for (user of usersList; track user.id) {
                 <tr>
-                  <!-- Usuario -->
                   <td class="ps-4">
                     <div class="d-flex align-items-center gap-3">
                       <div class="rounded-circle bg-fondo-secundario d-flex align-items-center justify-content-center fw-bold"
@@ -101,25 +96,9 @@
                       </div>
                     </div>
                   </td>
-
-                  <!-- Email -->
-                  <td>
-                    <small>{{ user.mail }}</small>
-                  </td>
-
-                  <!-- Teléfono -->
-                  <td>
-                    <small class="text-muted">{{ user.phone}}</small>
-                  </td>
-
-                  <!-- Rol -->
-                  <td>
-                    <span class="badge rounded-pill {{ getRoleBadgeClass(user.role) }}">
-                      {{ user.role }}
-                    </span>
-                  </td>
-
-                  <!-- Estado -->
+                  <td><small>{{ user.mail }}</small></td>
+                  <td><small class="text-muted">{{ user.phone || '--' }}</small></td>
+                  <td><span class="badge rounded-pill {{ getRoleBadgeClass(user.role) }}">{{ user.role }}</span></td>
                   <td>
                     @if (user.enabled) {
                       <span class="badge bg-success rounded-pill">Activo</span>
@@ -127,35 +106,16 @@
                       <span class="badge bg-danger rounded-pill">Desactivado</span>
                     }
                   </td>
-
-                  <!-- Fecha registro -->
-                  <td>
-                    <small class="text-muted">{{ user.creationDate | date:'dd/MM/yyyy' }}</small>
-                  </td>
-
-                  <!-- Acciones -->
+                  <td><small class="text-muted">{{ user.creationDate | date:'dd/MM/yyyy' }}</small></td>
                   <td class="text-center pe-4">
                     <div class="d-flex gap-2 justify-content-center">
-                      <!-- Activar/Desactivar -->
-                      <button class="btn btn-sm"
-                              [class.btn-outline-success]="!user.enabled"
-                              [class.btn-outline-warning]="user.enabled"
-                              [title]="user.enabled ? 'Desactivar' : 'Activar'"
-                              (click)="toggleEnabled(user)">
+                      <button class="btn btn-sm" [class.btn-outline-success]="!user.enabled" [class.btn-outline-warning]="user.enabled" [title]="user.enabled ? 'Desactivar' : 'Activar'" (click)="toggleEnabled(user)">
                         <i class="bi" [class.bi-toggle-on]="user.enabled" [class.bi-toggle-off]="!user.enabled"></i>
                       </button>
-
-                      <!-- Editar -->
-                      <button class="btn btn-sm btn-outline-secondary"
-                              title="Editar"
-                              (click)="openEditModal(user)">
+                      <button class="btn btn-sm btn-outline-secondary" title="Editar" (click)="openEditModal(user)">
                         <i class="bi bi-pencil"></i>
                       </button>
-
-                      <!-- Eliminar -->
-                      <button class="btn btn-sm btn-outline-danger"
-                              title="Eliminar"
-                              (click)="deleteUser(user)">
+                      <button class="btn btn-sm btn-outline-danger" title="Eliminar" (click)="deleteUser(user)">
                         <i class="bi bi-trash"></i>
                       </button>
                     </div>
@@ -165,20 +125,79 @@
             </tbody>
           </table>
         </div>
+
+        <div class="d-block d-lg-none">
+          @for (user of usersList; track user.id) {
+            <div class="card mb-3 border-0 shadow-sm rounded-4">
+              <div class="card-body">
+
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="rounded-circle bg-fondo-secundario d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                       style="width: 50px; height: 50px; color: var(--color-primario); font-size: 1.2rem;">
+                    {{ user.firstName.charAt(0).toUpperCase() }}{{ user.lastName.charAt(0).toUpperCase() }}
+                  </div>
+
+                  <div class="w-100 overflow-hidden">
+                    <div class="row align-items-start g-0 mb-1">
+                      <div class="col">
+                        <p class="fw-bold mb-0 text-truncate pe-2">{{ user.firstName }} {{ user.lastName }}</p>
+                      </div>
+                      <div class="col-auto">
+                        <span class="badge rounded-pill {{ getRoleBadgeClass(user.role) }} small">{{ user.role }}</span>
+                      </div>
+                    </div>
+                    <small class="text-muted d-block text-truncate">{{ user.mail }}</small>
+                  </div>
+                </div>
+
+                <div class="row g-2 mb-3 bg-light p-2 rounded-3 small">
+                  <div class="col-6">
+                    <span class="text-muted d-block">Teléfono</span>
+                    <span class="fw-medium">{{ user.phone || '--' }}</span>
+                  </div>
+                  <div class="col-6">
+                    <span class="text-muted d-block">Estado</span>
+                    @if (user.enabled) {
+                      <span class="text-success fw-medium"><i class="bi bi-check-circle-fill me-1"></i>Activo</span>
+                    } @else {
+                      <span class="text-danger fw-medium"><i class="bi bi-x-circle-fill me-1"></i>Inactivo</span>
+                    }
+                  </div>
+                </div>
+
+                <div class="d-flex gap-2 justify-content-between border-top pt-3">
+                  <button class="btn btn-sm flex-fill fw-medium"
+                          [class.btn-outline-success]="!user.enabled"
+                          [class.btn-outline-warning]="user.enabled"
+                          (click)="toggleEnabled(user)">
+                    <i class="bi me-1" [class.bi-toggle-on]="user.enabled" [class.bi-toggle-off]="!user.enabled"></i>
+                    {{ user.enabled ? 'Desactivar' : 'Activar' }}
+                  </button>
+                  <button class="btn btn-sm btn-outline-secondary flex-fill" (click)="openEditModal(user)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger flex-fill" (click)="deleteUser(user)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          }
+        </div>
+
       </div>
 
-      <!-- Paginación -->
       @if (totalPages > 1) {
-        <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center px-4 py-3">
-          <small class="text-muted">
-            Página {{ currentPage() + 1 }} de {{ totalPages }} · {{ totalElements }} usuarios
+        <div class="card-footer bg-white border-top d-flex flex-column flex-md-row justify-content-between align-items-center px-4 py-3 gap-3">
+          <small class="text-muted text-center text-md-start">
+            Página {{ currentPage() + 1 }} de {{ totalPages }} <br class="d-md-none">
+            · {{ totalElements }} usuarios
           </small>
           <nav>
-            <ul class="pagination pagination-sm mb-0 gap-1">
+            <ul class="pagination pagination-sm mb-0 gap-1 flex-wrap justify-content-center">
               <li class="page-item" [class.disabled]="isFirstPage">
-                <button class="page-link rounded"
-                        (click)="goToPage(currentPage() - 1)"
-                        [disabled]="isFirstPage">
+                <button class="page-link rounded" (click)="goToPage(currentPage() - 1)" [disabled]="isFirstPage">
                   <i class="bi bi-chevron-left"></i>
                 </button>
               </li>
@@ -193,9 +212,7 @@
                 </li>
               }
               <li class="page-item" [class.disabled]="isLastPage">
-                <button class="page-link rounded"
-                        (click)="goToPage(currentPage() + 1)"
-                        [disabled]="isLastPage">
+                <button class="page-link rounded" (click)="goToPage(currentPage() + 1)" [disabled]="isLastPage">
                   <i class="bi bi-chevron-right"></i>
                 </button>
               </li>
@@ -206,20 +223,20 @@
     </div>
 
   } @else {
-  <div class="card shadow-sm border-0">
-    <div class="card-body text-center py-5 text-muted">
-      <i class="bi bi-people fs-1 mb-3 text-secondary d-block"></i>
-      <h5>No se encontraron usuarios</h5>
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center py-5 text-muted">
+        <i class="bi bi-people fs-1 mb-3 text-secondary d-block"></i>
+        <h5>No se encontraron usuarios</h5>
+      </div>
     </div>
-  </div>
-}
+  }
 
 </div>
 
 @if (showModal) {
-  <div class="modal d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4 border-0 shadow">
+  <div class="modal d-block px-2" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered mx-auto">
+      <div class="modal-content rounded-4 border-0 shadow w-100">
 
         <div class="modal-header border-0 pb-0">
           <h5 class="modal-title fw-bold">
@@ -235,12 +252,12 @@
         <div class="modal-body pt-3">
           <div class="row g-3">
 
-            <div class="col-6">
+            <div class="col-12 col-md-6">
               <label class="form-label small fw-semibold">Nombre <span class="text-danger">*</span></label>
               <input type="text" class="form-control" [(ngModel)]="currentForm.firstName" placeholder="Nombre">
             </div>
 
-            <div class="col-6">
+            <div class="col-12 col-md-6">
               <label class="form-label small fw-semibold">Apellidos <span class="text-danger">*</span></label>
               <input type="text" class="form-control" [(ngModel)]="currentForm.lastName" placeholder="Apellidos">
             </div>
@@ -250,12 +267,12 @@
               <input type="email" class="form-control" [(ngModel)]="currentForm.mail" placeholder="correo@ejemplo.com">
             </div>
 
-            <div class="col-6">
+            <div class="col-12 col-md-6">
               <label class="form-label small fw-semibold">Teléfono</label>
               <input type="tel" class="form-control" [(ngModel)]="currentForm.phone" placeholder="612345678">
             </div>
 
-            <div class="col-6">
+            <div class="col-12 col-md-6">
               <label class="form-label small fw-semibold">Fecha de nacimiento</label>
               <input type="date" class="form-control" [(ngModel)]="currentForm.fechaNac">
             </div>
@@ -272,7 +289,6 @@
               }
             </div>
 
-            <!-- Ocultar el aviso de contraseña en modo edición -->
             @if (!isEditing) {
               <div class="col-12">
                 <div class="alert alert-info border-0 rounded-3 small mb-0">
@@ -285,21 +301,20 @@
           </div>
         </div>
 
-        <div class="modal-footer border-0 pt-0">
-          <button class="btn btn-outline-secondary" (click)="closeModal()" [disabled]="isSubmitting">
+        <div class="modal-footer border-0 pt-0 flex-nowrap">
+          <button class="btn btn-outline-secondary w-50" (click)="closeModal()" [disabled]="isSubmitting">
             Cancelar
           </button>
-          <!-- Botón submit -->
-          <button class="btn primary-btn fw-semibold"
+          <button class="btn primary-btn fw-semibold w-50"
                   (click)="submitModal()"
                   [disabled]="isSubmitting || !currentForm.firstName || !currentForm.lastName || !currentForm.mail">
             @if (isSubmitting) {
               <span class="spinner-border spinner-border-sm me-2"></span>
-              {{ isEditing ? 'Guardando...' : 'Creando...' }}
             } @else {
               <i class="bi me-2" [class.bi-floppy]="isEditing" [class.bi-person-check]="!isEditing"></i>
-              {{ isEditing ? 'Guardar cambios' : 'Crear usuario' }}
             }
+            <span class="d-none d-sm-inline">{{ isEditing ? 'Guardar cambios' : 'Crear usuario' }}</span>
+            <span class="d-inline d-sm-none">{{ isEditing ? 'Guardar' : 'Crear' }}</span>
           </button>
         </div>
 

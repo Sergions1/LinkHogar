@@ -1,0 +1,100 @@
+<div class="container-fluid py-3">
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 border-bottom pb-3 gap-3">
+    <div>
+      <h2 class="fw-bold mb-0">Configuración General</h2>
+      <p class="text-muted mb-0">Personaliza la apariencia y los recursos de la plataforma</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm border-0 h-100 rounded-4">
+        <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+          <h5 class="fw-bold"><i class="bi bi-circle-square me-2 text-primario"></i>Logo de la Plataforma</h5>
+          <p class="text-muted small mb-0">Se mostrará en la barra de navegación superior (formato horizontal recomendado).</p>
+        </div>
+        <div class="card-body p-4 d-flex flex-column align-items-center">
+
+          <div class="bg-fondo-secundario rounded-3 d-flex align-items-center justify-content-center mb-4 p-3 border" style="width: 100%; height: 120px;">
+            @if (settingsService.logoImage()) {
+              <img [src]="settingsService.logoImage()" class="img-fluid object-fit-contain" style="max-height: 80px;" alt="Logo actual">
+            } @else {
+              <span class="text-muted"><i class="bi bi-image me-2"></i>Sin logo configurado</span>
+            }
+          </div>
+
+          <button class="btn btn-outline-acento w-100 mt-auto" (click)="openCropper('APP_LOGO')">
+            <i class="bi bi-upload me-2"></i>Actualizar Logo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm border-0 h-100 rounded-4">
+        <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+          <h5 class="fw-bold"><i class="bi bi-display me-2 text-primario"></i>Imagen del Landing</h5>
+          <p class="text-muted small mb-0">Imagen principal de la página de inicio (formato panorámico 16:9).</p>
+        </div>
+        <div class="card-body p-4 d-flex flex-column align-items-center">
+
+          <div class="bg-fondo-secundario rounded-3 overflow-hidden mb-4 border w-100 position-relative" style="height: 200px;">
+            @if (settingsService.heroImage()) {
+              <img [src]="settingsService.heroImage()" class="w-100 h-100 object-fit-cover" alt="Hero actual">
+            } @else {
+              <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                <span><i class="bi bi-image me-2"></i>Sin imagen configurada</span>
+              </div>
+            }
+          </div>
+
+          <button class="btn btn-outline-acento w-100 mt-auto" (click)="openCropper('HERO_INITIAL_IMAGE')">
+            <i class="bi bi-upload me-2"></i>Actualizar Imagen Landing
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="settingsCropperModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow rounded-4">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-primario">
+          <i class="bi bi-crop me-2"></i>Recortar Imagen
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" (click)="cleanModal()"></button>
+      </div>
+      <div class="modal-body text-center p-4">
+
+        <input type="file" class="form-control mb-4" (change)="fileChangeEvent($event)" accept="image/png, image/jpeg, image/webp" />
+
+        @if (imageChangedEvent) {
+          <div class="d-flex justify-content-center bg-light rounded-3 border p-2 mb-3" style="min-height: 300px;">
+            <image-cropper
+              [imageChangedEvent]="imageChangedEvent"
+              [maintainAspectRatio]="maintainAspectRatio"
+              [aspectRatio]="aspectRatio"
+              [resizeToWidth]="1920"
+              format="png"
+              (imageCropped)="imageCropped($event)">
+            </image-cropper>
+          </div>
+        }
+
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" (click)="cleanModal()" [disabled]="isUploading">Cancelar</button>
+        <button type="button" class="btn primary-btn" [disabled]="!croppedImage || isUploading" (click)="saveImage()">
+          @if (isUploading) {
+            <span class="spinner-border spinner-border-sm me-2"></span>Subiendo...
+          } @else {
+            <i class="bi bi-floppy me-2"></i>Guardar Imagen
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

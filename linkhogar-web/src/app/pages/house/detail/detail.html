@@ -173,10 +173,10 @@
         <h4 class="mb-3 mt-5">Habitaciones disponibles</h4>
         <div class="rooms-section mb-5">
 
-          <ul class="nav nav-pills mb-4 gap-2 border-bottom pb-3" style="overflow-x: auto; flex-wrap: nowrap;">
+          <ul class="nav nav-pills mb-4 gap-2 border-bottom pb-3 flex-column flex-md-row">
             @for (room of house.roomList; track room.id; let i = $index) {
-              <li class="nav-item">
-                <button class="nav-link rounded-pill fw-semibold text-nowrap px-4"
+              <li class="nav-item w-100 w-md-auto">
+                <button class="nav-link rounded-pill fw-semibold px-4 w-100 text-center"
                         style="transition: all 0.2s ease;"
                         [class.active]="activeRoomIndex() === i"
                         [class.bg-primario]="activeRoomIndex() === i"
@@ -376,12 +376,12 @@
                   </p>
                 </div>
             </div>
+          }
 
-            @if(currentUser()?.id != house.owner.id){
-              <button (click)="onInterested()" class="btn primary-btn w-100 py-3 fw-bold rounded-4 shadow-sm">
-                <i class="bi bi-chat-dots-fill me-2"></i> ¡Estoy interesado!
-              </button>
-            }
+          @if (!currentUser() || currentUser()?.id !== house.owner.id) {
+            <button (click)="onInterested()" class="btn primary-btn w-100 py-3 fw-bold rounded-4 shadow-sm mt-3">
+              <i class="bi bi-chat-dots-fill me-2"></i> ¡Estoy interesado!
+            </button>
           }
 
         </div>

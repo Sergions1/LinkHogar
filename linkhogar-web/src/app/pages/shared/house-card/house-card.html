@@ -1,6 +1,6 @@
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden card-hover h-100">
 
-  <div class="position-relative" style="height: 400px; background-color: #eee;">
+  <div class="position-relative house-img-wrapper" style="background-color: #eee;">
     @if (house.images && house.images.length > 0) {
       <img [src]="house.images[0]"
            class="w-100 h-100 object-fit-cover"
@@ -12,7 +12,7 @@
     }
   </div>
 
-  <div class="card-body p-4 d-flex flex-column">
+  <div class="card-body p-3 p-md-4 d-flex flex-column">
     <h5 class="card-title fw-bold mb-1 text-truncate" [title]="house.title">
       {{ house.title }}
     </h5>
@@ -26,7 +26,7 @@
       {{ house.description }}
     </p>
 
-    <div class="d-flex gap-3 mb-4 text-muted small">
+    <div class="d-flex flex-wrap gap-2 gap-md-3 mb-4 text-muted small">
       <div class="d-flex align-items-center gap-1" title="Superficie">
         <i class="bi bi-rulers"></i>
         <span>{{ house.size }} m²</span>
@@ -48,7 +48,8 @@
 
     <hr class="text-muted opacity-25 mt-auto mb-3">
 
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 gap-md-0">
+
       <div>
         <span class="h4 fw-bold text-price mb-0">
           {{ house.price | number }} €
@@ -56,35 +57,37 @@
         <span class="text-muted small">/mes</span>
       </div>
 
-      <div>
+      <div class="d-flex flex-wrap align-items-center gap-2 w-100 w-md-auto justify-content-md-end">
         @if(isMyPublications){
-          <span class="badge me-2" [ngClass]="getBadgeColor(house.publicationStatus)">{{ house.publicationStatus | publicationStatus }}</span>
+          <span class="badge" [ngClass]="getBadgeColor(house.publicationStatus)">{{ house.publicationStatus | publicationStatus }}</span>
+
           @if (house.publicationStatus !== 'ARCHIVED' ) {
-            <button class="btn btn-people rounded-circle me-2 position-relative z-3" (click)="onManageMembers($event)" title="Gestionar hogar">
+            <button class="btn btn-people rounded-circle position-relative z-3" (click)="onManageMembers($event)" title="Gestionar hogar">
               <i class="bi bi-people fs-4 text-acento"></i>
             </button>
 
             @if (house.rentalMode == 'BY_ROOM') {
-              <button class="btn btn-door rounded-circle me-2 position-relative z-3" (click)="onManageRooms($event)" title="Gestionar habitaciones">
+              <button class="btn btn-door rounded-circle position-relative z-3" (click)="onManageRooms($event)" title="Gestionar habitaciones">
                 <i class="bi bi-door-closed fs-4 text-acento"></i>
               </button>
             }
 
-            <button class="btn btn-trash rounded-circle me-2 position-relative z-3" (click)="onDelete($event)" title="Eliminar">
+            <button class="btn btn-trash rounded-circle position-relative z-3" (click)="onDelete($event)" title="Eliminar">
               <i class="bi bi-trash fs-4 text-danger"></i>
             </button>
 
-            <button class="btn btn-trash rounded-circle me-2 position-relative z-3" (click)="onEdit($event)" title="Editar">
+            <button class="btn btn-trash rounded-circle position-relative z-3" (click)="onEdit($event)" title="Editar">
               <i class="bi bi-pencil-square fs-4 text-acento"></i>
             </button>
           }
         }
 
         <button (click)="open()"
-           class="btn btn-primary fw-medium border-0 px-3 py-2 stretched-link ms-2">
+                class="btn btn-primary fw-medium border-0 px-3 py-2 stretched-link flex-grow-1 flex-md-grow-0 ms-md-2">
           Ver detalles
         </button>
       </div>
+
     </div>
   </div>
 

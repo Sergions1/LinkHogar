@@ -27,6 +27,7 @@ import {HomeLayout} from './pages/home/home-layout/home-layout';
 import {Chat} from './pages/home/chat/chat';
 import {Expense} from './pages/home/expense/expense';
 import {Calendar} from './pages/home/calendar/calendar';
+import {AdminSettings} from './pages/Admin/admin-settings/admin-settings';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -51,7 +52,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'houses', component: AdminHousesComponent} ,
       { path: 'houses/requests', component: AdminRequests},
-      { path: 'users', component: AdminUsersComponent }
+      { path: 'users', component: AdminUsersComponent },
+      { path: 'ajustes', component: AdminSettings }
     ]
   },
   {
