@@ -188,7 +188,13 @@ export class Detail implements OnInit {
   }
 
 
-  async onInterested() {
+  async onInterested()
+  {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     if (!this.authService.isLoggedIn()) {
       Swal.fire({
         icon: 'warning',

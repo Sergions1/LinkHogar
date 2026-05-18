@@ -1,0 +1,11 @@
+/* Altura de la imagen en móviles */
+.house-img-wrapper {
+  height: 250px;
+}
+
+/* Recuperamos exactamente tu altura original a partir de tablets (PC) */
+@media (min-width: 768px) {
+  .house-img-wrapper {
+    height: 400px;
+  }
+}

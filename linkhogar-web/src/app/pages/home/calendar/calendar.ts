@@ -40,10 +40,12 @@ export class Calendar implements OnDestroy {
 
   //Control del modal de vista y edición ---
   showViewModal = signal<boolean>(false);
-  selectedEvent = signal<HomeEventResponse | null>(null);
+  selectedEvent = signal<any>(null);
   eventToEdit = signal<HomeEventResponse | null>(null);
+  isTask = false
 
   private wsSubscription: any;
+
 
   // Creamos un Signal "computado" que escucha los eventos y las tareas,
   // y los fusiona en el formato exacto que necesita FullCalendar
@@ -84,7 +86,7 @@ export class Calendar implements OnDestroy {
   // Configuración principal de FullCalendar
   calendarOptions = signal<CalendarOptions>({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
-    initialView: 'dayGridMonth',
+    initialView: typeof window !== 'undefined' && window.innerWidth < 768 ? 'timeGridDay' : 'dayGridMonth',
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
@@ -97,7 +99,13 @@ export class Calendar implements OnDestroy {
     dateClick: (arg) => this.handleDateClick(arg),
 
     // Al hacer clic en un evento/tarea
-    eventClick: (arg) => this.handleEventClick(arg)
+    eventClick: (arg) => this.handleEventClick(arg),
+
+    //Escuchar cuando se redimensiona o gira la pantalla
+    windowResize: (arg) => {
+      // Actualizamos los botones dinámicamente sin recargar la página
+      arg.view.calendar.setOption('headerToolbar', this.getResponsiveToolbar());
+    }
   });
 
   constructor() {
@@ -159,9 +167,17 @@ export class Calendar implements OnDestroy {
     const isTask = arg.event.extendedProps.type === 'TASK';
     const clickedId = arg.event.id;
 
-    if (!isTask) {
+    if (isTask) {
+      const fullTask = this.taskService.tasks().find(t => t.id === clickedId);
+      if (fullTask) {
+        this.isTask = true;
+        this.selectedEvent.set(fullTask);
+        this.showViewModal.set(true);
+      }
+    } else {
       const fullEvent = this.eventService.homeEvents().find(e => e.id === clickedId);
       if (fullEvent) {
+        this.isTask = false;
         this.selectedEvent.set(fullEvent);
         this.showViewModal.set(true);
       }
@@ -196,5 +212,21 @@ export class Calendar implements OnDestroy {
       this.wsSubscription.unsubscribe();
     }
     this.webSocketService.unsubscribeFromHomeEvents();
+  }
+
+  private getResponsiveToolbar() {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+    return isMobile
+      ? {
+        left: 'prev,next',
+        center: 'title',
+        right: 'dayGridMonth,timeGridDay' // Quitamos la vista semanal y el botón 'today' en móvil
+      }
+      : {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      };
   }
 }

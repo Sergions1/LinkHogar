@@ -1,5 +1,5 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {Observable, tap} from 'rxjs';
 
@@ -11,6 +11,9 @@ export class SettingsServices {
   private apiUrl = `${environment.apiUrl}/AppSettings`;
 
   heroImage = signal<string>('');
+  logoImage = signal<string>('');
+
+  allSettings = signal<Record<string, string>>({});
 
   getSettings(name: string): Observable<string> {
     return this.http.get(`${this.apiUrl}/${name}`, {responseType: 'text'});
@@ -23,5 +26,32 @@ export class SettingsServices {
           if (url) this.heroImage.set(url);
         })
       );
+  }
+
+  loadAllSettings(): Observable<Record<string, string>> {
+    return this.http.get<Record<string, string>>(this.apiUrl).pipe(
+      tap((settingsMap) => {
+        // Guardamos el diccionario completo
+        this.allSettings.set(settingsMap);
+
+        // Repartimos a las señales individuales si existen
+        if (settingsMap['HERO_INITIAL_IMAGE']) {
+          this.heroImage.set(settingsMap['HERO_INITIAL_IMAGE']);
+        }
+        if (settingsMap['APP_LOGO']) {
+          this.logoImage.set(settingsMap['APP_LOGO']);
+        }
+      })
+    );
+  }
+
+  updateSettingImage(name: string, file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.put(`${this.apiUrl}/${name}/image`, formData, { headers, responseType: 'text' });
   }
 }

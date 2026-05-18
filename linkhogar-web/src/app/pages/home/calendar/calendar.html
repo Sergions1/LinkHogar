@@ -1,23 +1,29 @@
-<div class="container-fluid py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold text-primary mb-0">Calendario del Hogar</h4>
-    <button class="btn primary-btn rounded-pill px-4 shadow-sm" (click)="handleDateClick({})">
-      <i class="bi bi-plus-lg me-2"></i> Añadir Evento
+<div class="container-fluid py-3 py-md-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4 px-1 px-md-0">
+    <h4 class="fw-bold text-primary mb-0 fs-5 fs-md-4">
+      Calendario <span class="d-none d-sm-inline">del Hogar</span>
+    </h4>
+    <button class="btn primary-btn rounded-pill px-3 px-md-4 py-2 d-flex align-items-center shadow-sm" (click)="handleDateClick({})">
+      <i class="bi bi-plus-lg fs-5"></i>
+      <span class="d-none d-md-inline ms-2">Añadir Evento</span>
     </button>
   </div>
 
   <div class="card border-0 shadow-sm rounded-4">
-    <div class="card-body p-4">
+    <div class="card-body p-2 p-md-4">
       <full-calendar [options]="calendarOptions()"></full-calendar>
     </div>
   </div>
+
 </div>
 
 @if (showViewModal() && selectedEvent()) {
   <app-view-event-modal
     [event]="selectedEvent()!"
     (close)="showViewModal.set(false)"
-    (edit)="openEditModal($event)">
+    (edit)="openEditModal($event)"
+    [isTask]="isTask">
   </app-view-event-modal>
 }
 

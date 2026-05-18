@@ -1,10 +1,11 @@
 .admin-container {
-  /* Calculamos el alto de la pantalla menos lo que ocupe tu Header normal */
   min-height: calc(100vh - 70px);
+  position: relative;
 }
 
+/* --- ESTILOS DE ESCRITORIO --- */
 .sidebar {
-  width: 260px;
+  width: 260px; /* Tu ancho original */
   transition: all 0.3s ease-in-out;
   overflow: hidden;
 
@@ -12,24 +13,81 @@
     width: 80px;
 
     .nav-link {
-      text-align: center;
-      padding-left: 0;
-      padding-right: 0;
-    }
-
-    .me-2 {
-      margin-right: 0 !important; /* Quitamos el margen del icono si está colapsado */
+      justify-content: center;
     }
   }
 
-  /* Para que el botón routerLinkActive cambie de color al pulsarlo */
+  .nav-link {
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+
   .nav-link.active {
-    background-color: var(--color-acento); /* Usa tu variable de color acento */
-    color: black;
+    background-color: var(--color-acento);
+    color: black !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    i {
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* El borde de Ajustes solo aplica a partir de tablets */
+@media (min-width: 768px) {
+  .border-top-desktop {
+    border-top: 1px solid rgba(0,0,0,0.1) !important;
   }
 }
 
 .main-content {
   overflow-y: auto;
-  max-height: calc(100vh - 70px);
+  height: calc(100vh - 70px);
+}
+
+/* --- VISTA MÓVIL: Barra Inferior --- */
+@media (max-width: 767px) {
+
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100% !important;
+    height: 75px;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1) !important;
+    padding: 5px !important;
+    display: flex;
+    align-items: center;
+
+    .nav-link {
+      padding: 5px !important;
+
+      .icon-nav {
+        font-size: 1.4rem;
+        transition: transform 0.2s;
+      }
+
+      .nav-text {
+        font-size: 0.65rem;
+        font-weight: 600;
+        display: block !important;
+      }
+
+      &.active {
+        transform: translateY(-5px);
+        background-color: transparent !important;
+        box-shadow: none;
+
+        .icon-nav {
+          color: black !important;
+        }
+      }
+    }
+  }
+
+  .main-content {
+    padding-bottom: 90px !important;
+    height: 100vh;
+  }
 }

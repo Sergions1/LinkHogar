@@ -28,6 +28,34 @@
     }
   }
 
+  /* --- ADAPTACIÓN MÓVIL FULLCALENDAR --- */
+  @media (max-width: 767px) {
+    .fc {
+      /* Hacemos el título del mes más pequeño */
+      .fc-toolbar-title {
+        font-size: 1.25rem !important;
+      }
+
+      /* Si los botones del header no caben, los apilamos ordenadamente */
+      .fc-header-toolbar {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      /* Reducimos la fuente de los números y los días de la semana */
+      .fc-col-header-cell-cushion,
+      .fc-daygrid-day-number {
+        font-size: 0.85rem;
+      }
+
+      /* Hacemos los eventos más compactos para que quepan en celdas pequeñas */
+      .fc-event {
+        font-size: 0.70rem;
+        padding: 1px 2px;
+      }
+    }
+  }
+
   .cursor-pointer {
     cursor: pointer !important;
   }

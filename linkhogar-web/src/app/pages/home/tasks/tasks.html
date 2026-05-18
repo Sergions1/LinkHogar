@@ -1,19 +1,27 @@
 <div class="container-fluid py-4 tablon-fondo">
 
-  <div class="d-flex justify-content-between align-items-center mb-4 px-3">
-    <h2 class="fw-bold text-dark mb-0 bg-white bg-opacity-75 px-3 py-1 rounded shadow-sm">Tablón de Tareas</h2>
-    <button class="btn primary-btn fw-bold rounded-pill shadow-sm px-4" id="createButton" data-bs-toggle="modal" data-bs-target="#createTaskModal">
-      <i class="bi bi-plus-lg me-1"></i> Nueva Tarea
+  <div class="d-flex justify-content-between align-items-center mb-4 px-2 px-md-3">
+
+    <h2 class="fw-bold text-dark mb-0 bg-white bg-opacity-75 px-3 py-2 rounded shadow-sm fs-5 fs-md-2">
+      Tablón <span class="d-none d-sm-inline">de Tareas</span>
+    </h2>
+
+    <button class="btn primary-btn fw-bold rounded-pill shadow-sm px-3 px-md-4 py-2 d-flex align-items-center"
+            id="createButton" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+      <i class="bi bi-plus-lg fs-5"></i>
+      <span class="d-none d-md-inline ms-2">Nueva Tarea</span>
     </button>
+
   </div>
 
-  <div class="row g-4 px-2" cdkDropListGroup>
+  <div class="row g-4 px-2 kanban-mobile-scroll" cdkDropListGroup cdkScrollable>
 
     <div class="col-md-4">
       <h4 class="text-center fw-bold mb-4 text-dark bg-white bg-opacity-75 py-2 rounded shadow-sm">Por Hacer</h4>
       <div class="kanban-column"
            cdkDropList
            [cdkDropListData]="todoTasks"
+           [cdkDropListAutoScrollStep]="15"
            (cdkDropListDropped)="drop($event, 'Por hacer')">
 
         @for (task of todoTasks; track task.id) {
@@ -27,6 +35,7 @@
       <div class="kanban-column"
            cdkDropList
            [cdkDropListData]="inProgressTasks"
+           [cdkDropListAutoScrollStep]="15"
            (cdkDropListDropped)="drop($event, 'En curso')">
 
         @for (task of inProgressTasks; track task.id) {
@@ -40,6 +49,7 @@
       <div class="kanban-column"
            cdkDropList
            [cdkDropListData]="doneTasks"
+           [cdkDropListAutoScrollStep]="15"
            (cdkDropListDropped)="drop($event, 'Finalizada')">
 
         @for (task of doneTasks; track task.id) {

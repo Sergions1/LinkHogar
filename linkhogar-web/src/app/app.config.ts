@@ -21,12 +21,14 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withFetch()),
     provideSweetAlert2(),
+
+    // Inicializador de la aplicación: Angular esperará a que este Observable termine antes de arrancar
     provideAppInitializer(() => {
       const settingsService = inject(SettingsServices);
-      return settingsService.loadInitialSettings();
+      return settingsService.loadAllSettings();
     }),
+
     // Proveer el LOCALE_ID para que la aplicación use 'es' por defecto
     { provide: LOCALE_ID, useValue: 'es' },
-
   ]
 };

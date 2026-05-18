@@ -42,4 +42,10 @@ public class HouseReportRepositoryImpl implements HouseReportRepository {
     public Page<HouseReport> getPendant(Pageable pageable){
         return jpaHouseReportRepository.findAllByStatus(ReportStatus.PENDIENTE, pageable);
     }
+
+    @Override
+    public long countByPendant() {
+        return jpaHouseReportRepository.countByStatus(ReportStatus.PENDIENTE);
+    }
+
 }

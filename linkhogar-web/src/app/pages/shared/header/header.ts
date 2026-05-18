@@ -9,6 +9,7 @@ import {NotificationService} from '../../../services/notification/notification-s
 import {UserNotification} from '../../../Models/Notification/UserNotification';
 import {DatePipe} from '@angular/common';
 import {WebSocketService} from '../../../services/chat/web-socket-service';
+import {SettingsServices} from '../../../services/settings/settings-services';
 
 @Component({
   selector: 'app-header',
@@ -22,6 +23,7 @@ export class Header implements OnInit, OnDestroy {
   private router = inject(Router);
   public userService = inject(UserService);
   private notificationService = inject(NotificationService);
+  protected settingsService = inject(SettingsServices);
 
   isAdminRoute: boolean = false; //Flag para cambiar de color para el panel de administración
   isHomeRoute: boolean = false; //Flag para cambiar de color para el panel de mi hogar

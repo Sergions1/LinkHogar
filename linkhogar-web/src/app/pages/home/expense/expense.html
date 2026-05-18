@@ -61,8 +61,8 @@
 
                 @if (rep.creditorId === myUserId()) {
                   <div class="list-group-item px-0 border-0 d-flex justify-content-between align-items-center mb-2">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <div class="d-flex align-items-center gap-2 gap-md-3">
+                      <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
                         <i class="bi bi-arrow-down-left"></i>
                       </div>
                       <span><strong>{{ rep.debtorName }}</strong> te debe</span>
@@ -71,8 +71,8 @@
                   </div>
                 } @else {
                   <div class="list-group-item px-0 border-0 d-flex justify-content-between align-items-center mb-2">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <div class="d-flex align-items-center gap-2 gap-md-3">
+                      <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
                         <i class="bi bi-arrow-up-right"></i>
                       </div>
                       <span>Le debes a <strong>{{ rep.creditorName }}</strong></span>
@@ -108,25 +108,25 @@
         <div class="list-group list-group-flush">
           @for (expense of expenseService.homeExpenses(); track expense.id) {
 
-            <div class="list-group-item p-4 border-bottom hover-bg-light" style="cursor: pointer;" (click)="toggleExpenseSplits(expense.id)">
+            <div class="list-group-item p-3 p-md-4 border-bottom hover-bg-light" style="cursor: pointer;" (click)="toggleExpenseSplits(expense.id)">
               <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                  <div class=" text-primary d-flex align-items-center justify-content-center">
-                    <i [class]="getCategoryIcon(expense.category)" class="me-2 text-acento "></i>
-                    <span class="badge bg-acento text-white bg-opacity-10 border fw-normal" style="font-size: 0.7rem;">
+                <div class="d-flex align-items-center gap-2 gap-md-3 overflow-hidden">
+                  <div class="text-primary d-flex align-items-center justify-content-center flex-shrink-0">
+                    <i [class]="getCategoryIcon(expense.category)" class="me-2 text-acento"></i>
+                    <span class="badge bg-acento text-white bg-opacity-10 border fw-normal d-none d-sm-inline-block" style="font-size: 0.7rem;">
                       {{ expense.category | expenseCategory }}
                     </span>
                   </div>
-                  <div>
-                    <h6 class="mb-1 fw-bold">{{ expense.description }}</h6>
-                    <small class="text-muted">
+                  <div class="text-truncate">
+                    <h6 class="mb-1 fw-bold text-truncate">{{ expense.description }}</h6>
+                    <small class="text-muted text-truncate d-block">
                       {{ expense.createdAt | date:'dd MMM yyyy' }} • Pagado por <strong>{{ expense.payerName }}</strong>
                     </small>
                   </div>
                 </div>
 
-                <div class="text-end d-flex align-items-center gap-3">
-                  <h5 class="fw-bold mb-0 text-dark">
+                <div class="text-end d-flex align-items-center gap-2 gap-md-3 flex-shrink-0 ms-2">
+                  <h5 class="fw-bold mb-0 text-dark fs-6 fs-md-5">
                     {{ expense.amount | currency:'EUR' }}
                   </h5>
                   @if (expense.payerId === myUserId()) {
@@ -143,11 +143,12 @@
 
                   <div class="list-group list-group-flush gap-2">
                     @for (split of expense.splits; track split.id) {
-                      <div class="list-group-item bg-white rounded-3 border-0 d-flex justify-content-between align-items-center shadow-sm py-2">
+
+                      <div class="list-group-item bg-white rounded-3 border-0 d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center shadow-sm py-2 gap-2 gap-sm-0">
 
                         <span class="fw-medium">{{ split.debtorName }}</span>
 
-                        <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-between gap-2 gap-md-3 align-self-stretch align-self-sm-auto">
                           <span class="fw-bold">{{ split.amountOwed | currency:'EUR' }}</span>
 
                           @if (split.paid) {

@@ -12,10 +12,15 @@
                  [value]="searchQuery()"
                  (input)="onInput($event)"
                  (keyup.enter)="search()">
-          <button class="btn primary-btn"
+          <button class="btn primary-btn d-none d-sm-block"
                   (click)="search()"
                   [disabled]="!searchQuery().trim()">
             <i class="bi bi-search me-1"></i> Buscar
+          </button>
+          <button class="btn primary-btn d-block d-sm-none"
+                  (click)="search()"
+                  [disabled]="!searchQuery().trim()">
+            <i class="bi bi-search me-1"></i>
           </button>
         </div>
       </div>

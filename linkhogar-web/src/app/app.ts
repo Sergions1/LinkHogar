@@ -13,13 +13,18 @@ import {filter, take} from 'rxjs';
 })
 export class App implements OnInit {
   showlayout: boolean = true;
+  isDashboard: boolean = false;
 
   constructor(private router: Router) { }
 
   ngOnInit() {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)).subscribe((event: any) => {
+        const currentUrl = event.urlAfterRedirects || event.url;
+
         this.showlayout = !event.url.includes("/login"); //Si la ruta es login no se muestra el layout
+
+        this.isDashboard = currentUrl.includes("/hogar") || currentUrl.includes("/admin");
       });
   }
 

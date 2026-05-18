@@ -12,4 +12,5 @@ public interface HouseReportRepository {
     Page<HouseReport> getAll(Pageable pageable);
     void deleteById(UUID id);
     Page<HouseReport> getPendant(Pageable pageable);
+    long countByPendant();
 }

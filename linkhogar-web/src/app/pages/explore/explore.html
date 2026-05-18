@@ -1,28 +1,36 @@
-<body>
-<div class="p-3 bg-secundario">
+<div class="p-2 p-md-3 bg-secundario" style="min-height: 100vh;">
 
-  <div class="row my-5">
-    <div class="col-12 col-md-6 mx-auto">
-      <div class="input-group search-shadow rounded-4 overflow-hidden">
-        <span class="input-group-text bg-white border-0 ps-4">
+  <div class="row my-4 my-md-5">
+    <div class="col-12 col-md-8 col-lg-6 mx-auto px-3 px-md-0">
+      <div class="input-group search-shadow rounded-4 overflow-hidden flex-nowrap">
+
+        <span class="input-group-text bg-white border-0 ps-3 ps-md-4">
           <i class="bi bi-search text-muted"></i>
         </span>
+
         <input type="text"
-               class="form-control border-0 py-3 shadow-none"
+               class="form-control border-0 py-3 shadow-none text-truncate"
                placeholder="Buscar por municipio..."
                [(ngModel)]="searchTerm"
                (keyup.enter)="onSearch()">
-        <button class="btn primary-btn px-4 border-0" (click)="onSearch()">
+
+        <button class="btn primary-btn px-4 border-0 d-none d-sm-block" (click)="onSearch()">
           Buscar
         </button>
+
+        <button class="btn primary-btn px-3 border-0 d-block d-sm-none" (click)="onSearch()">
+          <i class="bi bi-search"></i>
+        </button>
+
       </div>
     </div>
   </div>
 
-  <div class="d-flex col gap-3">
-    <section id="listado" class="w-100 rounded-3">
-      <div class="card shadow-sm border-0 rounded-4 bg-segundario h-100 px-4" id="seccionPisos">
-        <div class="row g-4 pt-3">
+  <div class="row">
+    <section id="listado" class="col-12">
+      <div class="card shadow-sm border-0 rounded-4 bg-segundario h-100 px-2 px-md-4" id="seccionPisos">
+
+        <div class="row g-3 g-md-4 pt-3">
           <app-entity-card-view
             [pageData]="houses()"
             [isLoading]="isLoading()"
@@ -32,6 +40,7 @@
             headerMessagePlural="Hogares encontrados para ti">
           </app-entity-card-view>
         </div>
+
       </div>
     </section>
   </div>
@@ -40,4 +49,3 @@
 <ng-template #houseCard let-house>
   <house-card [house]="house" />
 </ng-template>
-</body>
