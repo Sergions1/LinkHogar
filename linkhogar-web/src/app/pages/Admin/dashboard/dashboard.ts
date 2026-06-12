@@ -23,6 +23,8 @@ export class DashboardComponent implements OnInit {
   stats = this.adminService.stats;
 
   ngOnInit() {
+    this.adminService.preloadAdminData();
+
     if (!this.stats()) {
       this.adminService.getDashboardStats().subscribe({
         next: (data) => {

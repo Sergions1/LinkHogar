@@ -63,7 +63,14 @@ export class AdminService {
       });
     }
 
-    //5. Configuración General (Ajustes de la plataforma)
+    // 🌟 5. Precargar los anuncios generales
+    if (!this.adminHouses()) {
+      this.houseService.getPaginatedHouses(0, size).subscribe(data => {
+        this.adminHouses.set(data);
+      });
+    }
+
+    //6. Configuración General (Ajustes de la plataforma)
     // Asumimos que si no hay logo ni hero en la señal, toca cargarlos
     if (!this.settingsService.logoImage() && !this.settingsService.heroImage()) {
       this.settingsService.loadAllSettings().subscribe({

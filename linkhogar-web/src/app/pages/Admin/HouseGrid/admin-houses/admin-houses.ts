@@ -40,7 +40,7 @@ export class AdminHousesComponent implements OnInit {
 
   ngOnInit() {
     // Mandamos a precargar toda la sección administrativa en paralelo de fondo
-    this.adminService.preloadAdminData();
+
 
     // Si los anuncios de administración no se han cargado nunca, hacemos la primera llamada
     if (!this.houses()) {
@@ -191,13 +191,20 @@ export class AdminHousesComponent implements OnInit {
   submitStatusChange() {
     if (!this.selectedHouseId || !this.selectedStatus) return;
 
-    console.log("PublicationStatus");
-    console.log(this.parseStatusLabel(this.selectedStatus));
-
+    const newStatus = this.parseStatusLabel(this.selectedStatus);
     this.isSubmittingStatus = true;
     this.adminService.setHouseStatus(this.selectedHouseId, this.parseStatusLabel(this.selectedStatus)).subscribe({
       next: () => {
         this.isSubmittingStatus = false;
+        this.houses.update(page => {
+          if (!page) return page;
+          return {
+            ...page,
+            content: page.content.map(h =>
+              h.id === this.selectedHouseId ? { ...h, publicationStatus: newStatus } : h
+            )
+          };
+        });
         this.closeStatusModal();
         Swal.fire({
           title: '¡Estado actualizado!',
@@ -206,7 +213,6 @@ export class AdminHousesComponent implements OnInit {
           timer: 2000,
           showConfirmButton: false
         });
-        this.loadHouses();
       },
       error: (err) => {
         console.error(err);
