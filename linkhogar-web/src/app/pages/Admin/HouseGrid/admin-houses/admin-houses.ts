@@ -39,9 +39,6 @@ export class AdminHousesComponent implements OnInit {
   ];
 
   ngOnInit() {
-    // Mandamos a precargar toda la sección administrativa en paralelo de fondo
-
-
     // Si los anuncios de administración no se han cargado nunca, hacemos la primera llamada
     if (!this.houses()) {
       this.loadHouses();
