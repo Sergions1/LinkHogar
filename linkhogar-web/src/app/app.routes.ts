@@ -28,6 +28,7 @@ import {Chat} from './pages/home/chat/chat';
 import {Expense} from './pages/home/expense/expense';
 import {Calendar} from './pages/home/calendar/calendar';
 import {AdminSettings} from './pages/Admin/admin-settings/admin-settings';
+import {AboutUs} from './pages/shared/about-us/about-us';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -71,5 +72,6 @@ export const routes: Routes = [
   },
   {path: "messages", component: Messages, canActivate: [authGuard]},
   {path: "messages/:chatId", component: Messages, canActivate: [authGuard]},
+  {path: "AboutUs", component: AboutUs},
   { path: '**', component: NotFound }
 ];

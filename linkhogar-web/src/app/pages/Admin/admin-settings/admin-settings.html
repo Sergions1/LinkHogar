@@ -56,6 +56,53 @@
       </div>
     </div>
   </div>
+
+  <div class="row g-4 mt-3">
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm border-0 h-100 rounded-4">
+        <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+          <h5 class="fw-bold"><i class="bi bi-house-add me-2 text-primario"></i>Imagen de Publicar Anuncio</h5>
+          <p class="text-muted small mb-0">Imagen decorativa de la vista de publicación (formato cuadrado 1:1).</p>
+        </div>
+        <div class="card-body p-4 d-flex flex-column align-items-center">
+          <div class="bg-fondo-secundario rounded-3 overflow-hidden mb-4 border position-relative" style="height: 200px;">
+            @if (settingsService.publishImage()) {
+              <img [src]="settingsService.publishImage()" class="w-100 h-100 object-fit-cover" alt="Imagen publicar anuncio">
+            } @else {
+              <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                <span class="text-center small"><i class="bi bi-image d-block fs-3 mb-1"></i>Sin imagen</span>
+              </div>
+            }
+          </div>
+          <button class="btn btn-outline-acento w-100 mt-auto" (click)="openCropper('PUBLISH_IMAGE')">
+            <i class="bi bi-upload me-2"></i>Actualizar Imagen
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card nueva: Favicon -->
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm border-0 h-100 rounded-4">
+        <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+          <h5 class="fw-bold"><i class="bi bi-stars me-2 text-primario"></i>Favicon</h5>
+          <p class="text-muted small mb-0">Icono que aparece en la pestaña del navegador (formato cuadrado, mínimo 32×32px).</p>
+        </div>
+        <div class="card-body p-4 d-flex flex-column align-items-center">
+          <div class="bg-fondo-secundario rounded-3 d-flex align-items-center justify-content-center mb-4 border" style="width: 200px; height: 200px;">
+            @if (settingsService.faviconImage()) {
+              <img [src]="settingsService.faviconImage()" class="img-fluid object-fit-contain" style="max-width: 48px; max-height: 48px;" alt="Favicon actual">
+            } @else {
+              <i class="bi bi-image text-muted fs-4"></i>
+            }
+          </div>
+          <button class="btn btn-outline-acento w-100 mt-auto" (click)="openCropper('FAVICON')">
+            <i class="bi bi-upload me-2"></i>Actualizar Favicon
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal fade" id="settingsCropperModal" tabindex="-1" aria-hidden="true">

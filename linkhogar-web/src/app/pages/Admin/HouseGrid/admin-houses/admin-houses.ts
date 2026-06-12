@@ -20,9 +20,10 @@ import {RouterModule, Router} from '@angular/router';
 export class AdminHousesComponent implements OnInit {
   private router = inject(Router);
   private houseService = inject(HouseService);
-  private adminService = inject(AdminService);
+  public adminService = inject(AdminService);
 
-  houses = signal<PageResponse<HouseResponse> | null>(null);
+
+  houses = this.adminService.adminHouses;
   isLoading = signal(false);
   currentPage = signal(0);
   readonly pageSize = 10;
@@ -38,7 +39,13 @@ export class AdminHousesComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.loadHouses();
+    // Mandamos a precargar toda la sección administrativa en paralelo de fondo
+    this.adminService.preloadAdminData();
+
+    // Si los anuncios de administración no se han cargado nunca, hacemos la primera llamada
+    if (!this.houses()) {
+      this.loadHouses();
+    }
   }
 
   loadHouses() {
@@ -107,6 +114,12 @@ export class AdminHousesComponent implements OnInit {
           }
         });
       }
+    });
+  }
+
+  editHouse(id: string) {
+    this.router.navigate(['/editar', id], {
+      queryParams: { fromAdmin: true }
     });
   }
 

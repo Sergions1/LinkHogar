@@ -32,6 +32,10 @@ public class UpdateUserCommandHandler {
 
         user.setFecha_nac(command.fecha_Nac());
 
+        if(command.role() != null && command.role().isPresent()){
+            user.setRole(Role.valueOf(command.role().get()));
+        }
+
         userRepository.saveUser(user);
 
         return Result.success(null);

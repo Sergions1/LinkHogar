@@ -20,10 +20,10 @@ import {AuthService} from '../../../../services/auth/auth.service';
 })
 export class AdminUsersComponent implements OnInit {
   private userService = inject(UserService);
-  private adminService = inject(AdminService);
+  public adminService = inject(AdminService);
   private authService = inject(AuthService);
 
-  users = signal<PageResponse<UserResponse> | null>(null);
+  users = this.adminService.adminUsers;
   isLoading = signal(false);
   currentPage = signal(0);
   readonly pageSize = 10;
@@ -44,7 +44,9 @@ export class AdminUsersComponent implements OnInit {
   editUser: CreateUserByAdminRequest = this.emptyForm();
 
   ngOnInit() {
-    this.loadUsers();
+    if (!this.users()) {
+      this.loadUsers();
+    }
   }
 
   get isLinkHogar(): boolean {

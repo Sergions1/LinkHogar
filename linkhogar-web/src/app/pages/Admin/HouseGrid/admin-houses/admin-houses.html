@@ -66,7 +66,7 @@
                     <small class="text-muted">{{ house.address.province }}</small>
                   </td>
                   <td>
-                    <span class="fw-semibold" style="color: var(--color-primario);">{{ house.price | number:'1.0-0' }} €</span>
+                    <span class="fw-semibold" style="color: var(--color-primario);">@if (house.rentalMode == "BY_ROOM") {Desde }{{ house.price | number:'1.0-0' }} €</span>
                     <small class="text-muted d-block">/mes</small>
                   </td>
                   <td><span class="badge bg-fondo-secundario text-dark">{{ house.houseType }}</span></td>
@@ -83,7 +83,7 @@
                     <div class="d-flex gap-2 justify-content-center">
                       <a [routerLink]="['/inmueble', house.title, house.id]" class="btn btn-sm btn-outline-primary" title="Ver detalle"><i class="bi bi-eye"></i></a>
                       <button class="btn btn-sm btn-outline-warning" title="Cambiar estado" (click)="toggleStatus(house.id, house.publicationStatus)"><i class="bi bi-pause-circle"></i></button>
-                      <button class="btn btn-sm btn-outline-secondary" title="Editar"><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-outline-secondary" title="Editar" (click)="editHouse(house.id)"><i class="bi bi-pencil"></i></button>
                       <button class="btn btn-sm btn-outline-danger" title="Eliminar" (click)="deleteHouse(house.id)"><i class="bi bi-trash"></i></button>
                     </div>
                   </td>
@@ -130,7 +130,7 @@
                 <div class="row g-2 mb-3 bg-light p-2 rounded-3 small">
                   <div class="col-6">
                     <span class="text-muted d-block">Precio</span>
-                    <span class="fw-bold" style="color: var(--color-primario);">{{ house.price | number:'1.0-0' }} €/mes</span>
+                    <span class="fw-bold" style="color: var(--color-primario);">@if (house.rentalMode == "BY_ROOM") {Desde }{{ house.price | number:'1.0-0' }} €/mes</span>
                   </div>
                   <div class="col-6">
                     <span class="text-muted d-block">Propietario</span>
@@ -145,7 +145,7 @@
                   <button class="btn btn-sm btn-outline-warning flex-fill" (click)="toggleStatus(house.id, house.publicationStatus)">
                     <i class="bi bi-pause-circle"></i>
                   </button>
-                  <button class="btn btn-sm btn-outline-secondary flex-fill">
+                  <button class="btn btn-sm btn-outline-secondary flex-fill" (click)="editHouse(house.id)">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn btn-sm btn-outline-danger flex-fill" (click)="deleteHouse(house.id)">

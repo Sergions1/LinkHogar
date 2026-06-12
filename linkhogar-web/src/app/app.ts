@@ -1,8 +1,9 @@
-import {Component, OnInit, signal} from '@angular/core';
+import {Component, effect, inject, OnInit, signal} from '@angular/core';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import {Header} from './pages/shared/header/header';
 import {Footer} from './pages/shared/footer/footer';
 import {filter, take} from 'rxjs';
+import {SettingsServices} from './services/settings/settings-services';
 
 
 @Component({
@@ -15,7 +16,20 @@ export class App implements OnInit {
   showlayout: boolean = true;
   isDashboard: boolean = false;
 
-  constructor(private router: Router) { }
+  private settingsService = inject(SettingsServices);
+
+  constructor(private router: Router) {
+    effect(() => {
+      const favicon = this.settingsService.faviconImage();
+      if (favicon) {
+        const link = document.querySelector<HTMLLinkElement>("link[rel='icon']")
+          ?? document.createElement('link');
+        link.rel = 'icon';
+        link.href = favicon;
+        document.head.appendChild(link);
+      }
+    });
+  }
 
   ngOnInit() {
     this.router.events.pipe(

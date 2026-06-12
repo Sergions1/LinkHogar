@@ -80,10 +80,22 @@ export class Detail implements OnInit {
           this.activeRoomIndex.set(0);
           this.isFavourite.set(this.authService.isFavorite(this.houseId?.toString() || ''));
           this.isLoading.set(false);
+
+          if (this.house()?.publicationStatus === 'ARCHIVED') {
+
+            // 🌟 CORRECCIÓN 2: Evaluamos el rol asegurando que currentUser ya no sea null
+            const usuario = this.currentUser();
+            const autorized = usuario && ['Admin', 'LinkHogar'].includes(usuario.role || '');
+
+            if (!autorized) {
+              this.router.navigate(['notFound']);
+            }
+          }
         },
         error: err => {
           console.log(err);
           this.isLoading.set(false);
+          this.router.navigate(['notFound']);
         }
       });
     }

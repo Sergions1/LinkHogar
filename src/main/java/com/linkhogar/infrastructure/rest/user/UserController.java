@@ -46,6 +46,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -130,12 +131,19 @@ public class UserController {
                 .map(GrantedAuthority::getAuthority)
                 .orElse("");
 
+        Optional<String> assignedRole = Optional.empty();
+
+        if ((requestingUserRole.equals("admin") || requestingUserRole.equals("LinkHogar")) && updateDTO.role().isPresent()) {
+            assignedRole = updateDTO.role();
+        }
+
         UpdateUserCommand command = new UpdateUserCommand(
                 id,
                 updateDTO.firstName(),
                 updateDTO.lastName(),
                 updateDTO.fecha_Nac(),
-                updateDTO.phone()
+                updateDTO.phone(),
+                assignedRole
         );
 
         Result<Void> result = updateUserCommandHandler.handle(command);

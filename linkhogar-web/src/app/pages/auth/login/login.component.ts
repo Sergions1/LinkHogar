@@ -89,8 +89,10 @@ export class LoginComponent {
         let icon: 'error' | 'warning' = 'error';
 
         const backendError = error.error?.message || error.error || '';
+        const errorStr = backendError.toString();
 
-        if (backendError.toString().toLowerCase().includes('disabled') || backendError.toString().toLowerCase().includes('desactivada') || error.status === 403) {
+        if (errorStr.includes('NotEnabled')
+        ) {
           title = 'Cuenta no verificada';
           msg = 'Por favor, revisa tu correo electrónico y haz clic en el enlace de verificación para activar tu cuenta.';
           icon = 'warning';

@@ -81,6 +81,7 @@ export class Create implements OnInit{
   isEditMode = signal(false);
   editHouseId = signal<string | null>(null);
   existingPhotosUrls = signal<string[]>([]);
+  isFromAdmin = signal(false);
 
   formData = signal<HouseForm>({
     location: {
@@ -129,6 +130,11 @@ export class Create implements OnInit{
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
+
+    this.route.queryParamMap.subscribe(queryParams => {
+      this.isFromAdmin.set(queryParams.get('fromAdmin') === 'true'); //Comprobamos si edita el propietario o un adminsitrador
+    });
+
     if (id) {
       this.isEditMode.set(true);
       this.editHouseId.set(id);
@@ -419,6 +425,12 @@ export class Create implements OnInit{
   }
 
   private finishSubmit(tituloLimpio: string, id: string, isSuccess: boolean, isImageError: boolean = false) {
+    this.isLoading.set(true);
+
+    const finalRoute = this.isFromAdmin()
+      ? ['/admin/houses']
+      : ['/inmueble', tituloLimpio, id];
+
     this.isLoading.set(false);
 
     if (isImageError) {
@@ -428,15 +440,19 @@ export class Create implements OnInit{
         icon: 'warning',
         confirmButtonText: 'Aceptar',
         confirmButtonColor: 'var(--color-acento)'
-      }).then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
+      }).then(() => {
+        this.router.navigate(finalRoute);
+      });
     } else {
       Swal.fire({
         title: '¡Éxito!',
-        text: `Su anuncio ha sido ${this.isEditMode() ? 'actualizado' : 'publicado'} con éxito`,
+        text: `Anuncio ${this.isEditMode() ? 'actualizado' : 'publicado'} con éxito`,
         icon: 'success',
         confirmButtonText: 'Aceptar',
         confirmButtonColor: 'var(--color-acento)'
-      }).then(() => this.router.navigate(['/inmueble', tituloLimpio, id]));
+      }).then(() => {
+        this.router.navigate(finalRoute);
+      });
     }
   }
 

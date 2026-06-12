@@ -33,6 +33,11 @@
   .bg-acento {
     background-color: var(--color-acento);
   }
+
+  .bg-acento-light {
+    background-color: rgb(from var(--color-acento) r g b / 25%);
+
+  }
   .bg-fondo-principal {
     background-color: var(--color-fondo-principal);
   }
@@ -81,6 +86,10 @@
     color: var(--color-acento) !important;
   }
 
+  .text-primario{
+    color: var(--color-primario);
+  }
+
   /* Botón Outline Acento */
   .btn-outline-acento {
     background-color: transparent !important;
@@ -112,3 +121,5 @@
   .boton-Favorito:hover i{
     color: red !important;
   }
+
+

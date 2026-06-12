@@ -25,6 +25,10 @@ public class UserLoginCommandHandler {
             return Result.failure(UserErrors.NOT_FOUND_BY_EMAIL);
         }
 
+        if(!user.isEnabled()){
+            return Result.failure(UserErrors.NOT_ENABLED);
+        }
+
         if (!pswEncoder.matches(command.password(), user.getPassword())){
             return Result.failure(UserErrors.invalidPassword());
         }

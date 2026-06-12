@@ -52,6 +52,9 @@
 
       <div>
         <span class="h4 fw-bold text-price mb-0">
+          @if(house.rentalMode == "BY_ROOM"){
+            Desde
+          }
           {{ house.price | number }} €
         </span>
         <span class="text-muted small">/mes</span>

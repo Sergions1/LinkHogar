@@ -7,3 +7,15 @@ footer.home-theme {
   background-color: var(--color-acento) !important;
   transition: background-color 0.5s ease;
 }
+
+a {
+  color: #ffffff !important;
+  text-decoration: underline !important;
+  text-underline-offset: 1px;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    /* El azul clásico de los enlaces al pasar el ratón */
+    color: var(--color-acento) !important;
+  }
+}

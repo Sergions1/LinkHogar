@@ -45,4 +45,8 @@ export class EntityCardView implements OnInit{
     return this.currentPage < this.totalPages - 1;
   }
 
+  get displayedTotalElements(): number {
+    return this.pageData?.content?.length ?? 0;
+  }
+
 }

@@ -39,6 +39,7 @@ import com.linkhogar.application.house.updateRoomTenant.UpdateRoomTenantCommandH
 import com.linkhogar.application.house.updateRoomTenant.UpdateRoomTenantRequest;
 import com.linkhogar.domain.common.result.Result;
 import com.linkhogar.domain.house.HouseReport;
+import com.linkhogar.domain.user.UserErrors;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -269,13 +270,13 @@ public class HouseController {
                 authentication.getAuthorities()
         );
 
-        // 👇 Atrapamos el Result con el mapa de IDs
         Result<CreateHouseResponse> result = updateCommandHandler.handle(command);
 
         if (result.isSuccess()) {
-            // 👇 Devolvemos el cuerpo con los IDs a Angular
             return ResponseEntity.ok(result.getValue());
-        } else {
+        } else if (result.getError().equals(UserErrors.UNAUTHORIZED)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getError());
         }
     }

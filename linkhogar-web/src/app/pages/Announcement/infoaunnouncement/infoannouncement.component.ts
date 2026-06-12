@@ -1,6 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {AuthService} from '../../../services/auth/auth.service';
 import {Router} from '@angular/router';
+import {SettingsServices} from '../../../services/settings/settings-services';
 
 @Component({
   selector: 'app-infoannouncement',
@@ -12,6 +13,7 @@ export class Infoannouncement implements OnInit {
 
   public authService = inject(AuthService);
   public router = inject(Router);
+  public settingsService = inject(SettingsServices);
 
   ngOnInit() {
     const auth = this.authService.isLoggedIn();

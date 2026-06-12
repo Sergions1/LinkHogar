@@ -16,4 +16,12 @@ header.home-theme {
   z-index: 999 !important;
 }
 
+.specialbuttom{
+  color: #ffffff !important;
+  transition: color 0.2s ease-in-out;
 
+  &:hover {
+    /* El azul clásico de los enlaces al pasar el ratón */
+    color: var(--color-acento) !important;
+  }
+}

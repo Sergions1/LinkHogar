@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HouseCardResponse} from '../../Models/Houses/house-card-response.interface';
 import {HouseService} from '../../services/house/house-service';
@@ -23,7 +23,32 @@ export class Explore implements OnInit {
   isLoading = signal(false);
 
   searchTerm = '';
+  selectedRentalMode = signal<string>('');
   private citySlug: string | null = null;
+
+  filteredHousesPage = computed<PageResponse<HouseCardResponse> | null>(() => {
+    const originalData = this.houses();
+    if (!originalData) return null;
+
+    // 2. 🌟 Extraemos el valor leyendo la señal con paréntesis ()
+    const modeFilter = this.selectedRentalMode();
+
+    // Si no hay filtro seleccionado, devolvemos los datos tal cual vinieron del backend
+    if (!modeFilter) {
+      return originalData;
+    }
+
+    // Filtrar el array de viviendas de la página actual comparando con el valor de la señal
+    const filteredContent = originalData.content.filter(house =>
+      house.rentalMode === modeFilter
+    );
+
+    // Devolvemos un nuevo objeto estructurado igual que la página, pero con el contenido filtrado
+    return {
+      ...originalData,
+      content: filteredContent
+    };
+  });
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -66,7 +91,6 @@ export class Explore implements OnInit {
 
   onSearch() {
     if (this.searchTerm.trim()) {
-      // Ajusta la ruta base '/explore' si la tuya es diferente
       this.router.navigate(['/explore'], { queryParams: { q: this.searchTerm } });
     } else {
       this.router.navigate(['/explore']);

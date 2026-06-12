@@ -23,7 +23,14 @@
           </div>
 
           <div class="col-lg-5 text-center d-none d-lg-block">
-            <!--Todo inkuir imagen/icono /-->imagen
+            @if (settingsService.publishImage()) {
+              <img [src]="settingsService.publishImage()"
+                   class="img-fluid rounded-4 shadow"
+                   style="max-height: 280px; object-fit: cover;"
+                   alt="Imagen publicar anuncio">
+            } @else {
+              <i class="bi bi-house-add text-white" style="font-size: 8rem; opacity: 0.3;"></i>
+            }
           </div>
 
         </div>

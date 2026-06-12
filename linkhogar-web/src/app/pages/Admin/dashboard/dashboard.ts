@@ -16,23 +16,21 @@ import {RouterLink} from '@angular/router';
 })
 export class DashboardComponent implements OnInit {
   private authService = inject(AuthService);
-  private userService = inject(UserService);
-  private adminService = inject(AdminService);
+  public adminService = inject(AdminService);
 
   user = this.authService.currentUser;
 
-  userEmail: string | null = '';
-  userRole: string | null = '';
-
-  stats = signal<DashboardStatsResponse | null>(null);
+  stats = this.adminService.stats;
 
   ngOnInit() {
-    this.adminService.getDashboardStats().subscribe({
-      next: (data) => {
-        console.log('Stats recibidas:', data);
-        this.stats.set(data);
-      },
-      error: (err) => console.error("Error cargando estadísticas", err)
-    });
+    if (!this.stats()) {
+      this.adminService.getDashboardStats().subscribe({
+        next: (data) => {
+          console.log('Stats recibidas:', data);
+          this.stats.set(data);
+        },
+        error: (err) => console.error("Error cargando estadísticas", err)
+      });
+    }
   }
 }

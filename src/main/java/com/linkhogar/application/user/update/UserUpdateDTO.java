@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public record UserUpdateDTO(
         String firstName,
@@ -12,5 +13,6 @@ public record UserUpdateDTO(
         @JsonProperty("fecha_Nac")
         LocalDate fecha_Nac,
 
-        String phone
+        String phone,
+        Optional<String> role
 ) {}

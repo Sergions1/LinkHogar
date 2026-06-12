@@ -10,6 +10,7 @@ import com.linkhogar.domain.room.Room;
 import com.linkhogar.domain.room.enums.RoomStatus;
 import com.linkhogar.domain.user.User;
 import com.linkhogar.domain.user.UserRepository;
+import com.linkhogar.domain.user.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -106,6 +107,12 @@ public class CreateHouseCommandHandler {
         if (house.getRoomList() != null) {
             house.getRoomList().forEach(room -> roomIds.put(room.getName(), room.getId()));
         }
+
+        if(owner.getRole() == Role.User){
+            owner.setRole(Role.Propietario);
+        }
+
+        userRepository.saveUser(owner);
 
         return new CreateHouseResponse(house.getId(), roomIds);
     }

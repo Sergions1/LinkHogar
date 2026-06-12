@@ -12,6 +12,8 @@ export class SettingsServices {
 
   heroImage = signal<string>('');
   logoImage = signal<string>('');
+  publishImage = signal<string | null>(null);
+  faviconImage = signal<string | null>(null);
 
   allSettings = signal<Record<string, string>>({});
 
@@ -31,16 +33,12 @@ export class SettingsServices {
   loadAllSettings(): Observable<Record<string, string>> {
     return this.http.get<Record<string, string>>(this.apiUrl).pipe(
       tap((settingsMap) => {
-        // Guardamos el diccionario completo
         this.allSettings.set(settingsMap);
 
-        // Repartimos a las señales individuales si existen
-        if (settingsMap['HERO_INITIAL_IMAGE']) {
-          this.heroImage.set(settingsMap['HERO_INITIAL_IMAGE']);
-        }
-        if (settingsMap['APP_LOGO']) {
-          this.logoImage.set(settingsMap['APP_LOGO']);
-        }
+        if (settingsMap['HERO_INITIAL_IMAGE']) this.heroImage.set(settingsMap['HERO_INITIAL_IMAGE']);
+        if (settingsMap['APP_LOGO'])           this.logoImage.set(settingsMap['APP_LOGO']);
+        if (settingsMap['PUBLISH_IMAGE'])      this.publishImage.set(settingsMap['PUBLISH_IMAGE']);
+        if (settingsMap['FAVICON'])            this.faviconImage.set(settingsMap['FAVICON']);
       })
     );
   }

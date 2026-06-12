@@ -1,6 +1,7 @@
 <div class="p-2 p-md-3 bg-secundario" style="min-height: 100vh;">
 
   <div class="row my-4 my-md-5">
+
     <div class="col-12 col-md-8 col-lg-6 mx-auto px-3 px-md-0">
       <div class="input-group search-shadow rounded-4 overflow-hidden flex-nowrap">
 
@@ -26,13 +27,70 @@
     </div>
   </div>
 
+  <div class="col-12 mb-4">
+    <div class="d-flex flex-wrap flex-md-nowrap gap-3 w-100">
+
+      <div class="flex-fill">
+        <input type="radio"
+               class="btn-check"
+               id="modeAll"
+               name="rentalModeFilter"
+               value=""
+               [(ngModel)]="selectedRentalMode">
+        <label class="btn w-100 py-3 rounded-4 search-shadow border-0 transition-all"
+               [class.primary-btn]="selectedRentalMode() === ''"
+               [class.text-white]="selectedRentalMode() === ''"
+               [class.bg-white]="selectedRentalMode() !== ''"
+               [class.text-muted]="selectedRentalMode() !== ''"
+               for="modeAll">
+          <i class="bi bi-grid d-block fs-3 mb-1"></i> Cualquier modalidad
+        </label>
+      </div>
+
+      <div class="flex-fill">
+        <input type="radio"
+               class="btn-check"
+               id="modeEntire"
+               name="rentalModeFilter"
+               value="COMPLETE"
+               [(ngModel)]="selectedRentalMode">
+        <label class="btn w-100 py-3 rounded-4 search-shadow border-0 transition-all"
+               [class.primary-btn]="selectedRentalMode() === 'COMPLETE'"
+               [class.text-white]="selectedRentalMode() === 'COMPLETE'"
+               [class.bg-white]="selectedRentalMode() !== 'COMPLETE'"
+               [class.text-muted]="selectedRentalMode() !== 'COMPLETE'"
+               for="modeEntire">
+          <i class="bi bi-house-door d-block fs-3 mb-1"></i> Vivienda Completa
+        </label>
+      </div>
+
+      <div class="flex-fill">
+        <input type="radio"
+               class="btn-check"
+               id="modeRooms"
+               name="rentalModeFilter"
+               value="BY_ROOM"
+               [(ngModel)]="selectedRentalMode">
+        <label class="btn w-100 py-3 rounded-4 search-shadow border-0 transition-all"
+               [class.primary-btn]="selectedRentalMode() === 'BY_ROOM'"
+               [class.text-white]="selectedRentalMode() === 'BY_ROOM'"
+               [class.bg-white]="selectedRentalMode() !== 'BY_ROOM'"
+               [class.text-muted]="selectedRentalMode() !== 'BY_ROOM'"
+               for="modeRooms">
+          <i class="bi bi-door-closed d-block fs-3 mb-1"></i> Por Habitaciones
+        </label>
+      </div>
+
+    </div>
+  </div>
+
   <div class="row">
     <section id="listado" class="col-12">
       <div class="card shadow-sm border-0 rounded-4 bg-segundario h-100 px-2 px-md-4" id="seccionPisos">
 
         <div class="row g-3 g-md-4 pt-3">
           <app-entity-card-view
-            [pageData]="houses()"
+            [pageData]="filteredHousesPage()"
             [isLoading]="isLoading()"
             [cardTemplate]="houseCard"
             (pageChange)="onPageChange($event)"

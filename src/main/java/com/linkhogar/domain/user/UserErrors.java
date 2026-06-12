@@ -29,6 +29,11 @@ public class UserErrors {
             "No tienes permisos para realizar esta acción"
     );
 
+    public static final Error NOT_ENABLED = Error.unauthorized(
+            "Users.NotEnabled",
+            "La cuenta de usuario no está activa."
+    );
+
     public static final Error invalidPassword(){
         return Error.notFound(
                 "Users.InvalidPassword",

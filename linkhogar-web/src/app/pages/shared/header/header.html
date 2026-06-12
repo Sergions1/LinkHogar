@@ -18,10 +18,10 @@
     <div class="collapse navbar-collapse" id="headerNav">
 
       <ul class="navbar-nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-lg-center mb-md-0 mt-3 mt-lg-0">
-        <li class="nav-item"><a routerLink="/" class="nav-link px-2 text-white">Home</a></li>
+        <li class="nav-item"><a routerLink="/" class="nav-link px-2 specialbuttom">Home</a></li>
         @if (authService.isLoggedIn() && authService.haveHome()) {
           <li class="nav-item">
-            <button class="nav-link bg-transparent border-0 px-2 text-white text-start w-100" (click)="home()">Mi hogar</button>
+            <button class="nav-link bg-transparent border-0 px-2 specialbuttom text-start w-100" (click)="home()">Mi hogar</button>
           </li>
         }
         @if (authService.isLoggedIn() && userService.isAdmin()) {
@@ -117,10 +117,10 @@
                   <p class="fw-semibold mb-0 small">{{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</p>
                   <p class="mb-0" style="font-size: 0.75rem;">{{ authService.currentUser()?.mail }}</p>
                 </li>
-                <li><a class="dropdown-item py-2" routerLink="/perfil"><i class="bi bi-person me-2 text-primario"></i>Mi perfil</a></li>
-                <li><a class="dropdown-item py-2" routerLink="/favoritos"><i class="bi bi-heart me-2 text-primario"></i>Favoritos</a></li>
-                <li><a class="dropdown-item py-2" routerLink="/messages"><i class="bi bi-chat-left-text me-2 text-primario"></i>Mis mensajes</a></li>
-                <li><a class="dropdown-item py-2" routerLink="/mis-publicaciones"><i class="bi bi-house me-2 text-primario"></i>Mis publicaciones</a></li>
+                <li><a class="dropdown-item py-2" routerLink="/perfil"><i class="bi bi-person me-2 text-acento"></i>Mi perfil</a></li>
+                <li><a class="dropdown-item py-2" routerLink="/favoritos"><i class="bi bi-heart me-2 text-acento"></i>Favoritos</a></li>
+                <li><a class="dropdown-item py-2" routerLink="/messages"><i class="bi bi-chat-left-text me-2 text-acento"></i>Mis mensajes</a></li>
+                <li><a class="dropdown-item py-2" routerLink="/mis-publicaciones"><i class="bi bi-house me-2 text-acento"></i>Mis publicaciones</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                   <button class="dropdown-item pt-1 pb-2 text-danger rounded-bottom-3 mb-1" (click)="logOut()">

@@ -14,10 +14,10 @@
 
   } @else {
     <div class="mb-2">
-      @if (pageData?.totalElements == 1) {
-        <h5>{{ pageData?.totalElements }} {{ headerMessage }}</h5>
+      @if (displayedTotalElements === 1) {
+        <h5>{{ displayedTotalElements }} {{ headerMessage }}</h5>
       } @else {
-        <h5>{{ pageData?.totalElements }} {{ headerMessagePlural }}</h5>
+        <h5>{{ displayedTotalElements }} {{ headerMessagePlural }}</h5>
       }
     </div>
     <hr>

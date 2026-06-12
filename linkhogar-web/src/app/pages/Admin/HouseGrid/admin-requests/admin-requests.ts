@@ -15,10 +15,10 @@ import Swal from 'sweetalert2';
   styleUrls: ['./admin-requests.scss']
 })
 export class AdminRequests implements OnInit {
-  private adminService = inject(AdminService);
+  public adminService = inject(AdminService);
   private houseService = inject(HouseService); // Para obtener las denuncias
 
-  reports = signal<PageResponse<HouseReport> | null>(null);
+  reports = this.adminService.adminReports;
   isLoading = signal(false);
   currentPage = signal(0);
   readonly pageSize = 10;
@@ -27,7 +27,9 @@ export class AdminRequests implements OnInit {
   selectedReport = signal<HouseReport | null>(null);
 
   ngOnInit() {
-    this.loadReports();
+    if (!this.reports()) {
+      this.loadReports();
+    }
   }
 
   loadReports() {
